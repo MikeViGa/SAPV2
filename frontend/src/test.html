@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Minimal Map Heading Test</title>
+    <style>
+        #map { height: 500px; width: 100%; }
+        button { margin: 5px; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Minimal Map Heading Test</h1>
+    <div id="map"></div>
+    <button id="tiltBtn">Tilt Down (45)</button>
+    <button id="rotateBtn">Rotate Right (-20)</button>
+    <button id="headingBtn">Check Heading</button>
+
+    <script>
+        let map;
+        const API_KEY = "AIzaSyDKTJsLbFkir-lQL9nviPkD4wO50Dtmy20"; // <-- REPLACE
+        const API_VERSION = "3.56"; // Or try "beta", "3.56", etc.
+
+        function initMap() {
+            console.log("Initializing minimal map...");
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 40.7128, lng: -74.0060 }, // NYC
+                zoom: 18,
+                mapTypeId: "hybrid",
+                // Minimal options
+            });
+
+            map.addListener('heading_changed', () => {
+                console.log(`EVENT heading_changed triggered.`);
+                setTimeout(() => {
+                    console.log(`  -> Delayed check: heading via getHeading(): ${map.getHeading()}`);
+                }, 100);
+            });
+             map.addListener('tilt_changed', () => {
+                console.log(`EVENT tilt_changed triggered.`);
+                setTimeout(() => {
+                    console.log(`  -> Delayed check: tilt via getTilt(): ${map.getTilt()}`);
+                }, 100);
+            });
+
+            console.log("Minimal map initialized.");
+
+            document.getElementById('tiltBtn').addEventListener('click', () => {
+                console.log("Setting tilt to 45");
+                map.setOptions({ tilt: 45 });
+            });
+
+            document.getElementById('rotateBtn').addEventListener('click', () => {
+                const currentHeading = map.getHeading() || 0;
+                const newHeading = (currentHeading - 20 + 360) % 360; // Rotate right
+                console.log(`Attempting to set heading from ${currentHeading} to ${newHeading}`);
+                map.setOptions({ heading: newHeading });
+                 console.log(`Heading immediately after setOptions call: ${map.getHeading()}`);
+            });
+
+             document.getElementById('headingBtn').addEventListener('click', () => {
+                console.log(`Manual Check: Current Heading: ${map.getHeading()}`);
+                console.log(`Manual Check: Current Tilt: ${map.getTilt()}`);
+            });
+        }
+    </script>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=maps&v=${API_VERSION}&callback=initMap">
+    </script>
+</body>
+</html>

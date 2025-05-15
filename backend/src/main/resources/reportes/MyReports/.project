@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>MyReports</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>net.sf.jasperreports.builder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>net.sf.jasperreports.nature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>reporteclientescolonia.jasper</name>
+			<type>1</type>
+			<location>D:/Vivancox/Proyectos/Proyecto PLA/PLA 2/Código/SAP V2/app/src/main/resources/reportes/reporteclientescolonia.jasper</location>
+		</link>
+		<link>
+			<name>reporteclientescolonia.jrxml</name>
+			<type>1</type>
+			<location>D:/Vivancox/Proyectos/Proyecto PLA/PLA 2/Código/SAP V2/app/src/main/resources/reportes/reporteclientescolonia.jrxml</location>
+		</link>
+		<link>
+			<name>reporteclientesfechas.jasper</name>
+			<type>1</type>
+			<location>D:/Vivancox/Proyectos/Proyecto PLA/PLA 2/Código/SAP V2/app/src/main/resources/reportes/reporteclientesfechas.jasper</location>
+		</link>
+		<link>
+			<name>reporteclientesfechas.jrxml</name>
+			<type>1</type>
+			<location>D:/Vivancox/Proyectos/Proyecto PLA/PLA 2/Código/SAP V2/app/src/main/resources/reportes/reporteclientesfechas.jrxml</location>
+		</link>
+		<link>
+			<name>reporteempleados.jasper</name>
+			<type>1</type>
+			<location>D:/Vivancox/Proyectos/Proyecto PLA/PLA 2/Código/SAP V2/app/src/main/resources/reportes/reporteempleados.jasper</location>
+		</link>
+		<link>
+			<name>reporteempleados.jrxml</name>
+			<type>1</type>
+			<location>D:/Vivancox/Proyectos/Proyecto PLA/PLA 2/Código/SAP V2/app/src/main/resources/reportes/reporteempleados.jrxml</location>
+		</link>
+		<link>
+			<name>reportesolosupervisores.jasper</name>
+			<type>1</type>
+			<location>D:/Vivancox/Proyectos/Proyecto PLA/PLA 2/Código/SAP V2/app/src/main/resources/reportes/reportesolosupervisores.jasper</location>
+		</link>
+		<link>
+			<name>reportesolosupervisores.jrxml</name>
+			<type>1</type>
+			<location>D:/Vivancox/Proyectos/Proyecto PLA/PLA 2/Código/SAP V2/app/src/main/resources/reportes/reportesolosupervisores.jrxml</location>
+		</link>
+	</linkedResources>
+</projectDescription>
