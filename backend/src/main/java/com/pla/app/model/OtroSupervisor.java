@@ -6,20 +6,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import lombok.Data;
 import lombok.ToString;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "supervisores")
+@Table(name = "otrossupervisores")
 @Data
 @ToString(exclude = { "vendedores" })
-public class Supervisor implements Serializable {
+public class OtroSupervisor implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false)
     private Long id;
 
     @Column(name = "nombre", nullable = false)
@@ -77,7 +75,7 @@ public class Supervisor implements Serializable {
     @Column(name = "comision", nullable = false)
     private Double comision;
 
-    @OneToMany(mappedBy = "supervisor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<Vendedor> vendedores= new ArrayList<>();
+
+    @OneToMany(mappedBy = "otroSupervisor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Solicitud> solicitudes = new ArrayList<>();
 }

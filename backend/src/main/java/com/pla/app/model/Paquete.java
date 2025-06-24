@@ -10,41 +10,44 @@ import lombok.Data;
 public class Paquete implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private String id;
+    @Column(nullable = false, updatable = false)
+    private Long id;
 
-    @Column(name = "enganche", nullable = false)
-    private Double enganche;
+    @Column(nullable = false)
+    private Long servicios;
 
-    @Column(name = "importe", nullable = false)
-    private Double importe;
+    @Column(nullable = false)
+    private Long numeroDePagos;
 
-    @Column(name = "valorTotal", nullable = false)
+    @Column(nullable = false)
     private Double valorTotal;
 
-    @Column(name = "saldoPendiente", nullable = false)
-    private Double saldoPendiente;
+    @Column(nullable = false)
+    private Double enganche;
 
-    @Column(name = "numeroDePagos", nullable = false)
-    private Integer numeroDePagos;
+    @Column(nullable = false)
+    private Double importe;
 
-    @Column(name = "plazoDePago", nullable = false)
-    private Integer plazoDePago;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "plazodepago_id", foreignKey = @ForeignKey(name = "FK_paquete_plazodepago")) 
+    private PlazoDePago plazoDePago;
 
-    @Column(name = "listaDePrecios", nullable = false)
-    private Integer listaDePrecios;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "listadeprecios_id", foreignKey = @ForeignKey(name = "FK_paquete_listadeprecios")) 
+    private ListaDePrecios listaDePrecios;
 
-    @Column(name = "periodicidad", nullable = false)
-    private Integer periodicidad;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "periodicidad_id", foreignKey = @ForeignKey(name = "FK_paquete_periodicidad")) 
+    private Periodicidad periodicidad;
 
-    @Column(name = "bovedas", nullable = false)
-    private Integer bovedas;
+    @Column(nullable = false)
+    private Long bovedas;
 
-    @Column(name = "gavetas", nullable = false)
-    private Integer gavetas;
+    @Column(nullable = false)
+    private Long gavetas;
 
-    @Column(name = "servicios", nullable = false)
-    private Integer servicios;
+    @OneToOne(mappedBy = "paquete", fetch = FetchType.LAZY)
+    private Solicitud solicitud;
 
     public String obtenerDescripcion() {
         return bovedas + " Boveda(s) de " + gavetas + " Gaveta(s) con " + servicios

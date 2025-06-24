@@ -43,10 +43,10 @@ public class SolicitudService {
     @Transactional
     public Solicitud actualizarSolicitud(Solicitud solicitud) throws Exception {
         Solicitud solicitudAEditar = null;
-        Solicitud solicitudEncontrado = solicitudRepository.findById(solicitud.getClaveSolicitud()).get();
+        Solicitud solicitudEncontrado = solicitudRepository.findById(solicitud.getId()).get();
         if (solicitudEncontrado != null) {
             solicitudEncontrado = solicitudRepository.findByClaveContrato(solicitud.getClaveContrato());
-            if (solicitudEncontrado.getClaveSolicitud() == solicitud.getClaveSolicitud()) {
+            if (solicitudEncontrado.getId() == solicitud.getId()) {
                 solicitudAEditar = solicitudEncontrado;
                 solicitudAEditar.setClaveContrato(solicitud.getClaveContrato());
                 Solicitud solicitudActualizado = solicitudRepository.save(solicitudAEditar);

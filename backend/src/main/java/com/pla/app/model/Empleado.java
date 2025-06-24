@@ -2,6 +2,8 @@ package com.pla.app.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -56,4 +58,10 @@ public class Empleado implements Serializable {
 	@NotBlank(message = "El estado es obligatorio")
 	@Column(name = "estado", nullable = false, unique = true)
 	private String estado;
+
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "FK_empleado_usuario"))  
+    private Usuario usuario;
+
+
 }

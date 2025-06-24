@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "plazosdepago")
@@ -17,4 +19,8 @@ public class PlazoDePago implements Serializable {
 	@NotBlank(message = "El nombre es obligatoria")
 	@Column(name = "nombre", nullable = false)
 	private String nombre;
+
+	@OneToMany(mappedBy = "plazoDePago", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Paquete> paquetes = new ArrayList<>();
+
 }

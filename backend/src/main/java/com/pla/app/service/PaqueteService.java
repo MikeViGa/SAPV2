@@ -29,7 +29,7 @@ public class PaqueteService {
         return paqueteRepository.save(paquete);
     }
 
-    public Optional<Paquete> obtenerPaquetePorId(String id) {
+    public Optional<Paquete> obtenerPaquetePorId(Long id) {
         return paqueteRepository.findById(id);
     }
 
@@ -51,7 +51,7 @@ public class PaqueteService {
     }
 
     @Transactional
-    public void eliminarPaquete(String id) throws Exception {
+    public void eliminarPaquete(Long id) throws Exception {
         Optional<Paquete> paqueteEncontrado = paqueteRepository.findById(id);
         if (paqueteEncontrado.isPresent()) {
             paqueteRepository.deleteById(id);

@@ -40,7 +40,7 @@ public class PaqueteController {
 
 	// READ 1
 	@GetMapping("/paquetes/{id}")
-	public ResponseEntity<Paquete> obtenerPaquete(@PathVariable String id) {
+	public ResponseEntity<Paquete> obtenerPaquete(@PathVariable Long id) {
 		try {
 			Optional<Paquete> paquete = paqueteServicio.obtenerPaquetePorId(id);
 			if (paquete.isPresent()) {
@@ -62,7 +62,7 @@ public class PaqueteController {
 
 	// DELETE
 	@DeleteMapping("/paquetes/{id}")
-	public ResponseEntity<?> eliminarPaquete(@PathVariable String id) {
+	public ResponseEntity<?> eliminarPaquete(@PathVariable Long id) {
 		try {
 			paqueteServicio.eliminarPaquete(id);
 			return ResponseEntity.noContent().build();

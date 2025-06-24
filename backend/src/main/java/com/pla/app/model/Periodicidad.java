@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "periodicidad")
@@ -17,4 +19,9 @@ public class Periodicidad implements Serializable {
 	@NotBlank(message = "La descripción es obligatoria")
 	@Column(name = "nombre", nullable = false)
 	private String nombre;
+
+	@OneToMany(mappedBy = "periodicidad", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Paquete> paquete = new ArrayList<>();
+
+
 }

@@ -40,7 +40,16 @@ export default function ListarPaquetes({ refrescar, regs }) {
       }),
     },
     { field: "id", headerName: "Id", width: 60, headerClassName: "super-app-theme--header", pinned: 'left' },
-    { field: "descripcion", headerName: "Descripción", width: 500, headerClassName: "super-app-theme--header" },
+    { field: "servicios", headerName: "Servicios", width: 100, headerClassName: "super-app-theme--header" },
+    { field: "numeroDePagos", headerName: "Num pagos", width: 100, headerClassName: "super-app-theme--header" },
+    { field: "valorTotal", headerName: "Valor total", width: 120, headerClassName: "super-app-theme--header" },
+    { field: "enganche", headerName: "Enganche", width: 120, headerClassName: "super-app-theme--header" },
+    { field: "importe", headerName: "Importe", width: 120, headerClassName: "super-app-theme--header" },
+    { field: "plazosdepago", headerName: "Plazos de pago", width: 150, headerClassName: "super-app-theme--header" },
+    { field: "listadeprecios", headerName: "Lista de precios", width: 150, headerClassName: "super-app-theme--header" },
+    { field: "periodicidad", headerName: "Periodicidad", width: 120, headerClassName: "super-app-theme--header" },
+    { field: "bovedas", headerName: "Bovedas", width: 100, headerClassName: "super-app-theme--header" },
+    { field: "gavetas", headerName: "Gavetas", width: 100, headerClassName: "super-app-theme--header" },
   ];
 
   const DataGridComponent = () => (
@@ -75,7 +84,6 @@ export default function ListarPaquetes({ refrescar, regs }) {
   );
 
   return (
-
     <ListLayout
       dataGridComponent={<DataGridComponent />}
       dialogComponents={dialogComponents}

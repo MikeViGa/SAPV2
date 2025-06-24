@@ -12,21 +12,20 @@ import jakarta.persistence.*;
 public class Cancelacion implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", nullable = false, updatable = false)
+	@Column(nullable = false, updatable = false)
 	private Long id;
 
 	@NotNull(message = "La fecha de alta es obligatoria")
-	@Column(name = "fecha_cancelacion", nullable = false)
+	@Column(nullable = false)
 	private LocalDate fechaCancelacion;
 
-	@Column(name = "usuario_id", nullable = false)
-    private Integer idUsuario;
-
-	@Column(name = "descripcion", nullable = false)
+	@Column(nullable = false)
     private String descripcion;
 
-	@OneToOne
-    @JoinColumn(name = "solicitud_id", nullable = false)
-    private Solicitud solicitud;
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "FK_cancelacion_usuario")) 
+    private Usuario usuario;
 
+	@OneToOne(mappedBy = "cancelacion", fetch = FetchType.LAZY)
+	private Solicitud solicitud;
 }

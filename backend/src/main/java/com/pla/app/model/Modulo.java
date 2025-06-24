@@ -1,6 +1,7 @@
 package com.pla.app.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -41,7 +42,8 @@ public class Modulo implements Serializable {
     @JsonIgnore
     private List<Modulo> subModulos;
 
-    @OneToMany(mappedBy = "modulo")
+    @OneToMany(mappedBy = "modulo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<Permiso> permisos;
+    private List<Permiso> permisos = new ArrayList<>();
+
 }

@@ -75,7 +75,6 @@ export default function ListarSolicitudes({ refrescar, regs }) {
   );
 
   return (
-
     <ListLayout
       dataGridComponent={<DataGridComponent />}
       dialogComponents={dialogComponents}

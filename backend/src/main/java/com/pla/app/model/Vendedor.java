@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.ToString;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -17,63 +18,66 @@ import java.io.Serializable;
 public class Vendedor implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false)
     private Long id;
 
-    @Column(name = "nombre", nullable = false)
+    @Column(nullable = false)
     private String nombre;
 
-    @Column(name = "apellido_paterno", nullable = false)
+    @Column(nullable = false)
     private String apellidoPaterno;
 
-    @Column(name = "apellido_materno", nullable = false)
+    @Column(nullable = false)
     private String apellidoMaterno;
 
-    @Column(name = "calle", nullable = false)
+    @Column(nullable = false)
     private String calle;
 
-    @Column(name = "numero_exterior", nullable = false)
+    @Column(nullable = false)
     private String numeroExterior;
 
-    @Column(name = "numero_interior", nullable = false)
+    @Column(nullable = false)
     private String numeroInterior;
 
-    @Column(name = "colonia", nullable = false)
+    @Column(nullable = false)
     private String colonia;
 
-    @Column(name = "ciudad", nullable = false)
+    @Column(nullable = false)
     private String ciudad;
 
-    @Column(name = "estado", nullable = false)
+    @Column(nullable = false)
     private String estado;
 
-    @Column(name = "codigo_postal", nullable = false)
-    private Integer codigoPostal;
+    @Column(nullable = false)
+    private Long codigoPostal;
 
-    @Column(name = "telefono1", nullable = false)
+    @Column(nullable = false)
     private String telefono1;
 
-    @Column(name = "telefono2", nullable = false)
+    @Column(nullable = false)
     private String telefono2;
 
-    @Column(name = "regimen", nullable = false)
+    @Column(nullable = false)
     private String regimen;
 
-    @Column(name = "rfc", nullable = false)
+    @Column(nullable = false)
     private String rfc;
 
-    @Column(name = "curp", nullable = false)
+    @Column(nullable = false)
     private String curp;
 
-    @Column(name = "numero_tarjeta", nullable = false)
+    @Column(nullable = false)
     private String numeroTarjeta;
 
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
-    @Column(name = "fecha_alta", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime fechaAlta;
 
+    @OneToMany(mappedBy = "vendedor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Solicitud> solicitudes = new ArrayList<>();
+ 
     @ManyToOne
-    @JoinColumn(name = "supervendedor_id")
+    @JoinColumn(name = "supervendedor_id", foreignKey = @ForeignKey(name = "FK_vendedor_vendedor")) 
     private Vendedor superVendedor;
 
     @OneToMany(mappedBy = "superVendedor", cascade = CascadeType.ALL)
@@ -81,7 +85,7 @@ public class Vendedor implements Serializable {
     private List<Vendedor> supervisados;
 
     @ManyToOne
-    @JoinColumn(name = "supervisor_id")
+    @JoinColumn(name = "supervisor_id", foreignKey = @ForeignKey(name = "FK_vendedor_supervisor")) 
     private Supervisor supervisor;
 
     @Transient

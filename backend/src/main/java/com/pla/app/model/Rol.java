@@ -16,19 +16,21 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Rol implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", nullable = false, updatable = false)
+	@Column(nullable = false, updatable = false)
 	private Long id;
 
 	@NotBlank(message = "El nombre es obligatorio")
 	@Size(max = 100, message = "El nombre no puede exceder 100 caracteres")
-	@Column(name = "nombre", nullable = false)
+	@Column(nullable = false)
 	private String nombre;
 
 	@OneToMany(mappedBy = "rol", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
 	private List<Permiso> permisos;
 
-	@OneToMany(mappedBy = "rol")
-	@JsonIgnore
-	private List<Usuario> usuarios;
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "FK_rol_usuario")) 
+    @JsonIgnore
+	private Usuario usuario;
+
 }

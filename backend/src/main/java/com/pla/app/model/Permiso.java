@@ -18,7 +18,7 @@ public class Permiso implements Serializable {
     @JoinColumn(name = "rol_id", nullable = false)
     private Rol rol;
 
-    @ManyToOne
-    @JoinColumn(name = "modulo_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "modulo_id", foreignKey = @ForeignKey(name = "FK_permiso_modulo")) 
     private Modulo modulo;
 }
