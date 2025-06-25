@@ -15,10 +15,11 @@ public class Cancelacion implements Serializable {
 	@Column(nullable = false, updatable = false)
 	private Long id;
 
-	@NotNull(message = "La fecha de alta es obligatoria")
+	@NotNull(message = "La fecha de cancelación es obligatoria")
 	@Column(nullable = false)
 	private LocalDate fechaCancelacion;
 
+	@NotNull(message = "La descripción es obligatoria")
 	@Column(nullable = false)
     private String descripcion;
 

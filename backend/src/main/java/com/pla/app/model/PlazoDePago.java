@@ -13,11 +13,11 @@ import java.util.List;
 public class PlazoDePago implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", nullable = false, updatable = false)
+	@Column(nullable = false, updatable = false)
 	private Long id;
 
 	@NotBlank(message = "El nombre es obligatoria")
-	@Column(name = "nombre", nullable = false)
+	@Column(nullable = false)
 	private String nombre;
 
 	@OneToMany(mappedBy = "plazoDePago", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

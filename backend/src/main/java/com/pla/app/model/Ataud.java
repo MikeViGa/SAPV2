@@ -15,6 +15,10 @@ public class Ataud implements Serializable {
 	private Long id;
 
 	@NotBlank(message = "La descripción es obligatoria")
-	@Column(name = "descripcion", nullable = false)
+	@Column(nullable = false)
 	private String descripcion;
+
+	@OneToOne(mappedBy = "ataud", fetch = FetchType.LAZY)
+    private Paquete paquete;
+
 }

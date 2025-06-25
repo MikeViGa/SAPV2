@@ -24,4 +24,7 @@ public class Sucursal implements Serializable {
 	@OneToOne(mappedBy = "sucursal", fetch = FetchType.LAZY)
     private Solicitud solicitud;
 
+	@OneToOne(mappedBy = "sucursal", fetch = FetchType.LAZY)
+    private Empleado empleado;
+
 }

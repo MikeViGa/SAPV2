@@ -5,7 +5,7 @@ import com.pla.app.model.Solicitud;
 
 public interface SolicitudRepository extends JpaRepository<Solicitud, Long> {
 
-    Solicitud findByClaveContrato(Integer claveContrato);
+    Solicitud findByClaveContrato(Long claveContrato);
 
     
 }

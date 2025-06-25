@@ -30,6 +30,7 @@ public class Usuario implements Serializable {
 	@Column(nullable = false)
 	private String contrasena;
 
+	@NotBlank(message = "La fecha de creacion es obligatoria")
 	@JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
 	@Column(nullable = false)
 	private LocalDateTime fechaCreacion;

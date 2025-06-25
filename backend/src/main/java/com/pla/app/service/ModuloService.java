@@ -63,7 +63,7 @@ public class ModuloService {
     @Transactional(readOnly = true)
     public List<Modulo> obtenerModulosPorNombreUsuario(String nombreUsuario) {
         Usuario usuario = usuarioRepository.findByNombreUsuario(nombreUsuario);
-        List<Permiso> permisos = permisoRepository.findByRolId(usuario.getRol().getId());
+        List<Permiso> permisos = permisoRepository.findByRolId(usuario.getRoles().get(0).getId());//Obtiene solo el primer Rol
         List<Modulo> modulos = new ArrayList<>();
         for (Permiso permiso : permisos) {
             if (permiso.getModulo().getVisible()) // Agregar solo visibles

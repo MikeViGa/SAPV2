@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.ToString;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "otrossupervisores")
@@ -20,61 +20,76 @@ public class OtroSupervisor implements Serializable {
     @Column(nullable = false, updatable = false)
     private Long id;
 
-    @Column(name = "nombre", nullable = false)
+    @NotBlank(message = "El nombre es obligatorio")
+    @Column(nullable = false)
     private String nombre;
 
-    @Column(name = "apellido_paterno", nullable = false)
+    @NotBlank(message = "El apellido paterno es obligatorio")
+    @Column(nullable = false)
     private String apellidoPaterno;
 
-    @Column(name = "apellido_materno", nullable = false)
+    @NotBlank(message = "El apellido materno es obligatorio")
+    @Column(nullable = false)
     private String apellidoMaterno;
 
-    @Column(name = "calle", nullable = false)
+    @NotBlank(message = "La calle es obligatoria")
+    @Column(nullable = false)
     private String calle;
 
-    @Column(name = "numero_exterior", nullable = false)
+    @NotBlank(message = "El número exterior es obligatorio")
+    @Column(nullable = false)
     private String numeroExterior;
 
-    @Column(name = "numero_interior", nullable = false)
+    @Column(nullable = false)
     private String numeroInterior;
 
-    @Column(name = "colonia", nullable = false)
+    @NotBlank(message = "La colonia es obligatoria")
+    @Column(nullable = false)
     private String colonia;
 
-    @Column(name = "ciudad", nullable = false)
+    @NotBlank(message = "La ciudad es obligatoria")
+    @Column(nullable = false)
     private String ciudad;
 
-    @Column(name = "estado", nullable = false)
+    @NotBlank(message = "El estado es obligatorio")
+    @Column(nullable = false)
     private String estado;
 
-    @Column(name = "codigo_postal", nullable = false)
+    @NotBlank(message = "El codigo postal es obligatorio")
+    @Column(nullable = false)
     private Long codigoPostal;
 
-    @Column(name = "telefono1", nullable = false)
+    @NotBlank(message = "El telefono es obligatorio")
+    @Column(nullable = false)
     private String telefono1;
 
-    @Column(name = "telefono2", nullable = false)
+    @Column(nullable = false)
     private String telefono2;
 
-    @Column(name = "regimen", nullable = false)
+    @NotBlank(message = "El regimen es obligatorio")
+    @Column(nullable = false)
     private String regimen;
 
-    @Column(name = "rfc", nullable = false)
+    @NotBlank(message = "El rfc es obligatorio")
+    @Column(nullable = false)
     private String rfc;
 
-    @Column(name = "curp", nullable = false)
+    @NotBlank(message = "La curp es obligatoria")
+    @Column(nullable = false)
     private String curp;
 
-    @Column(name = "numero_tarjeta", nullable = false)
+    @NotBlank(message = "El número de tarjeta es obligatorio")
+    @Column(nullable = false)
     private String numeroTarjeta;
 
+    @NotBlank(message = "La fecha de alta es obligatoria")
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
-    @Column(name = "fecha_alta", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime fechaAlta;
 
-    @Column(name = "comision", nullable = false)
+    @NotBlank(message = "La comisión es obligatoria")
+    @Column(nullable = false)
     private Double comision;
-
 
     @OneToMany(mappedBy = "otroSupervisor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Solicitud> solicitudes = new ArrayList<>();

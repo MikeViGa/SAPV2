@@ -13,9 +13,6 @@ public class Ubicacion implements Serializable{
 	@Column(name = "id", nullable = false, updatable = false)
 	private Long id;
 
-	@Column(name = "id_solicitud", nullable = false)
-	private String id_solicitud;
-
  	@Column(name = "observaciones", nullable = false)
 	private String observaciones;
 
@@ -28,7 +25,11 @@ public class Ubicacion implements Serializable{
     @Column(name = "poligono", nullable = false)
 	private String poligono;
 
-	@ManyToOne
-    @JoinColumn(name = "jardin_id", nullable = false)
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "jardin_id", foreignKey = @ForeignKey(name = "FK_ubicacion_jardin")) 
     private Jardin jardin;
+
+	@OneToOne(mappedBy = "ubicacion", fetch = FetchType.LAZY)
+    private Solicitud solicitud;
+
 }

@@ -24,6 +24,7 @@ public class Solicitud implements Serializable {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_solicitud_vendedor")) 
 	private Vendedor vendedor;
 
+	@NotNull(message = "La comisión es obligatoria")
 	@Column(nullable = false)
     private Double comision;
 
@@ -61,6 +62,10 @@ public class Solicitud implements Serializable {
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_solicitud_cancelacion"))  
 	private Cancelacion cancelacion;
+
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_solicitud_ubicacion"))  
+	private Ubicacion ubicacion;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "otro_supervisor_id", foreignKey = @ForeignKey(name = "FK_solicitud_otrosupervisor")) 
@@ -69,6 +74,4 @@ public class Solicitud implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "FK_solicitud_usuario")) 
     private Usuario usuario;
-
-
 }

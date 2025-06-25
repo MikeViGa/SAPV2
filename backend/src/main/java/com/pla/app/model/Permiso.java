@@ -11,11 +11,11 @@ public class Permiso implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "rol_id", nullable = false)
+    @JoinColumn(foreignKey = @ForeignKey(name = "FK_permiso_rol")) 
     private Rol rol;
 
     @ManyToOne(fetch = FetchType.LAZY)

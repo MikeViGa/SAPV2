@@ -17,7 +17,7 @@ public class ListaDePrecios implements Serializable {
 	private String id;
 
 	@NotBlank(message = "La descripción es obligatoria")
-	@Column(name = "descripcion", nullable = false)
+	@Column(nullable = false)
 	private String descripcion;
 
 	@OneToMany(mappedBy = "listaDePrecios", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

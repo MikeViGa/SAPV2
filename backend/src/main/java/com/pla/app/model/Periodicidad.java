@@ -17,7 +17,7 @@ public class Periodicidad implements Serializable {
 	private Long id;
 
 	@NotBlank(message = "La descripción es obligatoria")
-	@Column(name = "nombre", nullable = false)
+	@Column(nullable = false)
 	private String nombre;
 
 	@OneToMany(mappedBy = "periodicidad", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

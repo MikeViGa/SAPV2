@@ -2,8 +2,6 @@ package com.pla.app.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.ArrayList;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -25,43 +23,48 @@ public class Empleado implements Serializable {
 
 	@NotBlank(message = "El nombre es obligatorio")
 	@Size(max = 100, message = "El nombre no puede exceder 100 caracteres")
-	@Column(name = "nombre", nullable = false)
+	@Column(nullable = false)
 	private String nombre;
 
 	@NotBlank(message = "El apellido paterno es obligatorio")
 	@Size(max = 100, message = "El apellido paterno no puede exceder 100 caracteres")
-	@Column(name = "apellido_paterno", nullable = false)
+	@Column(nullable = false)
 	private String apellidoPaterno;
 
+	@NotBlank(message = "El apellido materno es obligatorio")
 	@Size(max = 100, message = "El apellido materno no puede exceder 100 caracteres")
-	@Column(name = "apellido_materno")
+	@Column(nullable = false)
 	private String apellidoMaterno;
 
 	@NotBlank(message = "El correo es obligatorio")
 	@Email(message = "El correo debe ser válido")
-	@Column(name = "correo", nullable = false, unique = true)
+	@Column(nullable = false, unique = true)
 	private String correo;
 
+	@NotBlank(message = "El telefono es obligatorio")
 	@Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "El teléfono debe ser un número válido")
-	@Column(name = "telefono")
+	@Column(nullable = false)
 	private String telefono;
 
 	@Past(message = "La fecha de nacimiento debe ser en el pasado")
 	@NotNull(message = "La fecha de nacimiento es obligatoria")
-	@Column(name = "fecha_nacimiento", nullable = false)
+	@Column(nullable = false)
 	private LocalDate fechaNacimiento;
 
 	@NotNull(message = "La fecha de alta es obligatoria")
-	@Column(name = "fecha_alta", nullable = false)
+	@Column(nullable = false)
 	private LocalDate fechaAlta;
 
 	@NotBlank(message = "El estado es obligatorio")
-	@Column(name = "estado", nullable = false, unique = true)
+	@Column(nullable = false, unique = true)
 	private String estado;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "FK_empleado_usuario"))  
     private Usuario usuario;
 
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "sucursal_id", foreignKey = @ForeignKey(name = "FK_empleado_sucursal"))  
+    private Sucursal sucursal;
 
 }

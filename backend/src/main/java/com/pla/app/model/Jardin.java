@@ -2,6 +2,7 @@ package com.pla.app.model;
 
 import jakarta.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -18,7 +19,7 @@ public class Jardin implements Serializable{
 	private String id;
 
 	@NotBlank(message = "El nombre es obligatorio")
-	@Column(name = "nombre", nullable = false)
+	@Column(nullable = false)
 	private String nombre;
 
 	@Column(name = "poligono", nullable = false)
@@ -29,6 +30,6 @@ public class Jardin implements Serializable{
 
 	@OneToMany(mappedBy = "jardin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
-	private List<Ubicacion> ubicaciones;
+	private List<Ubicacion> ubicaciones= new ArrayList<>();
 
 }
