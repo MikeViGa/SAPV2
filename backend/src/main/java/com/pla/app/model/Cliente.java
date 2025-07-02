@@ -3,18 +3,18 @@ package com.pla.app.model;
 import lombok.Data;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.Serializable;
+import java.sql.Date;
 
 @Entity
 @Table(name = "clientes")
 @Data
 public class Cliente implements Serializable {
-
+  
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(nullable = false, updatable = false)
@@ -35,7 +35,7 @@ public class Cliente implements Serializable {
   @NotNull(message = "La fecha de nacimiento es obligatoria")
   @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
   @Column(nullable = false)
-  private LocalDateTime fechaNacimiento;
+  private Date fechaNacimiento;
 
   @NotNull(message = "El rfc es obligatorio")
   @Column(nullable = false)
@@ -83,7 +83,7 @@ public class Cliente implements Serializable {
 
   @NotNull(message = "El código postal es obligatorio")
   @Column(nullable = false)
-  private Long codigoPostal;
+  private String codigoPostal;
 
   @NotNull(message = "El teléfono es obligatorio")
   @Column(nullable = false)

@@ -6,14 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import lombok.ToString;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "otrossupervisores")
 @Data
-@ToString(exclude = { "vendedores" })
+//@ToString(exclude = { "vendedores" })
 public class OtroSupervisor implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,7 +56,7 @@ public class OtroSupervisor implements Serializable {
 
     @NotBlank(message = "El codigo postal es obligatorio")
     @Column(nullable = false)
-    private Long codigoPostal;
+    private String codigoPostal;
 
     @NotBlank(message = "El telefono es obligatorio")
     @Column(nullable = false)

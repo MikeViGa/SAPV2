@@ -38,7 +38,7 @@ public class Empleado implements Serializable {
 
 	@NotBlank(message = "El correo es obligatorio")
 	@Email(message = "El correo debe ser válido")
-	@Column(nullable = false, unique = true)
+	@Column(nullable = false)
 	private String correo;
 
 	@NotBlank(message = "El telefono es obligatorio")
@@ -56,15 +56,16 @@ public class Empleado implements Serializable {
 	private LocalDate fechaAlta;
 
 	@NotBlank(message = "El estado es obligatorio")
-	@Column(nullable = false, unique = true)
+	@Column(nullable = false)
 	private String estado;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "FK_empleado_usuario"))  
     private Usuario usuario;
 
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "sucursal_id", foreignKey = @ForeignKey(name = "FK_empleado_sucursal"))  
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sucursal_id", foreignKey = @ForeignKey(name = "FK_empleado_sucursal")) 
     private Sucursal sucursal;
+
 
 }

@@ -38,7 +38,7 @@ public class UbicacionController {
 	}
 
 	@GetMapping("/ubicacionesporjardin/{idJardin}")
-	public ResponseEntity<List<Ubicacion>> obtenerUbicacionesPorJardin(@PathVariable String idJardin) {
+	public ResponseEntity<List<Ubicacion>> obtenerUbicacionesPorJardin(@PathVariable Long idJardin) {
 			List<Ubicacion> ubicaciones = ubicacionServicio.obtenerUbicacionesPorJardin(idJardin);
 		return new ResponseEntity<>(ubicaciones, HttpStatus.OK); 
 	}

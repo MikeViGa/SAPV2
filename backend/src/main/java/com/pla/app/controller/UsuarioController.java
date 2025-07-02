@@ -76,7 +76,7 @@ public class UsuarioController {
 						Map<String, Object> map = new HashMap<>();
 						map.put("id", usuario.getId());
 						map.put("nombre",
-								usuario.getNombreUsuario());
+								usuario.getNombre());
 						return map;
 					}).collect(Collectors.toList()), HttpStatus.OK);
 		} catch (Exception e) {

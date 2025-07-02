@@ -41,7 +41,7 @@ public class JardinService {
         }
     }
 
-    public Optional<Jardin> obtenerJardinPorId(String id) {
+    public Optional<Jardin> obtenerJardinPorId(Long id) {
         return jardinRepository.findById(id);
     }
 
@@ -63,7 +63,7 @@ public class JardinService {
     }
 
     @Transactional
-    public void eliminarJardin(String id) throws Exception {
+    public void eliminarJardin(Long id) throws Exception {
         Optional<Jardin> jardinEncontrado = jardinRepository.findById(id);
         if (jardinEncontrado.isPresent()) {
             //jardinRepository.deleteById(id);

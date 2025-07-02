@@ -1,6 +1,8 @@
 package com.pla.app.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -13,16 +15,17 @@ public class Ubicacion implements Serializable{
 	@Column(name = "id", nullable = false, updatable = false)
 	private Long id;
 
- 	@Column(name = "observaciones", nullable = false)
+ 	@Column(nullable = false, length = 4000)
 	private String observaciones;
 
-    @Column(name = "seccion", nullable = false)
+    @Column(nullable = false)
 	private String seccion;
 
-    @Column(name = "coordenada", nullable = false)
+    @Column(nullable = false)
 	private String coordenada;
 
-    @Column(name = "poligono", nullable = false)
+	
+    @Column(nullable = false)
 	private String poligono;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -31,5 +34,9 @@ public class Ubicacion implements Serializable{
 
 	@OneToOne(mappedBy = "ubicacion", fetch = FetchType.LAZY)
     private Solicitud solicitud;
+
+	@OneToMany(mappedBy = "ubicacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Finado> productos = new ArrayList<>();
+
 
 }

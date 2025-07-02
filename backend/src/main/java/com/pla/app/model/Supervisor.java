@@ -4,10 +4,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import lombok.Data;
 import lombok.ToString;
 import jakarta.persistence.*;
@@ -62,7 +60,7 @@ public class Supervisor implements Serializable {
 
     @NotBlank(message = "El código postal es obligatorio")
     @Column(nullable = false)
-    private Long codigoPostal;
+    private String codigoPostal;
 
     @NotBlank(message = "El telefono es obligatorio")
     @Column(nullable = false)

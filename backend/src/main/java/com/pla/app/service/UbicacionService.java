@@ -45,7 +45,7 @@ public class UbicacionService {
 
 
     @Transactional(readOnly = true)
-    public List<Ubicacion> obtenerUbicacionesPorJardin(String id) {
+    public List<Ubicacion> obtenerUbicacionesPorJardin(Long id) {
         Jardin jardin = jardinRepository.findById(id).get();
         return ubicacionRepository.findByJardin(jardin);
     }

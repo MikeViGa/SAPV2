@@ -40,7 +40,7 @@ public class ListaDePreciosController {
 
 	// READ 1
 	@GetMapping("/listasdeprecios/{id}")
-	public ResponseEntity<ListaDePrecios> obtenerListaDePrecios(@PathVariable String id) {
+	public ResponseEntity<ListaDePrecios> obtenerListaDePrecios(@PathVariable Long id) {
 		try {
 			Optional<ListaDePrecios> listaDePrecios = listaDePreciosServicio.obtenerListaDePreciosPorId(id);
 			if (listaDePrecios.isPresent()) {
@@ -62,7 +62,7 @@ public class ListaDePreciosController {
 
 	// DELETE
 	@DeleteMapping("/listasdeprecios/{id}")
-	public ResponseEntity<?> eliminarListaDePrecios(@PathVariable String id) {
+	public ResponseEntity<?> eliminarListaDePrecios(@PathVariable Long id) {
 		try {
 			listaDePreciosServicio.eliminarListaDePrecios(id);
 			return ResponseEntity.noContent().build();

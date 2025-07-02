@@ -1,7 +1,8 @@
 package com.pla.app.model;
 
 import java.io.Serializable;
-
+import java.util.ArrayList;
+import java.util.List;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -24,7 +25,7 @@ public class Sucursal implements Serializable {
 	@OneToOne(mappedBy = "sucursal", fetch = FetchType.LAZY)
     private Solicitud solicitud;
 
-	@OneToOne(mappedBy = "sucursal", fetch = FetchType.LAZY)
-    private Empleado empleado;
+	@OneToMany(mappedBy = "sucursal", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Empleado> empleados = new ArrayList<>();
 
 }

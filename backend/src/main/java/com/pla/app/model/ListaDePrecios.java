@@ -14,7 +14,11 @@ public class ListaDePrecios implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false, updatable = false)
-	private String id;
+	private Long id;
+
+	@NotBlank(message = "La clave es obligatoria")
+	@Column(nullable = false, unique = true)
+	private String clave;
 
 	@NotBlank(message = "La descripción es obligatoria")
 	@Column(nullable = false)

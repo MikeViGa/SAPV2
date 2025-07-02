@@ -59,7 +59,7 @@ public class Vendedor implements Serializable {
 
     @NotBlank(message = "El código postal es obligatorio")
     @Column(nullable = false)
-    private Long codigoPostal;
+    private String codigoPostal;
 
     @NotBlank(message = "El teléfono es obligatorio")
     @Column(nullable = false)

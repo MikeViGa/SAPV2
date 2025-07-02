@@ -40,7 +40,7 @@ public class JardinController {
 
 	// READ 1
 	@GetMapping("/jardines/{id}")
-	public ResponseEntity<Jardin> obtenerJardin(@PathVariable String id) {
+	public ResponseEntity<Jardin> obtenerJardin(@PathVariable Long id) {
 		try {
 			Optional<Jardin> jardin = jardinServicio.obtenerJardinPorId(id);
 			if (jardin.isPresent()) {
@@ -62,7 +62,7 @@ public class JardinController {
 
 	// DELETE
 	@DeleteMapping("/jardines/{id}")
-	public ResponseEntity<?> eliminarJardin(@PathVariable String id) {
+	public ResponseEntity<?> eliminarJardin(@PathVariable Long id) {
 		try {
 			jardinServicio.eliminarJardin(id);
 			return ResponseEntity.noContent().build();

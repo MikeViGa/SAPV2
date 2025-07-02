@@ -2,6 +2,7 @@ package com.pla.app.model;
 
 import java.io.Serializable;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -13,6 +14,10 @@ public class Paquete implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false)
     private Long id;
+   
+    @NotBlank(message = "La clave es obligatoria")
+	@Column(nullable = false, unique = true)
+	private String clave;
 
     @NotNull(message = "El número de servicios es obligatorio")
     @Column(nullable = false)
@@ -20,7 +25,7 @@ public class Paquete implements Serializable {
 
     @NotNull(message = "El número de pagos es obligatorio")
     @Column(nullable = false)
-    private Long numeroDePagos;
+    private Long numeroPagos;
 
     @NotNull(message = "El valor total es obligatorio")
     @Column(nullable = false)
@@ -50,6 +55,8 @@ public class Paquete implements Serializable {
     @Column(nullable = false)
     private Long bovedas;
 
+
+
     @NotNull(message = "El número de gavetas es obligatorio")
     @Column(nullable = false)
     private Long gavetas;
@@ -57,12 +64,13 @@ public class Paquete implements Serializable {
     @OneToOne(mappedBy = "paquete", fetch = FetchType.LAZY)
     private Solicitud solicitud;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ataud_id", foreignKey = @ForeignKey(name = "FK_paquete_ataud"))  
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ataud_id", foreignKey = @ForeignKey(name = "FK_paquete_ataud")) 
     private Ataud ataud;
 
     public String obtenerDescripcion() {
         return bovedas + " Boveda(s) de " + gavetas + " Gaveta(s) con " + servicios
                 + " servicio(s) funerario(s) con ataud tipo: ";
     }
+
 }

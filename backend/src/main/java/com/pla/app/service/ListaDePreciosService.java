@@ -29,7 +29,7 @@ public class ListaDePreciosService {
         return listaDePreciosRepository.save(listaDePrecios);
     }
 
-    public Optional<ListaDePrecios> obtenerListaDePreciosPorId(String id) {
+    public Optional<ListaDePrecios> obtenerListaDePreciosPorId(Long id) {
         return listaDePreciosRepository.findById(id);
     }
 
@@ -51,7 +51,7 @@ public class ListaDePreciosService {
     }
 
     @Transactional
-    public void eliminarListaDePrecios(String id) throws Exception {
+    public void eliminarListaDePrecios(Long id) throws Exception {
         Optional<ListaDePrecios> listaDePreciosEncontrado = listaDePreciosRepository.findById(id);
         if (listaDePreciosEncontrado.isPresent()) {
             listaDePreciosRepository.deleteById(id);

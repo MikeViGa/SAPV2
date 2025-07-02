@@ -30,7 +30,7 @@ public class UsuarioService {
 
     @Transactional
     public Usuario crearUsuario(Usuario usuario) throws Exception {
-        if (usuarioRepository.findByNombreUsuario(usuario.getNombreUsuario()) == null) {
+        if (usuarioRepository.findByNombre(usuario.getNombre()) == null) {
             usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
         } else {
             throw new Exception("El nombre de usuario ya está en uso");
@@ -61,9 +61,8 @@ public class UsuarioService {
         if (usuarioEncontrado != null) {
             if (usuarioEncontrado.getId() == usuario.getId()) {
                 usuarioAEditar = usuarioEncontrado;
-                usuarioAEditar.setNombreUsuario(usuario.getNombreUsuario());
+                usuarioAEditar.setNombre(usuario.getNombre());
                 usuarioAEditar.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
-                usuarioAEditar.setFechaCreacion(usuario.getFechaCreacion());
                 usuarioAEditar.setEstado(usuario.getEstado());
                 Usuario usuarioActualizado = usuarioRepository.save(usuarioAEditar);
                 return usuarioActualizado;

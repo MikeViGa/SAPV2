@@ -34,13 +34,13 @@ public class Modulo implements Serializable {
     @Column(name = "visible", nullable = false)
     private Boolean visible;
 
-    @ManyToOne
-    @JoinColumn(name = "idsupermodulo")
-    private Modulo superModulo;
-
-    @OneToMany(mappedBy = "superModulo")
+    @OneToMany(mappedBy = "superModulo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<Modulo> subModulos;
+    private List<Modulo> subModulos = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "supermodulo_id", foreignKey = @ForeignKey(name = "FK_supermodulo_modulo")) 
+    private Modulo superModulo;
 
     @OneToMany(mappedBy = "modulo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
