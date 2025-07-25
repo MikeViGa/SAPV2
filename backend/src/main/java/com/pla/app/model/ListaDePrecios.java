@@ -17,14 +17,14 @@ public class ListaDePrecios implements Serializable {
 	private Long id;
 
 	@NotBlank(message = "La clave es obligatoria")
-	@Column(nullable = false, unique = true)
+	@Column(nullable = false, unique = true, length = 100)
 	private String clave;
 
-	@NotBlank(message = "La descripción es obligatoria")
-	@Column(nullable = false)
-	private String descripcion;
+	@NotBlank(message = "El nombre es obligatorio")
+	@Column(nullable = false, length = 100)
+	private String nombre;
 
-	@OneToMany(mappedBy = "listaDePrecios", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "listaDePrecios", cascade = CascadeType.ALL)
     private List<Paquete> paquetes = new ArrayList<>();
 
 }

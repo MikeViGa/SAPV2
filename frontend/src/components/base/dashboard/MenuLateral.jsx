@@ -13,15 +13,14 @@ import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import { useTheme } from '@mui/material/styles';
 
 export default function MenuLateral({ menuLateral, manejaMenuLateral }) {
-
   const [submenuOpen, setSubmenuOpen] = useState({});
   const [subSubmenuOpen, setSubSubmenuOpen] = useState({});
   const [drawerWidth, setDrawerWidth] = useState(200);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [margenIzquierdoAppBar, setMargenIzquierdoAppBar] = useState(null);
   const [nombreUsuario, setNombreUsuario] = useState(null);
-  const [menuItems, setMenuItems] = useState([]); // Initialize as empty array
+  const [menuItems, setMenuItems] = useState([]);
   const [openState, setOpenState] = useState({});
   const [selected, setSelected] = useState(null);
   const [allExpanded, setAllExpanded] = useState(false);
@@ -34,9 +33,10 @@ export default function MenuLateral({ menuLateral, manejaMenuLateral }) {
     const processItems = (items, parentIndex = '') => {
       items.forEach((item, index) => {
         const currentIndex = parentIndex ? `${parentIndex}-${index}` : `${index}`;
-        if (item.submenus && item.submenus.length > 0) {
+        // Changed from item.submenus to item.subModulos
+        if (item.subModulos && item.subModulos.length > 0) {
           newOpenState[currentIndex] = newExpandState;
-          processItems(item.submenus, currentIndex);
+          processItems(item.subModulos, currentIndex); // Changed from item.submenus
         }
       });
     };
@@ -115,36 +115,14 @@ export default function MenuLateral({ menuLateral, manejaMenuLateral }) {
     }),
   );
 
-  const buildMenuHierarchy = (flatMenu) => {
-    if (!Array.isArray(flatMenu)) return [];
-    const menuMap = {};
-    const rootItems = [];
-
-    flatMenu.forEach(item => {
-      if (item && item.id) {
-        menuMap[item.id] = { ...item, submenus: [] };
-      }
-    });
-
-    flatMenu.forEach(item => {
-      if (item && item.superModulo && item.superModulo.id) {
-        const parent = menuMap[item.superModulo.id];
-        if (parent) {
-          parent.submenus.push(menuMap[item.id]);
-        }
-      } else if (item && item.id) {
-        rootItems.push(menuMap[item.id]);
-      }
-    });
-    return rootItems;
-  };
+  // Remove buildMenuHierarchy function since data is already hierarchical
 
   const obtenerMenu = async () => {
     try {
       const response = await obtenerModulosPermitidosApi(sessionStorage.getItem('nombreUsuario'));
       if (response && response.data) {
-        const hierarchy = buildMenuHierarchy(response.data);
-        setMenuItems(hierarchy || []);
+        // No need to build hierarchy - data is already hierarchical
+        setMenuItems(response.data || []);
       } else {
         setMenuItems([]);
       }
@@ -178,10 +156,7 @@ export default function MenuLateral({ menuLateral, manejaMenuLateral }) {
             {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         </Toolbar>
-        <Box sx={{ overflow: 'auto', overflowX: 'hidden', border: 0 }}
-        //onMouseEnter={handleMouseEnter}
-        // onMouseLeave={handleMouseLeave}
-        >
+        <Box sx={{ overflow: 'auto', overflowX: 'hidden', border: 0 }}>
           <MenuComponent
             menuItems={menuItems}
             openState={openState}

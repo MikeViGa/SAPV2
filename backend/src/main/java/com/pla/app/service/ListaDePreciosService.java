@@ -42,7 +42,7 @@ public class ListaDePreciosService {
     public ListaDePrecios actualizarListaDePrecios(ListaDePrecios listaDePrecios) throws Exception {
         ListaDePrecios listaDePreciosEncontrado = listaDePreciosRepository.findById(listaDePrecios.getId()).get();
         if (listaDePreciosEncontrado != null) {
-            listaDePreciosEncontrado.setDescripcion(listaDePrecios.getDescripcion());
+            listaDePreciosEncontrado.setNombre(listaDePrecios.getNombre());
             ListaDePrecios listaDePreciosActualizado = listaDePreciosRepository.save(listaDePreciosEncontrado);
             return listaDePreciosActualizado;
         } else {

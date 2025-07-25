@@ -63,7 +63,6 @@ public class UsuarioService {
                 usuarioAEditar = usuarioEncontrado;
                 usuarioAEditar.setNombre(usuario.getNombre());
                 usuarioAEditar.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
-                usuarioAEditar.setEstado(usuario.getEstado());
                 Usuario usuarioActualizado = usuarioRepository.save(usuarioAEditar);
                 return usuarioActualizado;
             } else {

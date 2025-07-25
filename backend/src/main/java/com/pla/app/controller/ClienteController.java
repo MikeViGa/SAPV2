@@ -67,13 +67,13 @@ public class ClienteController {
 			return new ResponseEntity<>(clientes, HttpStatus.OK);
 	}
 
-
+/* 
 	@GetMapping("/obtenercoloniasclientes")
 	public ResponseEntity<List<String>> obtenerColoniasClientes() {
 			List<String> colonias = clienteServicio.obtenerColoniasClientes();
 			return new ResponseEntity<>(colonias, HttpStatus.OK);
 	}
-
+*/
 	// GETALLBYNAME
 	@GetMapping("/obtenerclientenombre")
 	public ResponseEntity<List<Map<String, Object>>> obtenerClientesPorNombreCliente(@RequestParam String nombre) {
@@ -150,7 +150,7 @@ public class ClienteController {
 			e.printStackTrace();
 		}
 	}
-
+/* 
 	@GetMapping("/reporteclientesporcolonia/{colonia}")
 	//@CrossOrigin(origins = "http://localhost:3000", exposedHeaders = "Content-Disposition")
 	public void generaReporteClientesPorColonia(@PathVariable String colonia, HttpServletResponse response) {
@@ -164,4 +164,5 @@ public class ClienteController {
 			e.printStackTrace();
 		}
 	}
+		*/
 }

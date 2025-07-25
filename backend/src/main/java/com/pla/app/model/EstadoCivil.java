@@ -9,20 +9,21 @@ import java.util.List;
 
 
 @Entity
-@Table(name = "ataudes")
+@Table(name = "estadosciviles")
 @Data
-public class Ataud implements Serializable {
+public class EstadoCivil implements Serializable {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false, updatable = false)
 	private Long id;
 
-	@NotBlank(message = "La descripción es obligatoria")
+	@NotBlank(message = "El nombre es obligatorio")
 	@Column(nullable = false, length = 100)
-	private String descripcion;
-	
-	@OneToMany(mappedBy = "ataud", cascade = CascadeType.ALL)
-    private List<Paquete> paquetes = new ArrayList<>();
+	private String nombre;
+
+	@OneToMany(mappedBy = "estadoCivil", cascade = CascadeType.ALL)
+    private List<Cliente> clientes = new ArrayList<>();
+
 
 }

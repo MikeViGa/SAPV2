@@ -67,6 +67,7 @@ export default function FormularioRol ({ modo, registro, open, onClose, refresca
 
     const { addSnackbar } = useSnackbar();
     const [operacionTerminada, setOperacionTerminada] = useState(false);
+    const [operacionExitosa, setOperacionExitosa] = useState(false);
     const [loading, setLoading] = useState(false);
     dayjs.extend(utc);
     dayjs.extend(timezone);
@@ -95,6 +96,7 @@ export default function FormularioRol ({ modo, registro, open, onClose, refresca
                     .then(response => {
                         addSnackbar("Registro " + (modo === "editar" ? "actualizado" : "creado") + " correctamente", "success");
                         setOperacionTerminada(true);
+                        setOperacionExitosa(true);
                     }).catch(error => {
                         if (error.response) {
                             addSnackbar(error.response.data, "error");
@@ -125,6 +127,9 @@ export default function FormularioRol ({ modo, registro, open, onClose, refresca
                     values: initialValues,
                 });
             }
+            // Resetear estados cuando se abre el modal
+            setOperacionTerminada(false);
+            setOperacionExitosa(false);
         }
     }, [registro, modo, open]);
 
@@ -184,15 +189,31 @@ export default function FormularioRol ({ modo, registro, open, onClose, refresca
                             onKeyDown={(e) => handleKeyDown(e, null)}
                             inputRef={nombreRef}
                         />
-                        <Button color="primary" startIcon={<SaveIcon />} variant="contained" type="submit" disabled={formik.isSubmitting}>
+                        <Button 
+                            color="primary" 
+                            startIcon={<SaveIcon />} 
+                            variant="contained" 
+                            type="submit" 
+                            disabled={formik.isSubmitting || operacionExitosa}
+                        >
                             {formik.values.id ? 'Actualizar' : 'Agregar'}
                         </Button>
-                        <Button color="primary" startIcon={<RefreshIcon />} variant="contained" onClick={handleReset} disabled={formik.isSubmitting}>Reiniciar</Button>
-                        <Button color={operacionTerminada ? "primary" : "warning"}
+                        <Button 
+                            color="primary" 
+                            startIcon={<RefreshIcon />} 
+                            variant="contained" 
+                            onClick={handleReset} 
+                            disabled={formik.isSubmitting || operacionExitosa}
+                        >
+                            Reiniciar
+                        </Button>
+                        <Button 
+                            color={operacionTerminada ? "primary" : "warning"}
                             variant="contained"
                             startIcon={operacionTerminada ? <ExitToAppIcon /> : <CancelIcon />}
                             onClick={onClose}
-                            className="btn btn-warning" >
+                            className="btn btn-warning" 
+                        >
                             {operacionTerminada ? "Salir" : "Cancelar"}
                         </Button>
                     </Box>
@@ -203,4 +224,3 @@ export default function FormularioRol ({ modo, registro, open, onClose, refresca
         </Dialog>
     );
 };
-

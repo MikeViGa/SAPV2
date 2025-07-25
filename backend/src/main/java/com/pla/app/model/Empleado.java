@@ -23,27 +23,24 @@ public class Empleado implements Serializable {
 
 	@NotBlank(message = "El nombre es obligatorio")
 	@Size(max = 100, message = "El nombre no puede exceder 100 caracteres")
-	@Column(nullable = false)
+	@Column(nullable = false, length = 100)
 	private String nombre;
 
 	@NotBlank(message = "El apellido paterno es obligatorio")
 	@Size(max = 100, message = "El apellido paterno no puede exceder 100 caracteres")
-	@Column(nullable = false)
+	@Column(nullable = false, length = 100)
 	private String apellidoPaterno;
 
 	@NotBlank(message = "El apellido materno es obligatorio")
 	@Size(max = 100, message = "El apellido materno no puede exceder 100 caracteres")
-	@Column(nullable = false)
+	@Column(nullable = false, length = 100)
 	private String apellidoMaterno;
 
-	@NotBlank(message = "El correo es obligatorio")
 	@Email(message = "El correo debe ser válido")
-	@Column(nullable = false)
+	@Column(length = 100)
 	private String correo;
 
-	@NotBlank(message = "El telefono es obligatorio")
-	@Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "El teléfono debe ser un número válido")
-	@Column(nullable = false)
+	@Column(length = 100)
 	private String telefono;
 
 	@Past(message = "La fecha de nacimiento debe ser en el pasado")
@@ -55,15 +52,11 @@ public class Empleado implements Serializable {
 	@Column(nullable = false)
 	private LocalDate fechaAlta;
 
-	@NotBlank(message = "El estado es obligatorio")
-	@Column(nullable = false)
-	private String estado;
-
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "FK_empleado_usuario"))  
     private Usuario usuario;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
     @JoinColumn(name = "sucursal_id", foreignKey = @ForeignKey(name = "FK_empleado_sucursal")) 
     private Sucursal sucursal;
 

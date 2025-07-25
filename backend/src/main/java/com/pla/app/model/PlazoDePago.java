@@ -17,10 +17,10 @@ public class PlazoDePago implements Serializable {
 	private Long id;
 
 	@NotBlank(message = "El nombre es obligatoria")
-	@Column(nullable = false)
+	@Column(nullable = false, length = 100)
 	private String nombre;
 
-	@OneToMany(mappedBy = "plazoDePago", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "plazoDePago", cascade = CascadeType.ALL)
     private List<Paquete> paquetes = new ArrayList<>();
 
 }

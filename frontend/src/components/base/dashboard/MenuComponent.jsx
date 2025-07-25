@@ -31,7 +31,6 @@ import AtaudIcon from './elementos/AtaudIcon'
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import Tooltip from '@mui/material/Tooltip';
-import { UnfoldLess as UnfoldLessIcon, UnfoldMore as UnfoldMoreIcon } from '@mui/icons-material';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -39,6 +38,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ExploreIcon from '@mui/icons-material/Explore';
 import AddLocationAltIcon from '@mui/icons-material/AddLocationAlt';
 import DatasetIcon from '@mui/icons-material/Dataset';
+import heartbeat from './imagenes/logoheartbeat.gif';
 
 const CustomListItemButton = styled(ListItemButton)(({ theme }) => ({
   width: 'auto',
@@ -82,7 +82,8 @@ const renderMenuItems = (items, openState, handleClick, selected, setSelected, p
     const currentIndex = parentIndex ? `${parentIndex}-${index}` : `${index}`;
     const iconName = item.icono ? item.icono.replace(/<|\/>/g, '') : null;
     const IconComponent = iconName ? iconMap[iconName] : null;
-    const hasSubmenus = item.submenus && item.submenus.length > 0;
+    // Changed from item.submenus to item.subModulos
+    const hasSubmenus = item.subModulos && item.subModulos.length > 0;
 
     return (
       <div key={`item-${currentIndex}`}>
@@ -90,7 +91,8 @@ const renderMenuItems = (items, openState, handleClick, selected, setSelected, p
           component={Link}
           to={item.ruta}
           onClick={() => {
-            if (item.submenus) handleClick(currentIndex);
+            // Changed from item.submenus to item.subModulos
+            if (item.subModulos && item.subModulos.length > 0) handleClick(currentIndex);
             setSelected(currentIndex);
           }}
           style={{
@@ -117,10 +119,12 @@ const renderMenuItems = (items, openState, handleClick, selected, setSelected, p
           />
           {hasSubmenus ? (openState[currentIndex] ? <ExpandLess /> : <ExpandMore />) : null}
         </CustomListItemButton>
-        {item.submenus && (
+        {/* Changed from item.submenus to item.subModulos */}
+        {item.subModulos && item.subModulos.length > 0 && (
           <Collapse in={openState[currentIndex]} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
-              {renderMenuItems(item.submenus, openState, handleClick, selected, setSelected, currentIndex, depth + 1)}
+              {/* Changed from item.submenus to item.subModulos */}
+              {renderMenuItems(item.subModulos, openState, handleClick, selected, setSelected, currentIndex, depth + 1)}
             </List>
           </Collapse>
         )}
@@ -133,7 +137,9 @@ export default function MenuComponent({ menuItems, openState, handleClick, selec
   toggleAll, open, toggleDrawer }) {
 
   if (!menuItems || menuItems.length === 0) {
-    return <div>Cargando menú...</div>;
+    return <Box sx={{ display: 'flex', justifyContent: 'center', px: 1, border:1, color: '#fff'}}>
+      <img src={heartbeat} width={100}/>
+      </Box>;
   }
 
   return (

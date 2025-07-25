@@ -22,16 +22,14 @@ public class Rol implements Serializable {
 	
 	@NotBlank(message = "El nombre es obligatorio")
 	@Size(max = 100, message = "El nombre no puede exceder 100 caracteres")
-	@Column(nullable = false)
+	@Column(nullable = false, length = 100, unique = true)
 	private String nombre;
 
-	@OneToMany(mappedBy = "rol", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "rol", cascade = CascadeType.ALL)
 	@JsonIgnore
 	private List<Permiso> permisos= new ArrayList<>();
 
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "FK_rol_usuario")) 
-    @JsonIgnore
-	private Usuario usuario;
-
-}
+    @OneToMany(mappedBy = "rol", cascade = CascadeType.ALL)
+	@JsonIgnore
+    private List<Usuario> usuarios = new ArrayList<>();
+	}

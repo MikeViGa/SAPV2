@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pla.app.model.Modulo;
 import com.pla.app.service.ModuloService;
 import jakarta.validation.Valid;
+
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Comparator;
 import java.util.Collections;

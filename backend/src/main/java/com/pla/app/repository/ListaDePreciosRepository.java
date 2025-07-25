@@ -5,5 +5,5 @@ import com.pla.app.model.ListaDePrecios;
 
 public interface ListaDePreciosRepository extends JpaRepository<ListaDePrecios, Long> {
     
-    ListaDePrecios findByDescripcion(String descripcion);
+    ListaDePrecios findByNombre(String nombre);
 }

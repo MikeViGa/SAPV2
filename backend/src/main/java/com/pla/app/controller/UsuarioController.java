@@ -61,7 +61,10 @@ public class UsuarioController {
 	// READ ALL
 	@GetMapping("/usuarios")
 	public ResponseEntity<List<Usuario>> obtenerUsuarios() {
+		long startTime = System.currentTimeMillis();
 		List<Usuario> usuarios = usuarioServicio.obtenerUsuarios();
+		long stopTime = System.currentTimeMillis();
+        System.out.println("Tiempo total en seg: " + (stopTime - startTime)/1000);
 		return new ResponseEntity<>(usuarios, HttpStatus.OK);
 	}
 

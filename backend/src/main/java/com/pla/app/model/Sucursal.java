@@ -19,13 +19,13 @@ public class Sucursal implements Serializable {
 
 	@NotBlank(message = "El nombre es obligatorio")
 	@Size(max = 100, message = "El nombre no puede exceder 100 caracteres")
-	@Column(nullable = false)
+	@Column(nullable = false, length = 100)
 	private String nombre;
 
-	@OneToOne(mappedBy = "sucursal", fetch = FetchType.LAZY)
-    private Solicitud solicitud;
+	@OneToMany(mappedBy = "sucursal", cascade = CascadeType.ALL)
+    private List<Solicitud> solicitudes = new ArrayList<>();
 
-	@OneToMany(mappedBy = "sucursal", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "sucursal", cascade = CascadeType.ALL)
     private List<Empleado> empleados = new ArrayList<>();
 
 }

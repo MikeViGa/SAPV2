@@ -17,10 +17,10 @@ public class Periodicidad implements Serializable {
 	private Long id;
 
 	@NotBlank(message = "La descripción es obligatoria")
-	@Column(nullable = false)
+	@Column(nullable = false, length = 100)
 	private String nombre;
 
-	@OneToMany(mappedBy = "periodicidad", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "periodicidad", cascade = CascadeType.ALL)
     private List<Paquete> paquete = new ArrayList<>();
 
 

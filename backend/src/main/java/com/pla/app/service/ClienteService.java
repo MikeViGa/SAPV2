@@ -57,13 +57,13 @@ public class ClienteService {
                 clienteAEditar.setNombre(cliente.getNombre());
                 clienteAEditar.setApellidoPaterno(cliente.getApellidoPaterno());
                 clienteAEditar.setApellidoMaterno(cliente.getApellidoMaterno());
-                clienteAEditar.setCalle(cliente.getCalle());
-                clienteAEditar.setNumeroExterior(cliente.getNumeroExterior());
-                clienteAEditar.setNumeroInterior(cliente.getNumeroInterior());
-                clienteAEditar.setColonia(cliente.getColonia());
-                clienteAEditar.setCiudad(cliente.getCiudad());
-                clienteAEditar.setEstado(cliente.getEstado());
-                clienteAEditar.setCodigoPostal(cliente.getCodigoPostal());
+               // clienteAEditar.setCalle(cliente.getCalle());
+               // clienteAEditar.setNumeroExterior(cliente.getNumeroExterior());
+               // clienteAEditar.setNumeroInterior(cliente.getNumeroInterior());
+               // clienteAEditar.setColonia(cliente.getColonia());
+               // clienteAEditar.setCiudad(cliente.getCiudad());
+               // clienteAEditar.setEstado(cliente.getEstado());
+               // clienteAEditar.setCodigoPostal(cliente.getCodigoPostal());
                 clienteAEditar.setTelefono1(cliente.getTelefono1());
                 clienteAEditar.setTelefono2(cliente.getTelefono2());
                 clienteAEditar.setRegimen(cliente.getRegimen());
@@ -119,6 +119,7 @@ public class ClienteService {
         JasperRunManager.runReportToPdfStream(jasperStream, (OutputStream) outputStream, parametros, conn);
     }
 
+    /* 
     @Transactional
     public void generarReporteClientesPorColonia(String colonia, OutputStream outputStream) throws Exception {
         ClassPathResource resource = new ClassPathResource("reportes/reporteclientescolonia.jasper");
@@ -134,4 +135,5 @@ public class ClienteService {
         List<String> colonias = clienteRepository.findDistinctColonias();
         return colonias;
     }
+        */
 }

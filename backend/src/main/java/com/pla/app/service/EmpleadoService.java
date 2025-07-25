@@ -56,7 +56,7 @@ public class EmpleadoService {
             empleadoEncontrado.setTelefono(empleado.getTelefono());
             empleadoEncontrado.setFechaNacimiento(empleado.getFechaNacimiento());
             empleadoEncontrado.setFechaAlta(empleado.getFechaAlta());
-            empleadoEncontrado.setEstado(empleado.getEstado());
+           
             Empleado empleadoActualizado = empleadoRepository.save(empleadoEncontrado);
             return empleadoActualizado;
         } else {

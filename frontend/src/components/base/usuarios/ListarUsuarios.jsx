@@ -10,7 +10,7 @@ import { useSnackbar } from '../../base/dashboard/elementos/SnackbarContext';
 export default function ListarUsuarios({ refrescar, regs }) {
   const listadoHook = useListado(eliminarUsuarioApi);
   const { addSnackbar } = useSnackbar();
-  
+
   const descargarReporte = async () => {
     listadoHook.setCargando(true);
     try {
@@ -39,14 +39,16 @@ export default function ListarUsuarios({ refrescar, regs }) {
       }),
     },
     { field: "id", headerName: "Id", width: 60, headerClassName: "super-app-theme--header", pinned: 'left' },
-    { field: "nombreUsuario", headerName: "Usuario", width: 150, headerClassName: "super-app-theme--header" },
-    { field: "fechaCreacion", headerName: "Fecha creación", width: 160, headerClassName: "super-app-theme--header" },
+    { field: "nombre", headerName: "Nombre", width: 150, headerClassName: "super-app-theme--header" },
     {
-      field: 'estado',
-      headerName: 'Estado',
-      width: 120,
-      renderCell: (params) => <StatusCell value={params.row.estado} />,
-    },
+      field: "rol",
+      headerName: "Rol",
+      width: 160,
+      headerClassName: "super-app-theme--header",
+      renderCell: (params) => (
+        <span>{params.row.rol?.nombre || 'Sin rol'}</span>
+      )
+    }
   ];
 
   const DataGridComponent = () => (
@@ -64,44 +66,48 @@ export default function ListarUsuarios({ refrescar, regs }) {
 
   const reportComponent = (
     <Button
-          variant="contained"
-          startIcon={<FeedIcon />}
-          sx={commonButtonStyles}
-          onClick={descargarReporte}
-        >
-          Reporte
-        </Button>
+      variant="contained"
+      startIcon={<FeedIcon />}
+      sx={commonButtonStyles}
+      onClick={descargarReporte}
+    >
+      Reporte
+    </Button>
   );
 
   const dialogComponents = (
-    <>
+  <>
+    {listadoHook.dialogoFormulario && (
       <FormularioUsuario
+        key={`${listadoHook.modo}-${listadoHook.registro?.id || 'new'}`} // Add this key
         modo={listadoHook.modo}
-        registro={listadoHook.registro}
+        registro={listadoHook.modo === 'crear' ? null : listadoHook.registro}
         open={listadoHook.dialogoFormulario}
         onClose={(e, r) => listadoHook.cerrarFomulario(e, r, refrescar)}
         refrescar={refrescar}
       />
-      <DeleteDialog
-        open={listadoHook.dialogoEliminar}
-        onClose={listadoHook.cancelarDialogoEliminar}
-        onConfirm={() => listadoHook.confirmarDialogoEliminar(refrescar)}
-        registro={listadoHook.registro}
-      />
-    </>
-  );
+    )}
+    <DeleteDialog
+      open={listadoHook.dialogoEliminar}
+      onClose={listadoHook.cancelarDialogoEliminar}
+      onConfirm={() => listadoHook.confirmarDialogoEliminar(refrescar)}
+      registro={listadoHook.registro}
+    />
+  </>
+);
+
   return (
     <ListLayout
-         dataGridComponent={<DataGridComponent />}
-         reportComponent={reportComponent}
-         dialogComponents={dialogComponents}
-       >
-         <FullScreenModal
-           open={listadoHook.tablaMaximizada}
-           onClose={listadoHook.controlarTabla}
-         >
-           <DataGridComponent />
-         </FullScreenModal>
-       </ListLayout>
+      dataGridComponent={<DataGridComponent />}
+      reportComponent={reportComponent}
+      dialogComponents={dialogComponents}
+    >
+      <FullScreenModal
+        open={listadoHook.tablaMaximizada}
+        onClose={listadoHook.controlarTabla}
+      >
+        <DataGridComponent />
+      </FullScreenModal>
+    </ListLayout>
   );
 }

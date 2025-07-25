@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import jakarta.persistence.*;
 
+
 @Entity
 @Table(name = "cancelaciones")
 @Data
@@ -15,18 +16,19 @@ public class Cancelacion implements Serializable {
 	@Column(nullable = false, updatable = false)
 	private Long id;
 
-	@NotNull(message = "La fecha de cancelación es obligatoria")
-	@Column(nullable = false)
+	@ManyToOne
+    @JoinColumn(name = "tipo_cancelacion_id", foreignKey = @ForeignKey(name = "FK_cancelacion_tipocancelacion")) 
+    private TipoCancelacion tipoCancelacion;
+
 	private LocalDate fechaCancelacion;
 
-	@NotNull(message = "La descripción es obligatoria")
-	@Column(nullable = false)
+	@Column(length = 500)
     private String descripcion;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
     @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "FK_cancelacion_usuario")) 
     private Usuario usuario;
 
-	@OneToOne(mappedBy = "cancelacion", fetch = FetchType.LAZY)
+	@OneToOne(mappedBy = "cancelacion")
 	private Solicitud solicitud;
 }

@@ -386,24 +386,25 @@ export const useListado = (eliminarApi) => {
   const [cargando, setCargando] = useState(false);
   const [tablaMaximizada, setTablaMaximizada] = useState(false);
   const [modo, setModo] = useState(null);
-  const [dialogoFormulario, setDialogDialogoFormulario] = useState(false);
+  const [dialogoFormulario, setDialogoFormulario] = useState(false);
   const [registro, setRegistro] = useState(null);
   const [dialogoEliminar, setDialogoEliminar] = useState(false);
 
   const abrirFomularioNuevo = () => {
+    setRegistro(null);
     setModo("nuevo");
-    setDialogDialogoFormulario(true);
+    setDialogoFormulario(true);
   };
 
   const abrirFomularioEditar = (registro) => {
     setRegistro(registro);
     setModo("editar");
-    setDialogDialogoFormulario(true);
+    setDialogoFormulario(true);
   };
 
   const cerrarFomulario = (evento, razon, refrescar) => {
     if (razon !== 'backdropClick') {
-      setDialogDialogoFormulario(false);
+      setDialogoFormulario(false);
       refrescar();
     }
   };
@@ -479,6 +480,12 @@ export const DataGridBase = ({
             controlarTabla={controlarTabla}
           />
         )
+      }}
+      slotProps={{
+        pagination: {
+          showFirstButton: true,
+          showLastButton: true,
+        },
       }}
       sx={{
         ...commonGridProps?.sx,

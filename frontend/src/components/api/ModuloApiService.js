@@ -21,8 +21,3 @@ export const actualizarModuloApi
 //DELETE
 export const eliminarModuloApi
     = (id) => apiClient.delete(`/modulos/${id}`)
-
-
-
-
-

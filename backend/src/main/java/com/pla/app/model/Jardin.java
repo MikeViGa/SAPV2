@@ -20,20 +20,20 @@ public class Jardin implements Serializable{
 	private Long id;
 
 	@NotBlank(message = "La clave es obligatoria")
-	@Column(nullable = false, unique = true)
+	@Column(nullable = false, unique = true, length = 100)
 	private String clave;
 
 	@NotBlank(message = "El nombre es obligatorio")
-	@Column(nullable = false)
+	@Column(nullable = false, length = 100)
 	private String nombre;
 
-	@Column(name = "poligono", nullable = false)
+	@Column(name = "poligono", nullable = false, length = 1000)
 	private String poligono;
 
-	@Column(name = "color", nullable = false)
+	@Column(name = "color", nullable = false, length = 100)
 	private String color;
 
-	@OneToMany(mappedBy = "jardin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "jardin", cascade = CascadeType.ALL)
 	@JsonIgnore
 	private List<Ubicacion> ubicaciones= new ArrayList<>();
 

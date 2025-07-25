@@ -11,8 +11,10 @@ import com.pla.app.repository.ModuloRepository;
 import com.pla.app.repository.PermisoRepository;
 import com.pla.app.repository.UsuarioRepository;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -63,13 +65,34 @@ public class ModuloService {
     @Transactional(readOnly = true)
     public List<Modulo> obtenerModulosPorNombreUsuario(String nombreUsuario) {
         Usuario usuario = usuarioRepository.findByNombre(nombreUsuario);
-        List<Permiso> permisos = permisoRepository.findByRolId(usuario.getRoles().get(0).getId());//Obtiene solo el primer Rol
-        List<Modulo> modulos = new ArrayList<>();
+        List<Permiso> permisos = permisoRepository.findByRolId(usuario.getRol().getId());
+
+        // Get all modules the user has permission to
+        List<Modulo> modulosPermitidos = new ArrayList<>();
+        Set<Long> idsPermitidos = new HashSet<>();
+
         for (Permiso permiso : permisos) {
-            if (permiso.getModulo().getVisible()) // Agregar solo visibles
-                modulos.add(permiso.getModulo());
+            if (permiso.getModulo().getVisible()) {
+                modulosPermitidos.add(permiso.getModulo());
+                idsPermitidos.add(permiso.getModulo().getId());
+            }
         }
-        return modulos;
+
+        // Filter to return only root modules OR modules whose parent is not in the
+        // permitted list
+        List<Modulo> modulosRaiz = modulosPermitidos.stream()
+                .filter(modulo -> {
+                    // If module has no parent, it's a root module
+                    if (modulo.getSuperModulo() == null) {
+                        return true;
+                    }
+                    // If module has a parent but user doesn't have permission to parent,
+                    // treat this module as a root module
+                    return !idsPermitidos.contains(modulo.getSuperModulo().getId());
+                })
+                .collect(Collectors.toList());
+
+        return modulosRaiz;
     }
 
     @Transactional

@@ -15,27 +15,26 @@ public class Ubicacion implements Serializable{
 	@Column(name = "id", nullable = false, updatable = false)
 	private Long id;
 
- 	@Column(nullable = false, length = 4000)
+ 	@Column(length = 4000)
 	private String observaciones;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
 	private String seccion;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
 	private String coordenada;
 
-	
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
 	private String poligono;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
     @JoinColumn(name = "jardin_id", foreignKey = @ForeignKey(name = "FK_ubicacion_jardin")) 
     private Jardin jardin;
 
-	@OneToOne(mappedBy = "ubicacion", fetch = FetchType.LAZY)
+	@OneToOne(mappedBy = "ubicacion")
     private Solicitud solicitud;
 
-	@OneToMany(mappedBy = "ubicacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "ubicacion", cascade = CascadeType.ALL)
     private List<Finado> productos = new ArrayList<>();
 
 

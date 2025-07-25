@@ -21,25 +21,28 @@ public class Finado implements Serializable{
     @Column(nullable = false)
 	private LocalDate fechaDeceso;
 
-    @Column(nullable = false)
+    @Column(length = 100)
 	private String nombre;
 
-    @Column(nullable = false)
+    @Column(length = 100)
 	private String apellidoPaterno;
 
-	@Column(nullable = false)
+	@Column(length = 100)
 	private String apellidoMaterno;
 
-	@Column(nullable = false)
+	@Column(length = 100)
 	private String ordenInternacion;
 
-	@Column(nullable = false)
+	@Column
 	private LocalDate fechaOrdenInternacion;
 
-	@Column(nullable = false)
-	private String contenido;
-
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
     @JoinColumn(name = "ubicacion_id", foreignKey = @ForeignKey(name = "FK_finado_ubicacion")) 
     private Ubicacion ubicacion;
+
+	@ManyToOne
+    @JoinColumn(name = "contenido_finado_id", foreignKey = @ForeignKey(name = "FK_finado_contenidofinado")) 
+    private ContenidoFinado contenidoFinado;
+
+
 }

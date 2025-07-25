@@ -22,67 +22,53 @@ public class Vendedor implements Serializable {
     @Column(nullable = false, updatable = false)
     private Long id;
 
-    @NotBlank(message = "El nombre es obligatorio")
-    @Column(nullable = false)
+    @Column(length = 100)
     private String nombre;
-
-    @NotBlank(message = "El apellido paterno es obligatorio")
-    @Column(nullable = false)
+   
+    @Column(length = 100)
     private String apellidoPaterno;
 
-    @NotBlank(message = "El apellido materno es obligatorio")
-    @Column(nullable = false)
+    @Column(length = 100)
     private String apellidoMaterno;
 
-    @NotBlank(message = "La calle es obligatoria")
-    @Column(nullable = false)
+    @Column(length = 100)
     private String calle;
 
-    @NotBlank(message = "El número exterior es obligatorio")
-    @Column(nullable = false)
+    @Column(length = 100)
     private String numeroExterior;
 
-    @Column(nullable = false)
+    @Column(length = 100)
     private String numeroInterior;
 
-    @NotBlank(message = "La colonia es obligatoria")
-    @Column(nullable = false)
+    @Column(length = 100)
     private String colonia;
 
-    @NotBlank(message = "La ciudad es obligatoria")
-    @Column(nullable = false)
+    @Column(length = 100)
     private String ciudad;
 
-    @NotBlank(message = "El estado es obligatorio")
-    @Column(nullable = false)
+    @Column(length = 100)
     private String estado;
 
     @NotBlank(message = "El código postal es obligatorio")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String codigoPostal;
 
-    @NotBlank(message = "El teléfono es obligatorio")
-    @Column(nullable = false)
+    @Column(length = 100)
     private String telefono1;
 
-    @NotBlank(message = "El estado es obligatorio")
-    @Column(nullable = false)
+    @Column(length = 100)
     private String telefono2;
 
-    @NotBlank(message = "El régimen es obligatorio")
-    @Column(nullable = false)
+   @Column(length = 100)
     private String regimen;
 
-    @NotBlank(message = "El rfc es obligatorio")
-    @Column(nullable = false)
+    @Column(length = 100)
     private String rfc;
 
-    @NotBlank(message = "La curp es obligatoria")
-    @Column(nullable = false)
+    @Column(length = 100)
     private String curp;
-
-    @NotBlank(message = "El número tarjeta es obligatorio")
-    @Column(nullable = false)
+   
+    @Column(length = 100)
     private String numeroTarjeta;
 
     @NotBlank(message = "La fecha de alta es obligatoria")
@@ -90,7 +76,7 @@ public class Vendedor implements Serializable {
     @Column(nullable = false)
     private LocalDateTime fechaAlta;
 
-    @OneToMany(mappedBy = "vendedor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "vendedor", cascade = CascadeType.ALL)
     private List<Solicitud> solicitudes = new ArrayList<>();
  
     @ManyToOne

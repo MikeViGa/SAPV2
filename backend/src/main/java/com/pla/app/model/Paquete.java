@@ -1,6 +1,9 @@
 package com.pla.app.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -16,7 +19,7 @@ public class Paquete implements Serializable {
     private Long id;
    
     @NotBlank(message = "La clave es obligatoria")
-	@Column(nullable = false, unique = true)
+	@Column(nullable = false, length = 100)
 	private String clave;
 
     @NotNull(message = "El número de servicios es obligatorio")
@@ -39,15 +42,15 @@ public class Paquete implements Serializable {
     @Column(nullable = false)
     private Double importe;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "plazodepago_id", foreignKey = @ForeignKey(name = "FK_paquete_plazodepago")) 
     private PlazoDePago plazoDePago;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "listadeprecios_id", foreignKey = @ForeignKey(name = "FK_paquete_listadeprecios")) 
     private ListaDePrecios listaDePrecios;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "periodicidad_id", foreignKey = @ForeignKey(name = "FK_paquete_periodicidad")) 
     private Periodicidad periodicidad;
 
@@ -55,16 +58,14 @@ public class Paquete implements Serializable {
     @Column(nullable = false)
     private Long bovedas;
 
-
-
     @NotNull(message = "El número de gavetas es obligatorio")
     @Column(nullable = false)
     private Long gavetas;
 
-    @OneToOne(mappedBy = "paquete", fetch = FetchType.LAZY)
-    private Solicitud solicitud;
+    @OneToMany(mappedBy = "paquete", cascade = CascadeType.ALL)
+    private List<Solicitud> solicitudes = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "ataud_id", foreignKey = @ForeignKey(name = "FK_paquete_ataud")) 
     private Ataud ataud;
 

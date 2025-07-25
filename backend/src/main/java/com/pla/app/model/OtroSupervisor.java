@@ -20,65 +20,62 @@ public class OtroSupervisor implements Serializable {
     private Long id;
 
     @NotBlank(message = "El nombre es obligatorio")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String nombre;
 
     @NotBlank(message = "El apellido paterno es obligatorio")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String apellidoPaterno;
 
     @NotBlank(message = "El apellido materno es obligatorio")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String apellidoMaterno;
 
     @NotBlank(message = "La calle es obligatoria")
-    @Column(nullable = false)
+    @Column(length = 100)
     private String calle;
 
-    @NotBlank(message = "El número exterior es obligatorio")
-    @Column(nullable = false)
+     @Column(length = 100)
     private String numeroExterior;
 
-    @Column(nullable = false)
+    @Column(length = 100)
     private String numeroInterior;
 
-    @NotBlank(message = "La colonia es obligatoria")
-    @Column(nullable = false)
+    @Column(length = 100)
     private String colonia;
 
     @NotBlank(message = "La ciudad es obligatoria")
-    @Column(nullable = false)
+    @Column(length = 100)
     private String ciudad;
 
-    @NotBlank(message = "El estado es obligatorio")
-    @Column(nullable = false)
+    @Column(length = 100)
     private String estado;
 
     @NotBlank(message = "El codigo postal es obligatorio")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String codigoPostal;
 
     @NotBlank(message = "El telefono es obligatorio")
-    @Column(nullable = false)
+    @Column(length = 100)
     private String telefono1;
 
-    @Column(nullable = false)
+    @Column(length = 100)
     private String telefono2;
 
     @NotBlank(message = "El regimen es obligatorio")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String regimen;
 
     @NotBlank(message = "El rfc es obligatorio")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String rfc;
 
     @NotBlank(message = "La curp es obligatoria")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String curp;
 
     @NotBlank(message = "El número de tarjeta es obligatorio")
-    @Column(nullable = false)
+    @Column(length = 100)
     private String numeroTarjeta;
 
     @NotBlank(message = "La fecha de alta es obligatoria")
@@ -90,6 +87,6 @@ public class OtroSupervisor implements Serializable {
     @Column(nullable = false)
     private Double comision;
 
-    @OneToMany(mappedBy = "otroSupervisor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "otroSupervisor", cascade = CascadeType.ALL)
     private List<Solicitud> solicitudes = new ArrayList<>();
 }

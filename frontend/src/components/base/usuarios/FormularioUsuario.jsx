@@ -75,24 +75,50 @@ export default function FormularioUsuario({ modo, registro, open, onClose, refre
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
-    const initialValues = useMemo(() => ({
+    // Define empty initial values for create mode
+    const emptyValues = {
         id: '',
         nombreUsuario: '',
         contrasena: '',
-        fechaCreacion: new Date(),
-        estado: 'Activo',
-    }), []);
+    };
 
-    const validationSchema = Yup.object({
+    // Get initial values based on mode
+    const getInitialValues = () => {
+        if (modo === 'crear') {
+            return emptyValues;
+        } else if (modo === 'editar' && registro) {
+            let fechaCreacion;
+            try {
+                fechaCreacion = parse(registro.fechaCreacion, 'dd/MM/yyyy HH:mm:ss', new Date());
+            } catch (error) {
+                console.error("Error parsing date:", error);
+                fechaCreacion = new Date();
+            }
+            
+            return {
+                id: registro.id || '',
+                nombreUsuario: registro.nombreUsuario || '',
+                contrasena: registro.contrasena || '',
+                fechaCreacion: fechaCreacion,
+                estado: registro.estado || 'Activo',
+            };
+        }
+        return emptyValues;
+    };
+
+    const validationSchema = useMemo(() => Yup.object({
         nombreUsuario: Yup.string().required('Requerido'),
         contrasena: Yup.string().min(8, 'La contraseña debe ser de al menos 8 caracteres').required('Requerido'),
-        fechaCreacion: Yup.date().required('Requerido'),
-        estado: Yup.string().required('Requerido'),
-    });
+        ...(modo === 'editar' && {
+            fechaCreacion: Yup.date().required('Requerido'),
+            estado: Yup.string().required('Requerido'),
+        })
+    }), [modo]);
 
     const formik = useFormik({
-        initialValues: initialValues,
+        initialValues: getInitialValues(),
         validationSchema: validationSchema,
+        enableReinitialize: false, // Change this to false
         onSubmit: async (values, { setSubmitting }) => {
             try {
                 setLoading(true);
@@ -100,22 +126,35 @@ export default function FormularioUsuario({ modo, registro, open, onClose, refre
                     id: values.id,
                     nombreUsuario: values.nombreUsuario,
                     contrasena: values.contrasena,
-                    fechaCreacion: format(values.fechaCreacion, 'dd/MM/yyyy HH:mm:ss'),
-                    estado: values.estado,
                 };
+
+                // Solo incluir estos campos si estamos editando
+                if (modo === 'editar') {
+                    formData.fechaCreacion = format(values.fechaCreacion, 'dd/MM/yyyy HH:mm:ss');
+                    formData.estado = values.estado;
+                }
 
                 const response = (modo === "editar" ? actualizarUsuarioApi(formData.id, formData) : crearUsuarioApi(formData))
                     .then(response => {
                         addSnackbar("Registro " + (modo === "editar" ? "actualizado" : "creado") + " correctamente", "success");
                         setOperacionTerminada(true);
                     }).catch(error => {
+                        let errorMessage = "Error inesperado";
                         if (error.response) {
-                            addSnackbar(error.response.data, "error");
-                        } else if (error.request) {
-                            addSnackbar("Error en la petición: " + error.request.data, "error");
+                        // Si hay un mensaje específico en la respuesta
+                        if (error.response.data?.message) {
+                            errorMessage = error.response.data.message;
+                        } else if (typeof error.response.data === 'string') {
+                            errorMessage = error.response.data;
                         } else {
-                            addSnackbar("Error inesperado al realizar la operación: " + error.message, "error");
+                            errorMessage = `Error ${error.response.status}: ${error.response.statusText}`;
                         }
+                    } else if (error.request) {
+                        errorMessage = "Error de conexión con el servidor";
+                    } else {
+                        errorMessage = error.message || "Error inesperado";
+                    }
+                    addSnackbar(errorMessage, "error");
                     });
             } catch (err) {
                 console.log(`Error inesperado ${values.id ? ' actualizando' : ' creando'} usuario: ${err.message}`, "error");
@@ -126,9 +165,22 @@ export default function FormularioUsuario({ modo, registro, open, onClose, refre
         },
     });
 
+    // Main effect to handle form state when dialog opens/closes
     useEffect(() => {
         if (open) {
-            if (modo === "editar" && registro) {
+            // Reset component state
+            setOperacionTerminada(false);
+            setLoading(false);
+            setShowPassword(false);
+            
+            // Force reset form values
+            if (modo === 'crear') {
+                // For create mode, always use empty values
+                formik.setValues(emptyValues);
+                formik.setErrors({});
+                formik.setTouched({});
+            } else if (modo === 'editar' && registro) {
+                // For edit mode, set the registro values
                 let fechaCreacion;
                 try {
                     fechaCreacion = parse(registro.fechaCreacion, 'dd/MM/yyyy HH:mm:ss', new Date());
@@ -136,25 +188,37 @@ export default function FormularioUsuario({ modo, registro, open, onClose, refre
                     console.error("Error parsing date:", error);
                     fechaCreacion = new Date();
                 }
-
+                
                 formik.setValues({
-                    ...registro,
+                    id: registro.id || '',
+                    nombreUsuario: registro.nombreUsuario || '',
+                    contrasena: registro.contrasena || '',
                     fechaCreacion: fechaCreacion,
+                    estado: registro.estado || 'Activo',
                 });
-            } else {
-                formik.setValues({
-                    ...initialValues,
-                    fechaCreacion: new Date(),
-                });
+                formik.setErrors({});
+                formik.setTouched({});
             }
-
+        } else {
+            // When dialog closes, reset everything
+            formik.resetForm({
+                values: emptyValues,
+                errors: {},
+                touched: {}
+            });
         }
-    }, [registro, modo, open]);
+    }, [open, modo]); // Remove registro from dependencies to avoid unnecessary re-renders
 
     const handleReset = () => {
-        formik.resetForm({
-            values: initialValues,
-        });
+        if (modo === 'crear') {
+            formik.setValues(emptyValues);
+            formik.setErrors({});
+            formik.setTouched({});
+        } else {
+            formik.resetForm({
+                values: getInitialValues()
+            });
+        }
     };
 
     const redAsteriskStyle = {
@@ -183,18 +247,16 @@ export default function FormularioUsuario({ modo, registro, open, onClose, refre
         cancelButtonLabel: 'Cancelar',
         clearButtonLabel: 'Limpiar',
         todayButtonLabel: 'Hoy',
-        
+
         // DateTimePicker specific texts
         dateTimePickerToolbarTitle: 'Seleccionar fecha y hora',
         datePickerToolbarTitle: 'Seleccionar fecha',
         timePickerToolbarTitle: 'Seleccionar hora',
-        
+
         // Calendar navigation
         previousMonth: 'Mes anterior',
         nextMonth: 'Mes siguiente',
-        
-       
-      };
+    };
 
     return (
         <Dialog open={open} onClose={onClose}>
@@ -210,14 +272,15 @@ export default function FormularioUsuario({ modo, registro, open, onClose, refre
                         <Typography variant="h5" component="h1" gutterBottom>
                             {modo === 'editar' ? 'Editar usuario' : 'Crear usuario'}
                         </Typography>
+
                         <TextField
                             size="small"
                             required
                             fullWidth
                             id="nombreUsuario"
                             name="nombreUsuario"
-                            label="Nombre de usuario"
-                            value={formik.values.nombreUsuario}
+                            label="Nombre"
+                            value={formik.values.nombreUsuario || ''} // Add || '' to ensure empty string
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             error={formik.touched.nombreUsuario && Boolean(formik.errors.nombreUsuario)}
@@ -229,6 +292,7 @@ export default function FormularioUsuario({ modo, registro, open, onClose, refre
                             onKeyDown={(e) => handleKeyDown(e, contrasenaRef)}
                             inputRef={nombreUsuarioRef}
                         />
+
                         <TextField
                             size="small"
                             required
@@ -236,8 +300,8 @@ export default function FormularioUsuario({ modo, registro, open, onClose, refre
                             id="contrasena"
                             name="contrasena"
                             label="Contraseña"
-                            type="password"
-                            value={formik.values.contrasena}
+                            type={showPassword ? 'text' : 'password'}
+                            value={formik.values.contrasena || ''} // Add || '' to ensure empty string
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             error={formik.touched.contrasena && Boolean(formik.errors.contrasena)}
@@ -255,43 +319,53 @@ export default function FormularioUsuario({ modo, registro, open, onClose, refre
                                     </InputAdornment>
                                 ),
                             }}
-                            onKeyDown={(e) => handleKeyDown(e, fechaCreacionRef)}
+                            onKeyDown={(e) => handleKeyDown(e, modo === 'editar' ? fechaCreacionRef : null)}
                             inputRef={contrasenaRef}
                         />
-                        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es} localeText={localeText} >
-                            <DateTimePicker
-                                label="Fecha de creación"
-                                value={formik.values.fechaCreacion}
-                                onChange={(newValue) => {
-                                    formik.setFieldValue('fechaCreacion', newValue);
-                                }}
-                                format="dd/MM/yyyy HH:mm:ss"
-                                slotProps={{
-                                    textField: {
-                                        size: "small",
-                                        fullWidth: true,
-                                        error: formik.touched.fechaCreacion && Boolean(formik.errors.fechaCreacion),
-                                        helperText: formik.touched.fechaCreacion && formik.errors.fechaCreacion,
-                                        InputLabelProps: {
-                                            sx: redAsteriskStyle,
-                                            shrink: true,
+
+                        {/* Campo fecha de creación - solo en edición */}
+                        {modo === 'editar' && formik.values.fechaCreacion && (
+                            <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es} localeText={localeText}>
+                                <DateTimePicker
+                                    label="Fecha de creación"
+                                    value={formik.values.fechaCreacion}
+                                    onChange={(newValue) => {
+                                        formik.setFieldValue('fechaCreacion', newValue);
+                                    }}
+                                    format="dd/MM/yyyy HH:mm:ss"
+                                    slotProps={{
+                                        textField: {
+                                            size: "small",
+                                            fullWidth: true,
+                                            error: formik.touched.fechaCreacion && Boolean(formik.errors.fechaCreacion),
+                                            helperText: formik.touched.fechaCreacion && formik.errors.fechaCreacion,
+                                            InputLabelProps: {
+                                                sx: redAsteriskStyle,
+                                                shrink: true,
+                                            },
+                                            onKeyDown: (e) => handleKeyDown(e, estadoRef),
+                                            inputRef: fechaCreacionRef,
                                         },
-                                        onKeyDown: (e) => handleKeyDown(e, estadoRef),
-                                        inputRef: fechaCreacionRef,
-                                    },
-                                }}
-                            />
-                        </LocalizationProvider>
-                        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-                            <Typography>Cancelado</Typography>
-                            <AntSwitch
-                                checked={formik.values.estado === 'Activo'}
-                                onChange={(event) => {
-                                    formik.setFieldValue('estado', event.target.checked ? 'Activo' : 'Cancelado');
-                                }}
-                            />
-                            <Typography>Activo</Typography>
-                        </Stack>
+                                    }}
+                                />
+                            </LocalizationProvider>
+                        )}
+
+                        {/* Campo estado - solo en edición */}
+                        {modo === 'editar' && (
+                            <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                                <Typography>Cancelado</Typography>
+                                <AntSwitch
+                                    checked={formik.values.estado === 'Activo'}
+                                    onChange={(event) => {
+                                        formik.setFieldValue('estado', event.target.checked ? 'Activo' : 'Cancelado');
+                                    }}
+                                    inputRef={estadoRef}
+                                />
+                                <Typography>Activo</Typography>
+                            </Stack>
+                        )}
+
                         <Button color="primary" startIcon={<SaveIcon />} variant="contained" type="submit" disabled={formik.isSubmitting}>
                             {formik.values.id ? 'Actualizar' : 'Agregar'}
                         </Button>
