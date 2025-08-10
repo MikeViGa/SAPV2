@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import jakarta.persistence.*;
@@ -18,9 +16,12 @@ public class Solicitud implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false, updatable = false)
 	private Long id;
+
+	@Column(length = 100)
+    private String claveSolicitud;
 	
-	@NotNull(message = "La fecha de alta es obligatoria")
-	@Column(nullable = false)
+	//@NotNull(message = "La fecha de alta es obligatoria")
+	@Column
 	private LocalDate fechaAlta;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -30,10 +31,6 @@ public class Solicitud implements Serializable {
 	@NotNull(message = "La comisión es obligatoria")
 	@Column(nullable = false)
     private Double comision;
-
-	//@NotBlank(message = "La identificación es obligatoria")
-	@Column( length = 100)
-	private String identificacion;
 
 	@ManyToOne
     @JoinColumn(name = "paquete_id", foreignKey = @ForeignKey(name = "FK_solicitud_paquete")) 
@@ -47,8 +44,8 @@ public class Solicitud implements Serializable {
 	@Column(nullable = false)
 	private LocalDate fechaVenta;
 
-	@NotNull(message = "La fecha de entrega es obligatoria")
-	@Column(nullable = false)
+	//@NotNull(message = "La fecha de entrega es obligatoria")
+	@Column
 	private LocalDate fechaEntrega;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -87,24 +84,23 @@ public class Solicitud implements Serializable {
 
 	@OneToMany(mappedBy = "solicitud_nueva", cascade = CascadeType.ALL)
     private List<Movimiento> movimientos_nueva = new ArrayList<>();
-
 	
 	@Column(length = 100)
-    private String nombre_beneficiario1;
+    private String nombreBeneficiario1;
 	@Column(length = 100)
-    private String apellido_paterno_beneficiario1;
+    private String apellidoPaternoBeneficiario1;
 	@Column(length = 100)
-    private String apellido_materno_beneficiario1;
+    private String apellidoMaternoBeneficiario1;
 	@Column(length = 100)
-    private String nombre_beneficiario2;
+    private String nombreBeneficiario2;
 	@Column(length = 100)
-    private String apellido_paterno_beneficiario2;
+    private String apellidoPaternoBeneficiario2;
 	@Column(length = 100)
-    private String apellido_materno_beneficiario2;
+    private String apellidoMaternoBeneficiario2;
 	@Column(length = 100)
-    private String nombre_beneficiario3;
+    private String nombreBeneficiario3;
 	@Column(length = 100)
-    private String apellido_paterno_beneficiario3;
+    private String apellidoPaternoBeneficiario3;
 	@Column(length = 100)
-    private String apellido_materno_beneficiario3;
+    private String apellidoMaternoBeneficiario3;
 }

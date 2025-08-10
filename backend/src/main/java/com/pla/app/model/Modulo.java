@@ -3,13 +3,10 @@ package com.pla.app.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
@@ -41,12 +38,13 @@ public class Modulo implements Serializable {
     private Boolean visible;
 
     @ManyToOne
-    @JsonBackReference
+    @JsonBackReference("supermodulo-submodulos")
     @JoinColumn(name = "supermodulo_id", foreignKey = @ForeignKey(name = "FK_supermodulo_modulo"))
+    @JsonIncludeProperties({"id", "nombre"})
     private Modulo superModulo;
 
     @OneToMany(mappedBy = "superModulo", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonManagedReference("supermodulo-submodulos")
     private List<Modulo> subModulos = new ArrayList<>();
 
     @OneToMany(mappedBy = "modulo", cascade = CascadeType.ALL)

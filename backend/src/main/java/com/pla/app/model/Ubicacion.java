@@ -37,5 +37,8 @@ public class Ubicacion implements Serializable{
 	@OneToMany(mappedBy = "ubicacion", cascade = CascadeType.ALL)
     private List<Finado> productos = new ArrayList<>();
 
+	@OneToOne(mappedBy = "ubicacion")
+    private Movimiento movimiento;
 
+	
 }

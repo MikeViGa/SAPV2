@@ -2,7 +2,6 @@ package com.pla.app.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import jakarta.persistence.*;
 

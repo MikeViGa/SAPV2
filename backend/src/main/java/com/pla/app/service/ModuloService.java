@@ -3,7 +3,7 @@ package com.pla.app.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
-import com.pla.app.dto.ModuloDTO;
+import com.pla.app.dto.modulos.ModuloDTO;
 import com.pla.app.model.Modulo;
 import com.pla.app.model.Permiso;
 import com.pla.app.model.Usuario;
@@ -38,22 +38,29 @@ public class ModuloService {
     }
 
     public List<ModuloDTO> getAllModules() {
-        List<Modulo> topLevelModules = moduloRepository.findBySuperModuloIsNull();
-        return topLevelModules.stream()
+        List<Modulo> allModules = moduloRepository.findAll(); // Get ALL modules
+        return allModules.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
     private ModuloDTO convertToDTO(Modulo modulo) {
         ModuloDTO dto = new ModuloDTO();
+        dto.setId(modulo.getId());
         dto.setNombre(modulo.getNombre());
         dto.setRuta(modulo.getRuta());
         dto.setIcono(modulo.getIcono());
-        if (!modulo.getSubModulos().isEmpty()) {
-            dto.setSubmenus(modulo.getSubModulos().stream()
-                    .map(this::convertToDTO)
-                    .collect(Collectors.toList()));
+        dto.setOrden(modulo.getOrden());
+        dto.setVisible(modulo.getVisible());
+        // Handle superModulo relationship
+        if (modulo.getSuperModulo() != null) {
+            dto.setSuperModuloId(modulo.getSuperModulo().getId());
+            ModuloDTO.SuperModuloDTO superModuloDTO = new ModuloDTO.SuperModuloDTO();
+            superModuloDTO.setId(modulo.getSuperModulo().getId());
+            superModuloDTO.setNombre(modulo.getSuperModulo().getNombre());
+            dto.setSuperModulo(superModuloDTO);
         }
+
         return dto;
     }
 
@@ -66,8 +73,6 @@ public class ModuloService {
     public List<Modulo> obtenerModulosPorNombreUsuario(String nombreUsuario) {
         Usuario usuario = usuarioRepository.findByNombre(nombreUsuario);
         List<Permiso> permisos = permisoRepository.findByRolId(usuario.getRol().getId());
-
-        // Get all modules the user has permission to
         List<Modulo> modulosPermitidos = new ArrayList<>();
         Set<Long> idsPermitidos = new HashSet<>();
 
@@ -78,37 +83,36 @@ public class ModuloService {
             }
         }
 
-        // Filter to return only root modules OR modules whose parent is not in the
-        // permitted list
         List<Modulo> modulosRaiz = modulosPermitidos.stream()
                 .filter(modulo -> {
-                    // If module has no parent, it's a root module
                     if (modulo.getSuperModulo() == null) {
                         return true;
                     }
-                    // If module has a parent but user doesn't have permission to parent,
-                    // treat this module as a root module
                     return !idsPermitidos.contains(modulo.getSuperModulo().getId());
                 })
                 .collect(Collectors.toList());
-
         return modulosRaiz;
     }
 
     @Transactional
-    public Modulo crearModulo(Modulo rol) throws Exception {
-        return moduloRepository.save(rol);
+    public Modulo crearModulo(Modulo modulo) throws Exception {
+        return moduloRepository.save(modulo);
     }
 
     @Transactional
-    public Modulo actualizarRol(Modulo modulo) throws Exception {
+    public Modulo actualizarModulo(Modulo modulo) throws Exception {
         Modulo moduloEncontrado = moduloRepository.findById(modulo.getId()).get();
         if (moduloEncontrado != null) {
             moduloEncontrado.setNombre(modulo.getNombre());
+            moduloEncontrado.setIcono(modulo.getIcono());
+            moduloEncontrado.setOrden(modulo.getOrden());
+            moduloEncontrado.setRuta(modulo.getRuta());
+            moduloEncontrado.setVisible(modulo.getVisible());
+            moduloEncontrado.setSuperModulo(modulo.getSuperModulo());
             Modulo moduloActualizado = moduloRepository.save(moduloEncontrado);
             return moduloActualizado;
         } else {
-            throw new Exception("Rol no encontrado con el ID proporcionado.");
+            throw new Exception("Módulo no encontrado con el ID proporcionado.");
         }
     }
 
@@ -118,7 +122,7 @@ public class ModuloService {
         if (moduloEncontrado.isPresent()) {
             moduloRepository.deleteById(id);
         } else {
-            throw new Exception("Rol no encontrado con el ID proporcionado.");
+            throw new Exception("Módulo no encontrado con el ID proporcionado.");
         }
     }
 }

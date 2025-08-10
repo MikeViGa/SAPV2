@@ -45,11 +45,12 @@ public class Cliente implements Serializable {
 
   @NotNull(message = "La fecha de registro es obligatoria")
   @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
-  @Column(nullable = false)
+  //@Column(nullable = false)
   private LocalDateTime fechaRegistro;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "estado_civil_id", foreignKey = @ForeignKey(name = "FK_cliente_estadocivil")) 
+  @JoinColumn(foreignKey = @ForeignKey(name = "FK_cliente_estadocivil")) 
+  @JsonIgnore
   private EstadoCivil estadoCivil;
 
   //@NotNull(message = "La ocupación es obligatoria")
@@ -71,7 +72,7 @@ public class Cliente implements Serializable {
   @JsonIgnore
   private List<Solicitud> solicitudes = new ArrayList<>();
 
-  @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Domicilio> domicilios = new ArrayList<>();
 
 }

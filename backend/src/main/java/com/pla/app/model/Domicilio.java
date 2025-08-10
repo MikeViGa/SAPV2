@@ -1,9 +1,10 @@
 package com.pla.app.model;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "domicilios")
@@ -21,11 +22,11 @@ public class Domicilio implements Serializable {
 
 	//@NotBlank(message = "El número interior es obligatorio")
 	@Column( length = 100)
-	private String numero_interior;
+	private String numeroInterior;
 
-	@NotBlank(message = "El número exterior es obligatorio")
-	@Column(nullable = false, length = 100)
-	private String numero_exterior;
+	//@NotBlank(message = "El número exterior es obligatorio")
+	@Column(length = 100)
+	private String numeroExterior;
 
 	//@NotBlank(message = "La colonia es obligatoria")
 	@Column( length = 100)
@@ -37,17 +38,19 @@ public class Domicilio implements Serializable {
 
 	//@NotBlank(message = "El código postal es obligatorio")
 	@Column( length = 100)
-	private String codigo_postal;
+	private String codigoPostal;
 
 	@ManyToOne
+	@JsonIgnore
     @JoinColumn(name = "estado_id", foreignKey = @ForeignKey(name = "FK_domicilio_estado")) 
     private Estado estado;
 
 	//@NotBlank(message = "Las entre calles son obligatorias")
 	@Column
-	private String entre_calles;
+	private String entreCalles;
 
-	@ManyToOne
+    @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "cliente_id", foreignKey = @ForeignKey(name = "FK_domicilio_cliente")) 
     private Cliente cliente;
 	

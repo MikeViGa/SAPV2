@@ -72,7 +72,8 @@ export default function PantallaClientes() {
         try {
             setCargando(true);
             const response = await obtenerClientesApi();
-            setRegistros(response.data);
+            const data = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
+            setRegistros(Array.isArray(data) ? data : []);
             addSnackbar("Registros cargados exitosamente", "success");
         } catch (error) {
             if (error.message == 'Request failed with status code 401')
@@ -102,10 +103,12 @@ export default function PantallaClientes() {
         try {
             if (idRegistro) {
                 const respuesta = await obtenerClienteApi(idRegistro);
-                setRegistros([respuesta.data]);
+                const detalle = typeof respuesta.data === 'string' ? JSON.parse(respuesta.data) : respuesta.data;
+                setRegistros(detalle ? [detalle] : []);
             } else {
-                const respuesta = await obtenerClienteApi();
-                setRegistros(respuesta.data);
+                const respuesta = await obtenerClientesApi();
+                const lista = typeof respuesta.data === 'string' ? JSON.parse(respuesta.data) : respuesta.data;
+                setRegistros(Array.isArray(lista) ? lista : []);
             }
             addSnackbar("Registros actualizados correctamente", "success");
         } catch (error) {

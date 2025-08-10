@@ -470,6 +470,7 @@ export const DataGridBase = ({
     <DataGrid
       {...commonGridProps}
       localeText={localeText}
+      getRowId={(row) => row.id}
       slots={{
         toolbar: () => (
           <DataGridToolbar

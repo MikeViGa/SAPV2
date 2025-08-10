@@ -43,6 +43,7 @@ public class UsuarioService {
         return usuarioRepository.findById(id);
     }
 
+    
     @Transactional(readOnly = true)
     public List<Usuario> obtenerUsuarios() {
         return usuarioRepository.findAll();
@@ -63,6 +64,7 @@ public class UsuarioService {
                 usuarioAEditar = usuarioEncontrado;
                 usuarioAEditar.setNombre(usuario.getNombre());
                 usuarioAEditar.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
+                usuarioAEditar.setRol(usuario.getRol());
                 Usuario usuarioActualizado = usuarioRepository.save(usuarioAEditar);
                 return usuarioActualizado;
             } else {

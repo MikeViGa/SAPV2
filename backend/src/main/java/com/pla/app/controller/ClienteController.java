@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.pla.app.model.Cliente;
+import com.pla.app.dto.clientes.ClienteResponseDTO;
+import com.pla.app.mapper.ClienteMapper;
+import com.pla.app.dto.clientes.ClienteConDomiciliosResponseDTO;
 import com.pla.app.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Date;
@@ -34,6 +37,9 @@ public class ClienteController {
 	@Autowired
 	private ClienteService clienteServicio;
 
+	@Autowired
+	private ClienteMapper clienteMapper;
+
 	// CREATE
 	@PostMapping("/clientes/")
 	public ResponseEntity<?> crearCliente(@Valid @RequestBody Cliente cliente, HttpServletRequest request) {
@@ -46,25 +52,28 @@ public class ClienteController {
 	}
 
 	// READ 1
-	@GetMapping("/clientes/{id}")
-	public ResponseEntity<Cliente> obtenerCliente(@PathVariable Long id) {
-		try {
-			Optional<Cliente> cliente = clienteServicio.obtenerClientePorId(id);
-			if (cliente.isPresent()) {
-				return new ResponseEntity<>(cliente.get(), HttpStatus.OK);
-			} else {
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-			}
-		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
+    @GetMapping("/clientes/{id}")
+    public ResponseEntity<ClienteConDomiciliosResponseDTO> obtenerCliente(@PathVariable Long id) {
+        try {
+            Optional<Cliente> cliente = clienteServicio.obtenerClientePorId(id);
+            if (cliente.isPresent()) {
+                return new ResponseEntity<>(clienteMapper.toConDomiciliosResponseDTO(cliente.get()), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 	// READ ALL
 	@GetMapping("/clientes")
-	public ResponseEntity<List<Cliente>> obtenerClientes() {
+	public ResponseEntity<List<ClienteResponseDTO>> obtenerClientes() {
 			List<Cliente> clientes = clienteServicio.obtenerClientes();
-			return new ResponseEntity<>(clientes, HttpStatus.OK);
+			List<ClienteResponseDTO> respuesta = clientes.stream()
+					.map(clienteMapper::toResponseDTO)
+					.collect(Collectors.toList());
+			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 	}
 
 /* 

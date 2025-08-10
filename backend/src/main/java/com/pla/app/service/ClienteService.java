@@ -27,6 +27,9 @@ public class ClienteService {
 
     @Transactional
     public Cliente crearCliente(Cliente cliente) throws Exception {
+        if (cliente.getDomicilios() != null) {
+            cliente.getDomicilios().forEach(d -> d.setCliente(cliente));
+        }
         return clienteRepository.save(cliente);
     }
 
@@ -48,35 +51,32 @@ public class ClienteService {
 
     @Transactional
     public Cliente actualizarCliente(Cliente cliente) throws Exception {
-        Cliente clienteAEditar = null;
-        Cliente clienteEncontrado = clienteRepository.findById(cliente.getId()).get();
-        if (clienteEncontrado != null) {
-            clienteEncontrado = clienteRepository.findByNombre(cliente.getNombre());
-            if (clienteEncontrado.getId() == cliente.getId()) {
-                clienteAEditar = clienteEncontrado;
-                clienteAEditar.setNombre(cliente.getNombre());
-                clienteAEditar.setApellidoPaterno(cliente.getApellidoPaterno());
-                clienteAEditar.setApellidoMaterno(cliente.getApellidoMaterno());
-               // clienteAEditar.setCalle(cliente.getCalle());
-               // clienteAEditar.setNumeroExterior(cliente.getNumeroExterior());
-               // clienteAEditar.setNumeroInterior(cliente.getNumeroInterior());
-               // clienteAEditar.setColonia(cliente.getColonia());
-               // clienteAEditar.setCiudad(cliente.getCiudad());
-               // clienteAEditar.setEstado(cliente.getEstado());
-               // clienteAEditar.setCodigoPostal(cliente.getCodigoPostal());
-                clienteAEditar.setTelefono1(cliente.getTelefono1());
-                clienteAEditar.setTelefono2(cliente.getTelefono2());
-                clienteAEditar.setRegimen(cliente.getRegimen());
-                clienteAEditar.setRfc(cliente.getRfc());
-                Cliente clienteActualizado = clienteRepository.save(clienteAEditar);
-                return clienteActualizado;
-
-            } else {
-                throw new Exception("El nombre de cliente ya está en uso.");
-            }
-        } else {
+        Optional<Cliente> opt = clienteRepository.findById(cliente.getId());
+        if (opt.isEmpty()) {
             throw new Exception("Cliente no encontrado con el ID proporcionado.");
         }
+        Cliente existente = opt.get();
+        existente.setNombre(cliente.getNombre());
+        existente.setApellidoPaterno(cliente.getApellidoPaterno());
+        existente.setApellidoMaterno(cliente.getApellidoMaterno());
+        existente.setFechaNacimiento(cliente.getFechaNacimiento());
+        existente.setRfc(cliente.getRfc());
+        existente.setFechaRegistro(cliente.getFechaRegistro());
+        existente.setOcupacion(cliente.getOcupacion());
+        existente.setTelefono1(cliente.getTelefono1());
+        existente.setTelefono2(cliente.getTelefono2());
+        existente.setRegimen(cliente.getRegimen());
+
+        // Sincronizar domicilios (orphanRemoval = true)
+        existente.getDomicilios().clear();
+        if (cliente.getDomicilios() != null) {
+            cliente.getDomicilios().forEach(d -> {
+                d.setCliente(existente);
+                existente.getDomicilios().add(d);
+            });
+        }
+
+        return clienteRepository.save(existente);
     }
 
     @Transactional

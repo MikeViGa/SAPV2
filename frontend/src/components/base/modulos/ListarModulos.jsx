@@ -7,7 +7,7 @@ import FeedIcon from '@mui/icons-material/Feed';
 import { saveAs } from 'file-saver';
 import { useSnackbar } from '../dashboard/elementos/SnackbarContext';
 
-export default function ListarModulos  ({ refrescar, regs })  {
+export default function ListarModulos({ refrescar, regs }) {
 
   const listadoHook = useListado(eliminarModuloApi);
   const { addSnackbar } = useSnackbar();
@@ -25,6 +25,17 @@ export default function ListarModulos  ({ refrescar, regs })  {
     },
     { field: "id", headerName: "Id", width: 60, headerClassName: "super-app-theme--header", pinned: 'left' },
     { field: "nombre", headerName: "Nombre", width: 200, headerClassName: "super-app-theme--header" },
+    { field: "icono", headerName: "Icono", width: 200, headerClassName: "super-app-theme--header" },
+    { field: "orden", headerName: "Orden", width: 200, headerClassName: "super-app-theme--header" },
+    { field: "ruta", headerName: "Ruta", width: 200, headerClassName: "super-app-theme--header" },
+    { field: "visible", headerName: "Visible", width: 200, headerClassName: "super-app-theme--header" },
+    {
+      field: "superModulo",
+      headerName: "Supermódulo",
+      width: 200,
+      headerClassName: "super-app-theme--header",
+      valueGetter: (value, row) => row.superModulo?.nombre || ''
+    },
   ];
 
   const DataGridComponent = () => (
@@ -42,34 +53,34 @@ export default function ListarModulos  ({ refrescar, regs })  {
 
 
   const dialogComponents = (
-      <>
-        <FormularioModulo
-          modo={listadoHook.modo}
-          registro={listadoHook.registro}
-          open={listadoHook.dialogoFormulario}
-          onClose={(e, r) => listadoHook.cerrarFomulario(e, r, refrescar)}
-          refrescar={refrescar}
-        />
-        <DeleteDialog
-          open={listadoHook.dialogoEliminar}
-          onClose={listadoHook.cancelarDialogoEliminar}
-          onConfirm={() => listadoHook.confirmarDialogoEliminar(refrescar)}
-          registro={listadoHook.registro}
-        />
-      </>
-    );
+    <>
+      <FormularioModulo
+        modo={listadoHook.modo}
+        registro={listadoHook.registro}
+        open={listadoHook.dialogoFormulario}
+        onClose={(e, r) => listadoHook.cerrarFomulario(e, r, refrescar)}
+        refrescar={refrescar}
+      />
+      <DeleteDialog
+        open={listadoHook.dialogoEliminar}
+        onClose={listadoHook.cancelarDialogoEliminar}
+        onConfirm={() => listadoHook.confirmarDialogoEliminar(refrescar)}
+        registro={listadoHook.registro}
+      />
+    </>
+  );
 
   return (
-     <ListLayout
-                 dataGridComponent={<DataGridComponent />}
-                 dialogComponents={dialogComponents}
-               >
-                 <FullScreenModal
-                   open={listadoHook.tablaMaximizada}
-                   onClose={listadoHook.controlarTabla}
-                 >
-                   <DataGridComponent />
-                 </FullScreenModal>
-               </ListLayout>
-          );
+    <ListLayout
+      dataGridComponent={<DataGridComponent />}
+      dialogComponents={dialogComponents}
+    >
+      <FullScreenModal
+        open={listadoHook.tablaMaximizada}
+        onClose={listadoHook.controlarTabla}
+      >
+        <DataGridComponent />
+      </FullScreenModal>
+    </ListLayout>
+  );
 };

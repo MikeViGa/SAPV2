@@ -16,100 +16,33 @@ import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import { useSnackbar } from '../dashboard/elementos/SnackbarContext';
 
-const AntSwitch = styled(Switch)(({ theme }) => ({
-    width: 28,
-    height: 16,
-    padding: 0,
-    display: 'flex',
-    '&:active': {
-        '& .MuiSwitch-thumb': {
-            width: 15,
-        },
-        '& .MuiSwitch-switchBase.Mui-checked': {
-            transform: 'translateX(9px)',
-        },
-    },
-    '& .MuiSwitch-switchBase': {
-        padding: 2,
-        '&.Mui-checked': {
-            transform: 'translateX(12px)',
-            color: '#fff',
-            '& + .MuiSwitch-track': {
-                opacity: 1,
-                backgroundColor: '#1890ff',
-                ...theme.applyStyles('dark', {
-                    backgroundColor: '#177ddc',
-                }),
-            },
-        },
-    },
-    '& .MuiSwitch-thumb': {
-        boxShadow: '0 2px 4px 0 rgb(0 35 11 / 20%)',
-        width: 12,
-        height: 12,
-        borderRadius: 6,
-        transition: theme.transitions.create(['width'], {
-            duration: 200,
-        }),
-    },
-    '& .MuiSwitch-track': {
-        borderRadius: 16 / 2,
-        opacity: 1,
-        backgroundColor: 'rgba(0,0,0,.25)',
-        boxSizing: 'border-box',
-        ...theme.applyStyles('dark', {
-            backgroundColor: 'rgba(255,255,255,.35)',
-        }),
-    },
-}));
-
-export default function FormularioRol ({ modo, registro, open, onClose, refrescar })  {
-
+export default function FormularioRol({ modo, registro, open, onClose, refrescar }) {
     const { addSnackbar } = useSnackbar();
-    const [operacionTerminada, setOperacionTerminada] = useState(false);
-    const [operacionExitosa, setOperacionExitosa] = useState(false);
     const [loading, setLoading] = useState(false);
-    dayjs.extend(utc);
-    dayjs.extend(timezone);
-    dayjs.tz.setDefault("America/Mexico_City");
-
-    const initialValues = {
-        id: '',
-        nombre: '',
-    };
-
-    const validationSchema = Yup.object({
-        nombre: Yup.string().required('Requerido'),
-    });
 
     const formik = useFormik({
-        initialValues: initialValues,
-        validationSchema: validationSchema,
-        onSubmit: async (values, { setSubmitting }) => {
+        initialValues: {
+            id: '',
+            nombre: '',
+        },
+        validationSchema: Yup.object({
+            nombre: Yup.string().required('Requerido'),
+        }),
+        onSubmit: async (values) => {
+            setLoading(true);
             try {
-                setLoading(true);
-                let formData = {
-                    id: values.id,
-                    nombre: values.nombre,
-                };
-                const response = (modo === "editar" ? actualizarRolApi(formData.id, formData) : crearRolApi(formData))
-                    .then(response => {
-                        addSnackbar("Registro " + (modo === "editar" ? "actualizado" : "creado") + " correctamente", "success");
-                        setOperacionTerminada(true);
-                        setOperacionExitosa(true);
-                    }).catch(error => {
-                        if (error.response) {
-                            addSnackbar(error.response.data, "error");
-                        } else if (error.request) {
-                            addSnackbar("Error en la petición: " + error.request.data, "error");
-                        } else {
-                            addSnackbar("Error inesperado al realizar la operación: " + error.message, "error");
-                        }
-                    });
-            } catch (err) {
-                console.log(`Error inesperado ${values.id ? ' actualizando' : ' creando'} rol: ${err.message}`, "error");
+                const apiCall = modo === "editar"
+                    ? actualizarRolApi(values.id, values)
+                    : crearRolApi(values);
+
+                await apiCall;
+                addSnackbar(`Rol ${modo === "editar" ? "actualizado" : "creado"} correctamente`, "success");
+                refrescar?.();
+                onClose();
+            } catch (error) {
+                const message = error.response?.data || error.message || "Error inesperado";
+                addSnackbar(message, "error");
             } finally {
-                setSubmitting(false);
                 setLoading(false);
             }
         },
@@ -118,42 +51,15 @@ export default function FormularioRol ({ modo, registro, open, onClose, refresca
     useEffect(() => {
         if (open) {
             if (modo === "editar" && registro) {
-                formik.setValues({
-                    ...registro,
-                    fechaCreacion: dayjs(registro.fechaCreacion),
-                });
+                formik.setValues(registro);
             } else {
-                formik.resetForm({
-                    values: initialValues,
-                });
+                formik.resetForm();
             }
-            // Resetear estados cuando se abre el modal
-            setOperacionTerminada(false);
-            setOperacionExitosa(false);
         }
-    }, [registro, modo, open]);
+    }, [open, modo, registro]);
 
     const handleReset = () => {
-        formik.resetForm({
-            values: initialValues,
-        });
-    };
-
-    const redAsteriskStyle = {
-        '& .MuiInputLabel-asterisk': {
-            color: 'red',
-        },
-    };
-
-    const nombreRef = useRef();
-
-    const handleKeyDown = (event, nextRef) => {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            if (nextRef && nextRef.current) {
-                nextRef.current.focus(); // Focus the next input if it exists
-            }
-        }
+        formik.resetForm();
     };
 
     return (
@@ -165,16 +71,16 @@ export default function FormularioRol ({ modo, registro, open, onClose, refresca
                     <Box
                         component="form"
                         onSubmit={formik.handleSubmit}
-                        sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '400px', margin: 'auto', mt: 0 }}
+                        sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: 400, pt: 1 }}
                     >
-                        <Typography variant="h5" component="h1" gutterBottom>
+                        <Typography variant="h5" gutterBottom>
                             {modo === 'editar' ? 'Editar rol' : 'Crear rol'}
                         </Typography>
+
                         <TextField
                             size="small"
                             required
                             fullWidth
-                            id="nombre"
                             name="nombre"
                             label="Nombre"
                             value={formik.values.nombre}
@@ -182,45 +88,41 @@ export default function FormularioRol ({ modo, registro, open, onClose, refresca
                             onBlur={formik.handleBlur}
                             error={formik.touched.nombre && Boolean(formik.errors.nombre)}
                             helperText={formik.touched.nombre && formik.errors.nombre}
-                            InputLabelProps={{
-                                sx: redAsteriskStyle,
-                                shrink: true,
-                            }}
-                            onKeyDown={(e) => handleKeyDown(e, null)}
-                            inputRef={nombreRef}
+                            autoFocus
                         />
+
                         <Button 
-                            color="primary" 
-                            startIcon={<SaveIcon />} 
                             variant="contained" 
                             type="submit" 
-                            disabled={formik.isSubmitting || operacionExitosa}
+                            disabled={formik.isSubmitting}
+                            startIcon={<SaveIcon />}
+                            fullWidth
                         >
-                            {formik.values.id ? 'Actualizar' : 'Agregar'}
+                            {modo === 'editar' ? 'Actualizar' : 'Agregar'}
                         </Button>
+                        
                         <Button 
-                            color="primary" 
-                            startIcon={<RefreshIcon />} 
                             variant="contained" 
-                            onClick={handleReset} 
-                            disabled={formik.isSubmitting || operacionExitosa}
+                            onClick={handleReset}
+                            disabled={formik.isSubmitting}
+                            startIcon={<RefreshIcon />}
+                            fullWidth
                         >
                             Reiniciar
                         </Button>
+                        
                         <Button 
-                            color={operacionTerminada ? "primary" : "warning"}
                             variant="contained"
-                            startIcon={operacionTerminada ? <ExitToAppIcon /> : <CancelIcon />}
+                            color="warning"
                             onClick={onClose}
-                            className="btn btn-warning" 
+                            startIcon={<CancelIcon />}
+                            fullWidth
                         >
-                            {operacionTerminada ? "Salir" : "Cancelar"}
+                            Cancelar
                         </Button>
                     </Box>
                 )}
             </DialogContent>
-            <DialogActions>
-            </DialogActions>
         </Dialog>
     );
-};
+}

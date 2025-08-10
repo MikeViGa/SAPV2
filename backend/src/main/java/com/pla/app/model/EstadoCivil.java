@@ -7,7 +7,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Entity
 @Table(name = "estadosciviles")
 @Data
@@ -21,8 +20,9 @@ public class EstadoCivil implements Serializable {
 	@NotBlank(message = "El nombre es obligatorio")
 	@Column(nullable = false, length = 100)
 	private String nombre;
-
+	
 	@OneToMany(mappedBy = "estadoCivil", cascade = CascadeType.ALL)
+	
     private List<Cliente> clientes = new ArrayList<>();
 
 

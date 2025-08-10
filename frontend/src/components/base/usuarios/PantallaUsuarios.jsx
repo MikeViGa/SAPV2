@@ -107,7 +107,7 @@ export default function PantallaUsuarios() {
                 const respuesta = await obtenerUsuariosApi();
                 setRegistros(respuesta.data);
             }
-            //addSnackbar("Registros actualizados correctamente", "success");
+            addSnackbar("Registros actualizados correctamente", "success");
         } catch (error) {
             if (error.message == 'Request failed with status code 401')
                 addSnackbar("La sesión ya caducó, vuelva a iniciar sesión", "error");

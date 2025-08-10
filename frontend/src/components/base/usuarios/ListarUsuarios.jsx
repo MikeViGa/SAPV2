@@ -77,16 +77,14 @@ export default function ListarUsuarios({ refrescar, regs }) {
 
   const dialogComponents = (
   <>
-    {listadoHook.dialogoFormulario && (
-      <FormularioUsuario
-        key={`${listadoHook.modo}-${listadoHook.registro?.id || 'new'}`} // Add this key
-        modo={listadoHook.modo}
-        registro={listadoHook.modo === 'crear' ? null : listadoHook.registro}
-        open={listadoHook.dialogoFormulario}
-        onClose={(e, r) => listadoHook.cerrarFomulario(e, r, refrescar)}
-        refrescar={refrescar}
-      />
-    )}
+    <FormularioUsuario
+      modo={listadoHook.modo}
+      registro={listadoHook.registro}
+      open={listadoHook.dialogoFormulario}
+      onClose={(e, r) => listadoHook.cerrarFomulario(e, r, refrescar)}
+      refrescar={refrescar}
+
+    />
     <DeleteDialog
       open={listadoHook.dialogoEliminar}
       onClose={listadoHook.cancelarDialogoEliminar}

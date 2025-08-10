@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { TextField, Button, Box, Typography } from '@mui/material';
-import { actualizarClienteApi, crearClienteApi, } from '../../api/ClienteApiService';
+import { TextField, Button, Box, Typography, List, ListItem, ListItemText, IconButton, Divider } from '@mui/material';
+import { actualizarClienteApi, crearClienteApi, obtenerClienteApi } from '../../api/ClienteApiService';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddLocationAltIcon from '@mui/icons-material/AddLocationAlt';
+import CheckIcon from '@mui/icons-material/Check';
 import { Dialog, DialogActions, DialogContent, } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
@@ -12,9 +16,9 @@ import Cargando from '../../base/dashboard/elementos/Cargando';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useSnackbar } from '../../base/dashboard/elementos/SnackbarContext';
 import Grid from '@mui/material/Grid2';
-import { Divider } from '@mui/material';
 import { Stack } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
@@ -25,8 +29,14 @@ export default function FormularioCliente({ modo, registro, open, onClose, refre
     const { addSnackbar } = useSnackbar();
     const [operacionTerminada, setOperacionTerminada] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [indiceEditando, setIndiceEditando] = useState(null);
+    const [dialogoDomicilioAbierto, setDialogoDomicilioAbierto] = useState(false);
+    const [nuevoDomicilio, setNuevoDomicilio] = useState({
+        calle: '', numeroInterior: '', numeroExterior: '', colonia: '', ciudad: '', codigoPostal: '', entreCalles: ''
+    });
     dayjs.extend(utc);
     dayjs.extend(timezone);
+    dayjs.extend(customParseFormat);
     dayjs.tz.setDefault("America/Mexico_City");
 
     const initialValues = {
@@ -34,17 +44,11 @@ export default function FormularioCliente({ modo, registro, open, onClose, refre
         nombre: '',
         apellidoPaterno: '',
         apellidoMaterno: '',
-        calle: '',
-        numeroInterior: '',
-        numeroExterior: '',
-        colonia: '',
-        ciudad: '',
-        estado: '',
-        codigoPostal: '',
+        domicilios: [],
         telefono1: '',
         telefono2: '',
         rfc: '',
-        fechaRegistro: '',
+        fechaRegistro: null,
     };
 
     const validationSchema = Yup.object({
@@ -64,17 +68,20 @@ export default function FormularioCliente({ modo, registro, open, onClose, refre
                     nombre: values.nombre,
                     apellidoPaterno: values.apellidoPaterno,
                     apellidoMaterno: values.apellidoMaterno,
-                    calle: values.calle,
-                    numeroInterior: values.numeroInterior,
-                    numeroExterior: values.numeroExterior,
-                    colonia: values.colonia,
-                    ciudad: values.ciudad,
-                    estado: values.estado,
-                    codigoPostal: values.codigoPostal,
+                    domicilios: values.domicilios?.map(d => ({
+                        id: d.id || undefined,
+                        calle: d.calle || '',
+                        numeroInterior: d.numeroInterior || '',
+                        numeroExterior: d.numeroExterior || '',
+                        colonia: d.colonia || '',
+                        ciudad: d.ciudad || '',
+                        codigoPostal: d.codigoPostal || '',
+                        entreCalles: d.entreCalles || ''
+                    })) || [],
                     telefono1: values.telefono1,
                     telefono2: values.telefono2,
                     rfc: values.rfc,
-                    fechaRegistro:values.fechaRegistro,
+                    fechaRegistro: values.fechaRegistro ? values.fechaRegistro.format('DD/MM/YYYY HH:mm:ss') : null,
                 };
 
                 const response = (modo === "editar" ? actualizarClienteApi(formData.id, formData) : crearClienteApi(formData))
@@ -100,19 +107,45 @@ export default function FormularioCliente({ modo, registro, open, onClose, refre
     });
 
     useEffect(() => {
-        if (open) {
-            if (modo === "editar" && registro) {
-                formik.setValues({
-                    ...registro,
-                    fechaRegistro: dayjs(registro.fechaRegistro),
-                });
-            } else {
-                formik.resetForm({
-                    values: initialValues,
-                });
+        const cargarDetalleSiEdita = async () => {
+            if (!open) return;
+            if (modo === "editar" && registro?.id) {
+                try {
+                    setLoading(true);
+                    const resp = await obtenerClienteApi(registro.id);
+                    const det = typeof resp.data === 'string' ? JSON.parse(resp.data) : resp.data;
+                    formik.setValues({
+                        id: det.id || registro.id || '',
+                        nombre: det.nombre ?? registro.nombre ?? '',
+                        apellidoPaterno: det.apellidoPaterno ?? registro.apellidoPaterno ?? '',
+                        apellidoMaterno: det.apellidoMaterno ?? registro.apellidoMaterno ?? '',
+                        domicilios: Array.isArray(det.domicilios) ? det.domicilios.map(d => ({
+                            id: d.id,
+                            calle: d.calle || '',
+                            numeroInterior: d.numeroInterior || '',
+                            numeroExterior: d.numeroExterior || '',
+                            colonia: d.colonia || '',
+                            ciudad: d.ciudad || '',
+                            codigoPostal: d.codigoPostal || '',
+                            entreCalles: d.entreCalles || ''
+                        })) : [],
+                        telefono1: det.telefono1 ?? registro.telefono1 ?? '',
+                        telefono2: det.telefono2 ?? registro.telefono2 ?? '',
+                        rfc: det.rfc ?? registro.rfc ?? '',
+                        fechaRegistro: det.fechaRegistro ? dayjs(det.fechaRegistro, 'DD/MM/YYYY HH:mm:ss') : null,
+                    });
+                } catch (e) {
+                    addSnackbar('No se pudo cargar el detalle del cliente', 'error');
+                } finally {
+                    setLoading(false);
+                }
+            } else if (open) {
+                formik.resetForm({ values: initialValues });
             }
-        }
-    }, [registro, modo, open]);
+        };
+        cargarDetalleSiEdita();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [registro?.id, modo, open]);
 
     const handleReset = () => {
         formik.resetForm({
@@ -231,156 +264,7 @@ export default function FormularioCliente({ modo, registro, open, onClose, refre
                             </Grid>
                         </Grid>
                         <Divider />
-                        <Typography > Domicilio: </Typography>
-                        <Grid container spacing={2}>
-                            <Grid xs={12} sm={4}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="calle"
-                                    name="calle"
-                                    label="Calle"
-                                    value={formik.values.calle}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.calle && Boolean(formik.errors.calle)}
-                                    helperText={formik.touched.calle && formik.errors.calle}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, null)}
-                                    inputRef={numeroInteriorRef}
-                                />
-                            </Grid>
-                            <Grid xs={12} sm={4}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="numeroInterior"
-                                    name="numeroInterior"
-                                    label="Número interior"
-                                    value={formik.values.numeroInterior}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.numeroInterior && Boolean(formik.errors.numeroInterior)}
-                                    helperText={formik.touched.numeroInterior && formik.errors.numeroInterior}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, null)}
-                                    inputRef={numeroExteriorRef}
-                                />
-                            </Grid>
-                            <Grid xs={12} sm={4}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="numeroExterior"
-                                    name="numeroExterior"
-                                    label="Número exterior"
-                                    value={formik.values.numeroExterior}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.numeroExterior && Boolean(formik.errors.numeroExterior)}
-                                    helperText={formik.touched.numeroExterior && formik.errors.numeroExterior}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, null)}
-                                    inputRef={coloniaRef}
-                                />
-                            </Grid>
-                            <Grid xs={12} sm={4}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="colonia"
-                                    name="colonia"
-                                    label="Colonia"
-                                    value={formik.values.colonia}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.colonia && Boolean(formik.errors.colonia)}
-                                    helperText={formik.touched.colonia && formik.errors.colonia}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, null)}
-                                    inputRef={ciudadRef}
-                                />
-                            </Grid>
-                            <Grid xs={12} sm={4}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="ciudad"
-                                    name="ciudad"
-                                    label="Ciudad"
-                                    value={formik.values.ciudad}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.ciudad && Boolean(formik.errors.ciudad)}
-                                    helperText={formik.touched.ciudad && formik.errors.ciudad}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, null)}
-                                    inputRef={estadoRef}
-                                />
-                            </Grid>
-                            <Grid xs={12} sm={4}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="estado"
-                                    name="estado"
-                                    label="Estado"
-                                    value={formik.values.estado}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.estado && Boolean(formik.errors.estado)}
-                                    helperText={formik.touched.estado && formik.errors.estado}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, null)}
-                                    inputRef={codigoPostalRef}
-                                />
-                            </Grid>
-                            <Grid xs={12} sm={4}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="codigoPostal"
-                                    name="codigoPostal"
-                                    label="Código postal"
-                                    value={formik.values.codigoPostal}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.codigoPostal && Boolean(formik.errors.codigoPostal)}
-                                    helperText={formik.touched.codigoPostal && formik.errors.codigoPostal}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, null)}
-                                    inputRef={telefono1Ref}
-                                />
-                            </Grid>
-                        </Grid>
+                        
                         <Divider />
                         <Typography > Otros datos: </Typography>
                         <Grid container spacing={2}>
@@ -485,6 +369,131 @@ export default function FormularioCliente({ modo, registro, open, onClose, refre
                             </Grid>
                         </Grid>
                         <Divider />
+                        <Typography sx={{ mb: 1 }}>Domicilios:</Typography>
+                        <List dense sx={{ width: '100%', bgcolor: 'background.paper', borderRadius: 1, border: '1px solid #eee' }}>
+                            {(formik.values.domicilios || []).map((domicilio, index) => {
+                                const resumen = `${domicilio.calle || ''} ${domicilio.numeroExterior || ''}${domicilio.numeroInterior ? ' Int ' + domicilio.numeroInterior : ''}, ${domicilio.colonia || ''}, ${domicilio.ciudad || ''} ${domicilio.codigoPostal ? 'CP ' + domicilio.codigoPostal : ''}`;
+                                return (
+                                    <Box key={domicilio.id || index}>
+                                        <ListItem
+                                            secondaryAction={
+                                                <Box>
+                                                    {indiceEditando === index ? (
+                                                        <IconButton edge="end" aria-label="done" onClick={() => setIndiceEditando(null)}>
+                                                            <CheckIcon color="success" />
+                                                        </IconButton>
+                                                    ) : (
+                                                        <IconButton edge="end" aria-label="edit" onClick={() => setIndiceEditando(index)}>
+                                                            <EditIcon color="primary" />
+                                                        </IconButton>
+                                                    )}
+                                                    <IconButton edge="end" aria-label="delete" onClick={() => {
+                                                        const arr = [...formik.values.domicilios];
+                                                        arr.splice(index, 1);
+                                                        formik.setFieldValue('domicilios', arr);
+                                                        if (indiceEditando === index) setIndiceEditando(null);
+                                                    }}>
+                                                        <DeleteIcon color="warning" />
+                                                    </IconButton>
+                                                </Box>
+                                            }
+                                        >
+                                            <ListItemText
+                                                primary={resumen.trim() || `Domicilio ${index + 1}`}
+                                                secondary={domicilio.entreCalles ? `Entre calles: ${domicilio.entreCalles}` : null}
+                                            />
+                                        </ListItem>
+                                        {indiceEditando === index && (
+                                            <Box sx={{ px: 2, pb: 1 }}>
+                                                <Grid container spacing={1}>
+                                                    <Grid xs={12} sm={3}>
+                                                        <TextField size="small" fullWidth label="Calle" value={domicilio.calle}
+                                                            onChange={(e) => { const a = [...formik.values.domicilios]; a[index].calle = e.target.value; formik.setFieldValue('domicilios', a); }} />
+                                                    </Grid>
+                                                    <Grid xs={12} sm={2}>
+                                                        <TextField size="small" fullWidth label="Num. Interior" value={domicilio.numeroInterior}
+                                                            onChange={(e) => { const a = [...formik.values.domicilios]; a[index].numeroInterior = e.target.value; formik.setFieldValue('domicilios', a); }} />
+                                                    </Grid>
+                                                    <Grid xs={12} sm={2}>
+                                                        <TextField size="small" fullWidth label="Num. Exterior" value={domicilio.numeroExterior}
+                                                            onChange={(e) => { const a = [...formik.values.domicilios]; a[index].numeroExterior = e.target.value; formik.setFieldValue('domicilios', a); }} />
+                                                    </Grid>
+                                                    <Grid xs={12} sm={2}>
+                                                        <TextField size="small" fullWidth label="Colonia" value={domicilio.colonia}
+                                                            onChange={(e) => { const a = [...formik.values.domicilios]; a[index].colonia = e.target.value; formik.setFieldValue('domicilios', a); }} />
+                                                    </Grid>
+                                                    <Grid xs={12} sm={2}>
+                                                        <TextField size="small" fullWidth label="Ciudad" value={domicilio.ciudad}
+                                                            onChange={(e) => { const a = [...formik.values.domicilios]; a[index].ciudad = e.target.value; formik.setFieldValue('domicilios', a); }} />
+                                                    </Grid>
+                                                    <Grid xs={12} sm={1}>
+                                                        <TextField size="small" fullWidth label="CP" value={domicilio.codigoPostal}
+                                                            onChange={(e) => { const a = [...formik.values.domicilios]; a[index].codigoPostal = e.target.value; formik.setFieldValue('domicilios', a); }} />
+                                                    </Grid>
+                                                    <Grid xs={12} sm={4}>
+                                                        <TextField size="small" fullWidth label="Entre calles" value={domicilio.entreCalles}
+                                                            onChange={(e) => { const a = [...formik.values.domicilios]; a[index].entreCalles = e.target.value; formik.setFieldValue('domicilios', a); }} />
+                                                    </Grid>
+                                                </Grid>
+                                            </Box>
+                                        )}
+                                        <Divider />
+                                    </Box>
+                                );
+                            })}
+                        </List>
+                        <Box sx={{ mt: 1 }}>
+                            <Button startIcon={<AddLocationAltIcon />} variant="contained" onClick={() => {
+                                setNuevoDomicilio({ calle: '', numeroInterior: '', numeroExterior: '', colonia: '', ciudad: '', codigoPostal: '', entreCalles: '' });
+                                setDialogoDomicilioAbierto(true);
+                            }}>Agregar domicilio</Button>
+                        </Box>
+
+                        <Dialog open={dialogoDomicilioAbierto} onClose={() => setDialogoDomicilioAbierto(false)} fullWidth maxWidth="sm">
+                            <DialogContent>
+                                <Typography variant="h6" gutterBottom>Nuevo domicilio</Typography>
+                                <Grid container spacing={1}>
+                                    <Grid xs={12} sm={6}>
+                                        <TextField size="small" fullWidth label="Calle" required value={nuevoDomicilio.calle}
+                                            onChange={(e) => setNuevoDomicilio({ ...nuevoDomicilio, calle: e.target.value })}
+                                            InputLabelProps={{ sx: redAsteriskStyle, shrink: true }} />
+                                    </Grid>
+                                    <Grid xs={12} sm={3}>
+                                        <TextField size="small" fullWidth label="Num. Interior" value={nuevoDomicilio.numeroInterior}
+                                            onChange={(e) => setNuevoDomicilio({ ...nuevoDomicilio, numeroInterior: e.target.value })} />
+                                    </Grid>
+                                    <Grid xs={12} sm={3}>
+                                        <TextField size="small" fullWidth label="Num. Exterior" value={nuevoDomicilio.numeroExterior}
+                                            onChange={(e) => setNuevoDomicilio({ ...nuevoDomicilio, numeroExterior: e.target.value })} />
+                                    </Grid>
+                                    <Grid xs={12} sm={6}>
+                                        <TextField size="small" fullWidth label="Colonia" value={nuevoDomicilio.colonia}
+                                            onChange={(e) => setNuevoDomicilio({ ...nuevoDomicilio, colonia: e.target.value })} />
+                                    </Grid>
+                                    <Grid xs={12} sm={4}>
+                                        <TextField size="small" fullWidth label="Ciudad" value={nuevoDomicilio.ciudad}
+                                            onChange={(e) => setNuevoDomicilio({ ...nuevoDomicilio, ciudad: e.target.value })} />
+                                    </Grid>
+                                    <Grid xs={12} sm={2}>
+                                        <TextField size="small" fullWidth label="CP" value={nuevoDomicilio.codigoPostal}
+                                            onChange={(e) => setNuevoDomicilio({ ...nuevoDomicilio, codigoPostal: e.target.value })} />
+                                    </Grid>
+                                    <Grid xs={12}>
+                                        <TextField size="small" fullWidth label="Entre calles" value={nuevoDomicilio.entreCalles}
+                                            onChange={(e) => setNuevoDomicilio({ ...nuevoDomicilio, entreCalles: e.target.value })} />
+                                    </Grid>
+                                </Grid>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button variant="text" onClick={() => setDialogoDomicilioAbierto(false)}>Cancelar</Button>
+                                <Button variant="contained" onClick={() => {
+                                    const arr = [...(formik.values.domicilios || [])];
+                                    arr.push({ ...nuevoDomicilio });
+                                    formik.setFieldValue('domicilios', arr);
+                                    setDialogoDomicilioAbierto(false);
+                                }}>Guardar</Button>
+                            </DialogActions>
+                        </Dialog>
                         <Stack direction="row" spacing={1}>
                             <Button color="primary" startIcon={<SaveIcon />} variant="contained" type="submit" disabled={formik.isSubmitting}>
                                 {formik.values.id ? 'Actualizar' : 'Agregar'}

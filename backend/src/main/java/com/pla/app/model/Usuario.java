@@ -3,12 +3,10 @@ package com.pla.app.model;
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.pla.app.audit.Auditable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "usuarios")
@@ -16,7 +14,7 @@ import lombok.EqualsAndHashCode;
 public class Usuario {
 
 	@Id
-	//@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false, updatable = false)
 	private Long id;
 
@@ -30,6 +28,7 @@ public class Usuario {
 	private String contrasena;
 
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+	@JsonIgnore
     private List<Cancelacion> cancelaciones = new ArrayList<>();
 
 	@ManyToOne
@@ -37,6 +36,7 @@ public class Usuario {
     private Rol rol;
 
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+	@JsonIgnore
     private List<Solicitud> solicitudes = new ArrayList<>();
 
 	@OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
@@ -44,7 +44,7 @@ public class Usuario {
     private Empleado empleado;
 
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+	@JsonIgnore
     private List<Movimiento> movimientos = new ArrayList<>();
-
 	
 }

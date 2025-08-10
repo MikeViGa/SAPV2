@@ -2,174 +2,150 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { TextField, Button, Box, Typography, } from '@mui/material';
-import { actualizarModuloApi, crearModuloApi, } from "../../api/ModuloApiService"
+import { actualizarModuloApi, crearModuloApi, obtenerModulosApi } from "../../api/ModuloApiService"
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { Dialog, DialogActions, DialogContent, } from '@mui/material';
+import { Dialog, Autocomplete, FormControlLabel, DialogContent, } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import Cargando from '../../base/dashboard/elementos/Cargando';
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
-import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import { useSnackbar } from '../../base/dashboard/elementos/SnackbarContext';
 
-const AntSwitch = styled(Switch)(({ theme }) => ({
-    width: 28,
-    height: 16,
-    padding: 0,
-    display: 'flex',
-    '&:active': {
-        '& .MuiSwitch-thumb': {
-            width: 15,
-        },
-        '& .MuiSwitch-switchBase.Mui-checked': {
-            transform: 'translateX(9px)',
-        },
-    },
-    '& .MuiSwitch-switchBase': {
-        padding: 2,
-        '&.Mui-checked': {
-            transform: 'translateX(12px)',
-            color: '#fff',
-            '& + .MuiSwitch-track': {
-                opacity: 1,
-                backgroundColor: '#1890ff',
-                ...theme.applyStyles('dark', {
-                    backgroundColor: '#177ddc',
-                }),
-            },
-        },
-    },
-    '& .MuiSwitch-thumb': {
-        boxShadow: '0 2px 4px 0 rgb(0 35 11 / 20%)',
-        width: 12,
-        height: 12,
-        borderRadius: 6,
-        transition: theme.transitions.create(['width'], {
-            duration: 200,
-        }),
-    },
-    '& .MuiSwitch-track': {
-        borderRadius: 16 / 2,
-        opacity: 1,
-        backgroundColor: 'rgba(0,0,0,.25)',
-        boxSizing: 'border-box',
-        ...theme.applyStyles('dark', {
-            backgroundColor: 'rgba(255,255,255,.35)',
-        }),
-    },
-}));
-
 export default function FormularioModulo({ modo, registro, open, onClose, refrescar }) {
-
     const { addSnackbar } = useSnackbar();
-    const [operacionTerminada, setOperacionTerminada] = useState(false);
     const [loading, setLoading] = useState(false);
-    dayjs.extend(utc);
-    dayjs.extend(timezone);
-    dayjs.tz.setDefault("America/Mexico_City");
-
-    const initialValues = {
-        id: '',
-        nombre: '',
-    };
-
-    const validationSchema = Yup.object({
-        nombre: Yup.string().required('Requerido'),
-    });
+    const [superModulos, setSuperModulos] = useState([]);
+    const [loadingData, setLoadingData] = useState(false);
 
     const formik = useFormik({
-        initialValues: initialValues,
-        validationSchema: validationSchema,
-        onSubmit: async (values, { setSubmitting }) => {
+        initialValues: {
+            id: '',
+            nombre: '',
+            icono: '',
+            orden: '',
+            ruta: '',
+            visible: true,
+            superModulo: null,
+        },
+        validationSchema: Yup.object({
+            nombre: Yup.string()
+                .required('Requerido')
+                .max(100, 'Máximo 100 caracteres'),
+            ruta: Yup.string()
+                .required('Requerido')
+                .max(100, 'Máximo 100 caracteres'),
+            icono: Yup.string()
+                .max(100, 'Máximo 100 caracteres'),
+            orden: Yup.number()
+                .required('Requerido')
+                .positive('Debe ser un número positivo')
+                .integer('Debe ser un número entero'),
+        }),
+        onSubmit: async (values) => {
+            setLoading(true);
             try {
-                setLoading(true);
-                let formData = {
+                const formData = {
                     id: values.id,
                     nombre: values.nombre,
+                    icono: values.icono,
+                    orden: parseInt(values.orden),
+                    ruta: values.ruta,
+                    visible: values.visible,
+                    superModuloId: values.superModulo?.id || null, // Solo enviar el ID
                 };
-                const response = (modo === "editar" ? actualizarModuloApi(formData.id, formData) : crearModuloApi(formData))
-                    .then(response => {
-                        addSnackbar("Registro " + (modo === "editar" ? "actualizado" : "creado") + " correctamente", "success");
-                        setOperacionTerminada(true);
-                    }).catch(error => {
-                        if (error.response) {
-                            addSnackbar(error.response.data, "error");
-                        } else if (error.request) {
-                            addSnackbar("Error en la petición: " + error.request.data, "error");
-                        } else {
-                            addSnackbar("Error inesperado al realizar la operación: " + error.message, "error");
-                        }
-                    });
-            } catch (err) {
-                console.log(`Error inesperado ${values.id ? ' actualizando' : ' creando'} módulo: ${err.message}`, "error");
+
+                const apiCall = modo === "editar"
+                    ? actualizarModuloApi(formData.id, formData)
+                    : crearModuloApi(formData);
+
+                await apiCall;
+                addSnackbar(`Módulo ${modo === "editar" ? "actualizado" : "creado"} correctamente`, "success");
+                refrescar?.();
+                onClose();
+            } catch (error) {
+                console.error('Error completo:', error); // Debug
+
+                // Manejo correcto del error
+                let message = "Error inesperado";
+
+                if (error.response?.data) {
+                    // Si es un objeto de error de Spring Boot
+                    if (typeof error.response.data === 'object') {
+                        message = error.response.data.message ||
+                            error.response.data.error ||
+                            `Error ${error.response.data.status || 'del servidor'}`;
+                    } else {
+                        // Si es un string directo
+                        message = error.response.data;
+                    }
+                } else if (error.message) {
+                    message = error.message;
+                }
+
+                addSnackbar(message, "error");
             } finally {
-                setSubmitting(false);
                 setLoading(false);
             }
         },
     });
 
-    useEffect(() => {
-        if (open) {
+    const cargarDatosFormulario = async () => {
+        setLoadingData(true);
+        try {
+            // Cargar todos los módulos
+            const response = await obtenerModulosApi();
+            const modulos = response.data || [];
+            setSuperModulos(modulos);
+
+            // Si es edición y hay un superModuloId, configurar el formulario
             if (modo === "editar" && registro) {
+                const superModuloCompleto = registro.superModulo?.id
+                    ? modulos.find(m => m.id === registro.superModulo.id)
+                    : null;
+
                 formik.setValues({
                     ...registro,
-                    fechaCreacion: dayjs(registro.fechaCreacion),
+                    superModulo: superModuloCompleto || null,
                 });
             } else {
-                formik.resetForm({
-                    values: initialValues,
-                });
+                formik.resetForm();
             }
+        } catch (error) {
+            console.error('Error cargando datos:', error);
+        } finally {
+            setLoadingData(false);
         }
-    }, [registro, modo, open]);
+    };
+
+    useEffect(() => {
+        if (open) {
+            cargarDatosFormulario();
+        }
+    }, [open, modo, registro]);
 
     const handleReset = () => {
-        formik.resetForm({
-            values: initialValues,
-        });
-    };
-
-    const redAsteriskStyle = {
-        '& .MuiInputLabel-asterisk': {
-            color: 'red',
-        },
-    };
-
-    const nombreRef = useRef();
-
-    const handleKeyDown = (event, nextRef) => {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            if (nextRef && nextRef.current) {
-                nextRef.current.focus(); // Focus the next input if it exists
-            }
-        }
+        formik.resetForm();
     };
 
     return (
-        <Dialog open={open} onClose={onClose}>
+        <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
             <DialogContent>
-                {loading ? (
-                    <Cargando loading={loading} />
+                {loading || loadingData ? (
+                    <Cargando loading={loading || loadingData} />
                 ) : (
                     <Box
                         component="form"
                         onSubmit={formik.handleSubmit}
-                        sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '400px', margin: 'auto', mt: 0 }}
+                        sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}
                     >
-                        <Typography variant="h5" component="h1" gutterBottom>
+                        <Typography variant="h5" gutterBottom>
                             {modo === 'editar' ? 'Editar módulo' : 'Crear módulo'}
                         </Typography>
+
                         <TextField
                             size="small"
                             required
                             fullWidth
-                            id="nombre"
                             name="nombre"
                             label="Nombre"
                             value={formik.values.nombre}
@@ -177,29 +153,114 @@ export default function FormularioModulo({ modo, registro, open, onClose, refres
                             onBlur={formik.handleBlur}
                             error={formik.touched.nombre && Boolean(formik.errors.nombre)}
                             helperText={formik.touched.nombre && formik.errors.nombre}
-                            InputLabelProps={{
-                                sx: redAsteriskStyle,
-                                shrink: true,
-                            }}
-                            onKeyDown={(e) => handleKeyDown(e, null)}
-                            inputRef={nombreRef}
+                            autoFocus
                         />
-                        <Button color="primary" startIcon={<SaveIcon />} variant="contained" type="submit" disabled={formik.isSubmitting}>
-                            {formik.values.id ? 'Actualizar' : 'Agregar'}
-                        </Button>
-                        <Button color="primary" startIcon={<RefreshIcon />} variant="contained" onClick={handleReset} disabled={formik.isSubmitting}>Reiniciar</Button>
-                        <Button color={operacionTerminada ? "primary" : "warning"}
+
+                        <TextField
+                            size="small"
+                            required
+                            fullWidth
+                            name="ruta"
+                            label="Ruta"
+                            value={formik.values.ruta}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            error={formik.touched.ruta && Boolean(formik.errors.ruta)}
+                            helperText={formik.touched.ruta && formik.errors.ruta}
+                            placeholder="/ejemplo/ruta"
+                        />
+
+                        <TextField
+                            size="small"
+                            fullWidth
+                            name="icono"
+                            label="Icono"
+                            value={formik.values.icono}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            error={formik.touched.icono && Boolean(formik.errors.icono)}
+                            helperText={formik.touched.icono && formik.errors.icono}
+                            placeholder="dashboard, settings, etc."
+                        />
+
+                        <TextField
+                            size="small"
+                            required
+                            fullWidth
+                            name="orden"
+                            label="Orden"
+                            type="number"
+                            value={formik.values.orden}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            error={formik.touched.orden && Boolean(formik.errors.orden)}
+                            helperText={formik.touched.orden && formik.errors.orden}
+                        />
+
+                        <Autocomplete
+                            size="small"
+                            options={superModulos}
+                            getOptionLabel={(option) => option.nombre || ''}
+                            value={formik.values.superModulo}
+                            onChange={(event, newValue) => {
+                                formik.setFieldValue('superModulo', newValue);
+                            }}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Supermódulo"
+                                    placeholder="Seleccionar supermódulo (opcional)"
+                                />
+                            )}
+                            isOptionEqualToValue={(option, value) => {
+                                if (!option || !value) return option === value;
+                                return option.id === value.id;
+                            }}
+                            noOptionsText="No hay supermódulos disponibles"
+                        />
+
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={formik.values.visible}
+                                    onChange={(event) => {
+                                        formik.setFieldValue('visible', event.target.checked);
+                                    }}
+                                    name="visible"
+                                />
+                            }
+                            label="Visible"
+                        />
+                        <Button
                             variant="contained"
-                            startIcon={operacionTerminada ? <ExitToAppIcon /> : <CancelIcon />}
+                            type="submit"
+                            disabled={formik.isSubmitting}
+                            startIcon={<SaveIcon />}
+                            fullWidth
+                        >
+                            {modo === 'editar' ? 'Actualizar' : 'Agregar'}
+                        </Button>
+                        <Button
+                            variant="contained"
+                            onClick={handleReset}
+                            disabled={formik.isSubmitting}
+                            startIcon={<RefreshIcon />}
+                            fullWidth
+                        >
+                            Reiniciar
+                        </Button>
+                        <Button
+                            variant="contained"
+                            color="warning"
                             onClick={onClose}
-                            className="btn btn-warning" >
-                            {operacionTerminada ? "Salir" : "Cancelar"}
+                            startIcon={<CancelIcon />}
+                            fullWidth
+                        >
+                            Cancelar
                         </Button>
                     </Box>
                 )}
             </DialogContent>
-            <DialogActions>
-            </DialogActions>
         </Dialog>
     );
-};
+}
