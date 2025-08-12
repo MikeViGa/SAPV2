@@ -63,6 +63,9 @@ public class ClienteMapper {
         dto.setTelefono1(cliente.getTelefono1());
         dto.setTelefono2(cliente.getTelefono2());
         dto.setRegimen(cliente.getRegimen());
+        if (cliente.getEstadoCivil() != null) {
+            dto.setEstadoCivilNombre(cliente.getEstadoCivil().getNombre());
+        }
         dto.setCantidadDomicilios(cliente.getDomicilios() != null ? cliente.getDomicilios().size() : 0);
         return dto;
     }
@@ -81,6 +84,10 @@ public class ClienteMapper {
         dto.setTelefono1(cliente.getTelefono1());
         dto.setTelefono2(cliente.getTelefono2());
         dto.setRegimen(cliente.getRegimen());
+        if (cliente.getEstadoCivil() != null) {
+            dto.setEstadoCivilId(cliente.getEstadoCivil().getId());
+            dto.setEstadoCivilNombre(cliente.getEstadoCivil().getNombre());
+        }
         dto.setCantidadDomicilios(cliente.getDomicilios() != null ? cliente.getDomicilios().size() : 0);
         dto.setDomicilios(cliente.getDomicilios() != null ? 
             cliente.getDomicilios().stream().map(this::toDomicilioResponseDTO).collect(Collectors.toList()) : 
@@ -96,7 +103,11 @@ public class ClienteMapper {
         dto.setNumeroExterior(domicilio.getNumeroExterior());
         dto.setColonia(domicilio.getColonia());
         dto.setCiudad(domicilio.getCiudad());
-        //dto.setEstado(domicilio.getEstado()); // Si tienes este campo
+        if (domicilio.getEstado() != null) {
+            dto.setEstadoNombre(domicilio.getEstado().getNombre());
+            dto.setEstadoId(domicilio.getEstado().getId());
+            dto.setEstado(domicilio.getEstado().getNombre());
+        }
         dto.setCodigoPostal(domicilio.getCodigoPostal());
         dto.setEntreCalles(domicilio.getEntreCalles());
         return dto;

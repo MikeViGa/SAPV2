@@ -6,13 +6,14 @@ import { actualizarUsuarioApi, crearUsuarioApi, } from "../../api/UsuarioApiServ
 import { obtenerRolesApi } from "../../api/RolApiService"
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { Dialog, DialogActions, DialogContent, } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import Cargando from '../dashboard/elementos/Cargando';
 import { useSnackbar } from '../dashboard/elementos/SnackbarContext';
 import InputAdornment from '@mui/material/InputAdornment';
-import IconButton from '@mui/material/IconButton';
 import Iconify from '../dashboard/elementos/iconify';
 
 import {
@@ -136,6 +137,16 @@ export default function FormularioUsuario({ modo, registro, open, onClose, refre
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+            <DialogTitle sx={{ bgcolor: '#1976d2', color: '#fff', py: 1, px: 2 }}>
+                <Box display="flex" justifyContent="space-between" alignItems="center">
+                    <Typography variant="h6" sx={{ color: 'inherit' }}>
+                        {modo === 'editar' ? 'Editar usuario' : 'Crear usuario'}
+                    </Typography>
+                    <IconButton onClick={onClose} aria-label="close" sx={{ color: '#fff' }}>
+                        <CloseIcon />
+                    </IconButton>
+                </Box>
+            </DialogTitle>
             <DialogContent>
                 {loading || loadingData ? (
                     <Cargando loading={loading || loadingData} />

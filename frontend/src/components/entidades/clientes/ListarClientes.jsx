@@ -45,7 +45,7 @@ export default function ListarClientes({ refrescar, regs }) {
       headerName: "Acciones",
       headerClassName: "super-app-theme--header",
       getActions: (params) => ActionButtons({
-        onEdit: () => listadoHook.abrirFomularioEditar(params.row),
+        onEdit: () => listadoHook.abrirFomularioEditar({ id: params.row.id }),
         onDelete: () => listadoHook.abrirDialogoEliminar(params.id, regs)
       }),
     },
@@ -54,10 +54,13 @@ export default function ListarClientes({ refrescar, regs }) {
     { field: "apellidoPaterno", headerName: "Apellido paterno", width: 150, headerClassName: "super-app-theme--header" },
     { field: "apellidoMaterno", headerName: "Apellido materno", width: 150, headerClassName: "super-app-theme--header" },
     { field: "fechaRegistro", headerName: "Fecha registro", width: 180, headerClassName: "super-app-theme--header" },
+    { field: "fechaNacimiento", headerName: "Fecha nacimiento", width: 180, headerClassName: "super-app-theme--header" },
     { field: "telefono1", headerName: "Teléfono 1", width: 150, headerClassName: "super-app-theme--header" },
     { field: "telefono2", headerName: "Teléfono 2", width: 150, headerClassName: "super-app-theme--header" },
     { field: "rfc", headerName: "RFC", width: 150, headerClassName: "super-app-theme--header" },
+    { field: "regimen", headerName: "Regimen", width: 150, headerClassName: "super-app-theme--header" },
     { field: "ocupacion", headerName: "Ocupación", width: 150, headerClassName: "super-app-theme--header" },
+    { field: "estadoCivilNombre", headerName: "Estado civil", width: 150, headerClassName: "super-app-theme--header" },
     { 
       field: "cantidadDomicilios", 
       headerName: "Domicilios", 

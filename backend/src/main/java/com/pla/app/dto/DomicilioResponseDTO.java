@@ -14,7 +14,9 @@ public class DomicilioResponseDTO {
     private String numeroExterior;
     private String colonia;
     private String ciudad;
-    private String estado;
+    private String estado; // legacy/display
+    private Long estadoId; // for preselect
+    private String estadoNombre; // for display
     private String codigoPostal;
     private String entreCalles;
 }

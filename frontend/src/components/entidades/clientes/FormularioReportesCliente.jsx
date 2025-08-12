@@ -1,7 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { TextField, Button, Box, Typography, Divider, Stack, Dialog, DialogActions, DialogContent, Autocomplete } from '@mui/material';
+import { TextField, Button, Box, Typography, Divider, Stack, Dialog, DialogActions, DialogContent, DialogTitle, Autocomplete } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 import Grid from '@mui/material/Grid2';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
@@ -167,6 +169,16 @@ export default function FormularioReportesCliente({ open, onClose }) {
 
     return (
         <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg">
+            <DialogTitle sx={{ bgcolor: '#1976d2', color: '#fff', py: 1, px: 2 }}>
+                <Box display="flex" justifyContent="space-between" alignItems="center">
+                    <Typography variant="h6" sx={{ color: 'inherit' }}>
+                        Reportes de clientes
+                    </Typography>
+                    <IconButton onClick={onClose} aria-label="close" sx={{ color: '#fff' }}>
+                        <CloseIcon />
+                    </IconButton>
+                </Box>
+            </DialogTitle>
             <DialogContent>
                 {loading ? (
                     <Cargando loading={loading} />

@@ -5,7 +5,9 @@ import { TextField, Button, Box, Typography } from '@mui/material';
 import { actualizarSupervisorApi, crearSupervisorApi, } from "../../api/SupervisorApiService"
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { Dialog, DialogActions, DialogContent, } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import Cargando from '../../base/dashboard/elementos/Cargando';
@@ -229,6 +231,16 @@ export default function FormularioSupervisor({ modo, registro, open, onClose, re
 
     return (
         <Dialog open={open} onClose={onClose} fullWidth={true}  maxWidth="lg">
+            <DialogTitle sx={{ bgcolor: '#1976d2', color: '#fff', py: 1, px: 2 }}>
+                <Box display="flex" justifyContent="space-between" alignItems="center">
+                    <Typography variant="h6" sx={{ color: 'inherit' }}>
+                        {modo === 'editar' ? 'Editar supervisor' : 'Crear supervisor'}
+                    </Typography>
+                    <IconButton onClick={onClose} aria-label="close" sx={{ color: '#fff' }}>
+                        <CloseIcon />
+                    </IconButton>
+                </Box>
+            </DialogTitle>
             <DialogContent>
                 {loading ? (
                     <Cargando loading={loading} />

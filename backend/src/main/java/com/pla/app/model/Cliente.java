@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 import java.sql.Date;
@@ -50,7 +51,7 @@ public class Cliente implements Serializable {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(foreignKey = @ForeignKey(name = "FK_cliente_estadocivil")) 
-  @JsonIgnore
+  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   private EstadoCivil estadoCivil;
 
   //@NotNull(message = "La ocupación es obligatoria")

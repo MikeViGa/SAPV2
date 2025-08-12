@@ -66,6 +66,7 @@ public class ClienteService {
         existente.setTelefono1(cliente.getTelefono1());
         existente.setTelefono2(cliente.getTelefono2());
         existente.setRegimen(cliente.getRegimen());
+        existente.setEstadoCivil(cliente.getEstadoCivil());
 
         // Sincronizar domicilios (orphanRemoval = true)
         existente.getDomicilios().clear();

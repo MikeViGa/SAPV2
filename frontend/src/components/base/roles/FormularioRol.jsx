@@ -5,7 +5,9 @@ import { TextField, Button, Box, Typography } from '@mui/material';
 import { actualizarRolApi, crearRolApi, } from "../../api/RolApiService"
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { Dialog, DialogActions, DialogContent, } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import Cargando from '../dashboard/elementos/Cargando';
@@ -64,6 +66,16 @@ export default function FormularioRol({ modo, registro, open, onClose, refrescar
 
     return (
         <Dialog open={open} onClose={onClose}>
+            <DialogTitle sx={{ bgcolor: '#1976d2', color: '#fff', py: 1, px: 2 }}>
+                <Box display="flex" justifyContent="space-between" alignItems="center">
+                    <Typography variant="h6" sx={{ color: 'inherit' }}>
+                        {modo === 'editar' ? 'Editar rol' : 'Crear rol'}
+                    </Typography>
+                    <IconButton onClick={onClose} aria-label="close" sx={{ color: '#fff' }}>
+                        <CloseIcon />
+                    </IconButton>
+                </Box>
+            </DialogTitle>
             <DialogContent>
                 {loading ? (
                     <Cargando loading={loading} />

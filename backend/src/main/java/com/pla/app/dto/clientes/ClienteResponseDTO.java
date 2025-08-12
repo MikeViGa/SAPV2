@@ -19,5 +19,6 @@ public class ClienteResponseDTO {
     private String telefono1;
     private String telefono2;
     private String regimen;
+    private String estadoCivilNombre;
     private int cantidadDomicilios;
 }

@@ -5,7 +5,9 @@ import { TextField, Button, Box, Typography, } from '@mui/material';
 import { actualizarModuloApi, crearModuloApi, obtenerModulosApi } from "../../api/ModuloApiService"
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { Dialog, Autocomplete, FormControlLabel, DialogContent, } from '@mui/material';
+import { Dialog, Autocomplete, FormControlLabel, DialogContent, DialogTitle } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import Cargando from '../../base/dashboard/elementos/Cargando';
 import Switch from '@mui/material/Switch';
@@ -129,6 +131,16 @@ export default function FormularioModulo({ modo, registro, open, onClose, refres
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+            <DialogTitle sx={{ bgcolor: '#1976d2', color: '#fff', py: 1, px: 2 }}>
+                <Box display="flex" justifyContent="space-between" alignItems="center">
+                    <Typography variant="h6" sx={{ color: 'inherit' }}>
+                        {modo === 'editar' ? 'Editar módulo' : 'Crear módulo'}
+                    </Typography>
+                    <IconButton onClick={onClose} aria-label="close" sx={{ color: '#fff' }}>
+                        <CloseIcon />
+                    </IconButton>
+                </Box>
+            </DialogTitle>
             <DialogContent>
                 {loading || loadingData ? (
                     <Cargando loading={loading || loadingData} />

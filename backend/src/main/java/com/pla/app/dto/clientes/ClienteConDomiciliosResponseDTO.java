@@ -23,6 +23,8 @@ public class ClienteConDomiciliosResponseDTO {
     private String telefono1;
     private String telefono2;
     private String regimen;
+    private Long estadoCivilId;
+    private String estadoCivilNombre;
     private int cantidadDomicilios;
     private List<DomicilioResponseDTO> domicilios; // Incluye los domicilios completos
 }
