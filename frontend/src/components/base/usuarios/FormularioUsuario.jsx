@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { TextField, Button, Box, Typography, } from '@mui/material';
+import { TextField, Button, Box, Typography, Paper, Stack } from '@mui/material';
 import { actualizarUsuarioApi, crearUsuarioApi, } from "../../api/UsuarioApiService"
 import { obtenerRolesApi } from "../../api/RolApiService"
 import SaveIcon from '@mui/icons-material/Save';
@@ -15,6 +15,7 @@ import Cargando from '../dashboard/elementos/Cargando';
 import { useSnackbar } from '../dashboard/elementos/SnackbarContext';
 import InputAdornment from '@mui/material/InputAdornment';
 import Iconify from '../dashboard/elementos/iconify';
+import Grid from '@mui/material/Grid2';
 
 import {
     FormControl,
@@ -154,103 +155,89 @@ export default function FormularioUsuario({ modo, registro, open, onClose, refre
                     <Box
                         component="form"
                         onSubmit={formik.handleSubmit}
-                        sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}
+                        sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '650px', margin: 'auto', mt: 2 }}
                     >
-                        <Typography variant="h5" gutterBottom>
-                            {modo === 'editar' ? 'Editar usuario' : 'Crear usuario'}
-                        </Typography>
+                        <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
+                            <Typography sx={{ mb: 2 }}>Datos del usuario:</Typography>
+                            <Grid container spacing={1} sx={{ mb: 2 }}>
+                                <Grid xs={12} sm={6} md={3}>
+                                    <TextField
+                                        size="small"
+                                        required
+                                        fullWidth
+                                        name="nombre"
+                                        label="Nombre"
+                                        value={formik.values.nombre}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={formik.touched.nombre && Boolean(formik.errors.nombre)}
+                                        helperText={formik.touched.nombre && formik.errors.nombre}
+                                        autoFocus
+                                    />
+                                </Grid>
+                                <Grid xs={12} sm={6} md={3}>
+                                    <TextField
+                                        size="small"
+                                        required
+                                        fullWidth
+                                        name="contrasena"
+                                        label="Contraseña"
+                                        type={showPassword ? 'text' : 'password'}
+                                        value={formik.values.contrasena}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={formik.touched.contrasena && Boolean(formik.errors.contrasena)}
+                                        helperText={formik.touched.contrasena && formik.errors.contrasena}
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment position="end">
+                                                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                                                        <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            ),
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid xs={12} sm={6} md={3}>
+                                    <FormControl
+                                        size="small"
+                                        fullWidth
+                                        required
+                                        error={formik.touched.rolId && Boolean(formik.errors.rolId)}
+                                    >
+                                        <InputLabel>Rol</InputLabel>
+                                        <Select
+                                            name="rolId"
+                                            value={formik.values.rolId}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
+                                            label="Rol"
+                                        >
+                                            {roles.map((rol) => (
+                                                <MenuItem key={rol.id} value={rol.id}>
+                                                    {rol.nombre}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                        {formik.touched.rolId && formik.errors.rolId && (
+                                            <FormHelperText>{formik.errors.rolId}</FormHelperText>
+                                        )}
+                                    </FormControl>
+                                </Grid>
+                                <Grid xs={12} sm={6} md={3} />
+                            </Grid>
+                        </Paper>
 
-                        <TextField
-                            size="small"
-                            required
-                            fullWidth
-                            name="nombre"
-                            label="Nombre"
-                            value={formik.values.nombre}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            error={formik.touched.nombre && Boolean(formik.errors.nombre)}
-                            helperText={formik.touched.nombre && formik.errors.nombre}
-                            autoFocus
-                        />
-
-                        <TextField
-                            size="small"
-                            required
-                            fullWidth
-                            name="contrasena"
-                            label="Contraseña"
-                            type={showPassword ? 'text' : 'password'}
-                            value={formik.values.contrasena}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            error={formik.touched.contrasena && Boolean(formik.errors.contrasena)}
-                            helperText={formik.touched.contrasena && formik.errors.contrasena}
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                                            <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
-                            }}
-                        />
-
-                        <FormControl
-                            size="small"
-                            fullWidth
-                            required
-                            error={formik.touched.rolId && Boolean(formik.errors.rolId)}
-                        >
-                            <InputLabel>Rol</InputLabel>
-                            <Select
-                                name="rolId"
-                                value={formik.values.rolId}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                label="Rol"
-                            >
-                                {roles.map((rol) => (
-                                    <MenuItem key={rol.id} value={rol.id}>
-                                        {rol.nombre}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                            {formik.touched.rolId && formik.errors.rolId && (
-                                <FormHelperText>{formik.errors.rolId}</FormHelperText>
-                            )}
-                        </FormControl>
-
-                        <Button
-                            variant="contained"
-                            type="submit"
-                            disabled={formik.isSubmitting}
-                            startIcon={<SaveIcon />}
-                            fullWidth
-                        >
-                            {modo === 'editar' ? 'Actualizar' : 'Agregar'}
-                        </Button>
-
-                        <Button
-                            variant="contained"
-                            onClick={handleReset}
-                            disabled={formik.isSubmitting}
-                            startIcon={<RefreshIcon />}
-                            fullWidth
-                        >
-                            Reiniciar
-                        </Button>
-
-                        <Button
-                            variant="contained"
-                            color="warning"
-                            onClick={onClose}
-                            startIcon={<CancelIcon />}
-                            fullWidth
-                        >
-                            Cancelar
-                        </Button>
+                        <Paper elevation={1} sx={{ p: 1, mb: 0 }}>
+                            <Stack direction="row" spacing={1}>
+                                <Button variant="contained" type="submit" disabled={formik.isSubmitting} startIcon={<SaveIcon />}> 
+                                    {modo === 'editar' ? 'Actualizar' : 'Agregar'}
+                                </Button>
+                                <Button variant="contained" onClick={handleReset} disabled={formik.isSubmitting} startIcon={<RefreshIcon />}>Reiniciar</Button>
+                                <Button color="warning" variant="contained" onClick={onClose} startIcon={<CancelIcon />}>Cancelar</Button>
+                            </Stack>
+                        </Paper>
                     </Box>
                 )}
             </DialogContent>

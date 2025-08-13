@@ -268,437 +268,442 @@ export default function FormularioCliente({ modo, registro, open, onClose, refre
                 </Box>
             </DialogTitle>
             <DialogContent>
-                <Cargando loading={cargandoGlobal} />
-                <Box
-                    component="form"
-                    onSubmit={formik.handleSubmit}
-                    sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '950px', margin: 'auto', mt: 2 }}
-                >
-                    <Paper elevation={1} sx={{ p: 1, mb: 0 }}>
-                        <Typography>Datos personales:</Typography>
-                        <Grid container spacing={2} alignItems="center">
-                            <Grid xs={12} sm={6} md={3}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="nombre"
-                                    name="nombre"
-                                    label="Nombre"
-                                    value={formik.values.nombre}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.nombre && Boolean(formik.errors.nombre)}
-                                    helperText={formik.touched.nombre && formik.errors.nombre}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, null)}
-                                    inputRef={apellidoPaternoRef}
-                                />
-                            </Grid>
-                            <Grid xs={12} sm={6} md={3}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="apellidoPaterno"
-                                    name="apellidoPaterno"
-                                    label="Apellido paterno"
-                                    value={formik.values.apellidoPaterno}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.apellidoPaterno && Boolean(formik.errors.apellidoPaterno)}
-                                    helperText={formik.touched.apellidoPaterno && formik.errors.apellidoPaterno}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, null)}
-                                    inputRef={apellidoMaternoRef}
-                                />
-                            </Grid>
-                            <Grid xs={12} sm={6} md={3}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="apellidoMaterno"
-                                    name="apellidoMaterno"
-                                    label="Apellido Materno"
-                                    value={formik.values.apellidoMaterno}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.apellidoMaterno && Boolean(formik.errors.apellidoMaterno)}
-                                    helperText={formik.touched.apellidoMaterno && formik.errors.apellidoMaterno}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, null)}
-                                    inputRef={calleRef}
-                                />
-                            </Grid>
-                        </Grid>
-                        <Grid container spacing={2} alignItems="center">
-                            <Grid xs={12} sm={6} md={3}>
-                                <TextField
-                                    size="small"
-                                    fullWidth
-                                    id="ocupacion"
-                                    name="ocupacion"
-                                    label="Ocupación"
-                                    value={formik.values.ocupacion}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.ocupacion && Boolean(formik.errors.ocupacion)}
-                                    helperText={formik.touched.ocupacion && formik.errors.ocupacion}
-                                    InputLabelProps={{
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, null)}
-                                />
-                            </Grid>
-                            <Grid xs={12} sm={6} md={3}>
-                                <TextField
-                                    size="small"
-                                    fullWidth
-                                    id="regimen"
-                                    name="regimen"
-                                    label="Régimen"
-                                    value={formik.values.regimen}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.regimen && Boolean(formik.errors.regimen)}
-                                    helperText={formik.touched.regimen && formik.errors.regimen}
-                                    InputLabelProps={{
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, null)}
-                                />
-                            </Grid>
-                            <Grid xs={12} sm={6} md={3}>
-                                <TextField
-                                    size="small"
-                                    fullWidth
-                                    id="rfc"
-                                    name="rfc"
-                                    label="RFC"
-                                    value={formik.values.rfc}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.rfc && Boolean(formik.errors.rfc)}
-                                    helperText={formik.touched.rfc && formik.errors.rfc}
-                                    InputLabelProps={{
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, null)}
-                                />
-                            </Grid>
-                        </Grid>
-                        <Grid container spacing={2} alignItems="center">
-                            <Grid xs={12} sm={6} md={3}>
-                                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-                                    <DateTimePicker
-                                        id="fechaNacimiento"
-                                        name="fechaNacimiento"
-                                        label="Fecha de nacimiento"
-                                        value={formik.values.fechaNacimiento}
-                                        onChange={(newValue) => {
-                                            formik.setFieldValue('fechaNacimiento', newValue)
-                                        }}
-                                        format="DD/MM/YYYY HH:mm:ss"
-                                        viewRenderers={{
-                                            hours: renderTimeViewClock,
-                                            minutes: renderTimeViewClock,
-                                            seconds: renderTimeViewClock,
-                                        }}
-                                        slotProps={{
-                                            textField: {
-                                                name: "fechaNacimiento",
-                                                onBlur: formik.handleBlur,
-                                                error: formik.touched.fechaNacimiento && Boolean(formik.errors.fechaNacimiento),
-                                                helperText: formik.touched.fechaNacimiento && formik.errors.fechaNacimiento,
-                                                size: "small",
-                                                InputLabelProps: {
-                                                    shrink: true,
-                                                },
-                                                onKeyDown: (e) => handleKeyDown(e, null),
-                                            },
-                                        }}
-                                    />
-                                </LocalizationProvider>
-                            </Grid>
-                            <Grid xs={12} sm={6} md={3}>
-                                <TextField
-                                    select
-                                    size="small"
-                                    fullWidth
-                                    id="estadoCivilId"
-                                    name="estadoCivilId"
-                                    label="Estado civil"
-                                    value={formik.values.estadoCivilId === null ? '' : formik.values.estadoCivilId}
-                                    onChange={(e) => {
-                                        const newValue = e.target.value === '' ? '' : Number(e.target.value);
-                                        formik.setFieldValue('estadoCivilId', newValue);
-                                    }}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.estadoCivilId && Boolean(formik.errors.estadoCivilId)}
-                                    helperText={formik.touched.estadoCivilId && formik.errors.estadoCivilId}
-                                    InputLabelProps={{
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, null)}
-                                >
-                                    <MenuItem value="">Seleccionar estado civil</MenuItem>
-                                    {(estadosCiviles || []).map((estadoCivil) => (
-                                        <MenuItem key={estadoCivil.id} value={estadoCivil.id}>
-                                            {estadoCivil.nombre}
-                                        </MenuItem>
-                                    ))}
-                                </TextField>
-                            </Grid>
-                            <Grid xs={12} sm={6} md={3}>
-                                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-                                    <DateTimePicker
-                                        id="fechaRegistro"
-                                        name="fechaRegistro"
-                                        label="Fecha de registro"
-                                        required
-                                        value={formik.values.fechaRegistro}
-                                        onChange={(newValue) => {
-                                            const utcValue = newValue.utc();
-                                            formik.setFieldValue('fechaRegistro', newValue)
-                                        }}
-                                        format="DD/MM/YYYY HH:mm:ss"
-                                        viewRenderers={{
-                                            hours: renderTimeViewClock,
-                                            minutes: renderTimeViewClock,
-                                            seconds: renderTimeViewClock,
-                                        }}
-                                        slotProps={{
-                                            textField: {
-                                                name: "fechaRegistro",
-                                                onBlur: formik.handleBlur,
-                                                error: formik.touched.fechaRegistro && Boolean(formik.errors.fechaRegistro),
-                                                helperText: formik.touched.fechaRegistro && formik.errors.fechaRegistro,
-                                                size: "small",
-                                                InputLabelProps: {
-                                                    sx: redAsteriskStyle,
-                                                    shrink: true,
-                                                },
-                                                onKeyDown: (e) => handleKeyDown(e, estadoRef),
-                                                inputRef: fechaRegistroRef,
-                                            },
-                                        }}
-                                    />
-                                </LocalizationProvider>
-                            </Grid>
-                        </Grid>
-                        <Grid container spacing={2} alignItems="center">
-                            <Grid xs={12} sm={6} md={3}>
-                                <TextField
-                                    size="small"
-                                    fullWidth
-                                    id="telefono1"
-                                    name="telefono1"
-                                    label="Teléfono 1"
-                                    value={formik.values.telefono1}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.telefono1 && Boolean(formik.errors.telefono1)}
-                                    helperText={formik.touched.telefono1 && formik.errors.telefono1}
-                                    InputLabelProps={{
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, null)}
-                                    inputRef={telefono1Ref}
-                                />
-                            </Grid>
-                            <Grid xs={12} sm={6} md={3}>
-                                <TextField
-                                    size="small"
-                                    fullWidth
-                                    id="telefono2"
-                                    name="telefono2"
-                                    label="Teléfono 2"
-                                    value={formik.values.telefono2}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.telefono2 && Boolean(formik.errors.telefono2)}
-                                    helperText={formik.touched.telefono2 && formik.errors.telefono2}
-                                    InputLabelProps={{
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, null)}
-                                    inputRef={rfcRef}
-                                />
-                            </Grid>
-                        </Grid>
-                    </Paper>
-
-                    <Paper elevation={1} sx={{ p: 1, mb: 0 }}>
-                        <Typography sx={{ mb: 1 }}>Domicilios:</Typography>
-                        <List dense sx={{ width: '100%', bgcolor: 'background.paper', borderRadius: 0 }}>
-                            {(formik.values.domicilios || []).map((domicilio, index) => {
-                                const resumen = `${domicilio.calle || ''} ${domicilio.numeroExterior || ''}${domicilio.numeroInterior ? ' Int ' + domicilio.numeroInterior : ''}, ${domicilio.colonia || ''}, ${domicilio.ciudad || ''} ${domicilio.codigoPostal ? 'CP ' + domicilio.codigoPostal : ''}`;
-                                return (
-                                    <Box key={domicilio.id || index}>
-                                        <ListItem
-                                            secondaryAction={
-                                                <Box>
-                                                    {indiceEditando === index ? (
-                                                        <IconButton edge="end" aria-label="done" onClick={() => setIndiceEditando(null)}>
-                                                            <CheckIcon color="success" />
+                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+                    <Cargando loading={cargandoGlobal} />
+                    <Box
+                        component="form"
+                        onSubmit={formik.handleSubmit}
+                        sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '950px', margin: 'auto', mt: 2 }}
+                    >
+                                                 <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
+                             <Typography sx={{ mb: 2 }}>Datos personales:</Typography>
+ 
+                             {/* Fila 1: Nombre, Apellido paterno, Apellido materno, RFC */}
+                             <Grid container spacing={1} sx={{ mb: 2 }}>
+                                 <Grid xs={12} sm={6} md={3}>
+                                     <TextField
+                                         size="small"
+                                         required
+                                         fullWidth
+                                         id="nombre"
+                                         name="nombre"
+                                         label="Nombre"
+                                         value={formik.values.nombre}
+                                         onChange={formik.handleChange}
+                                         onBlur={formik.handleBlur}
+                                         error={formik.touched.nombre && Boolean(formik.errors.nombre)}
+                                         helperText={formik.touched.nombre && formik.errors.nombre}
+                                         InputLabelProps={{
+                                             sx: redAsteriskStyle,
+                                             shrink: true,
+                                         }}
+                                         onKeyDown={(e) => handleKeyDown(e, null)}
+                                         inputRef={apellidoPaternoRef}
+                                     />
+                                 </Grid>
+                                 <Grid xs={12} sm={6} md={3}>
+                                     <TextField
+                                         size="small"
+                                         required
+                                         fullWidth
+                                         id="apellidoPaterno"
+                                         name="apellidoPaterno"
+                                         label="Apellido paterno"
+                                         value={formik.values.apellidoPaterno}
+                                         onChange={formik.handleChange}
+                                         onBlur={formik.handleBlur}
+                                         error={formik.touched.apellidoPaterno && Boolean(formik.errors.apellidoPaterno)}
+                                         helperText={formik.touched.apellidoPaterno && formik.errors.apellidoPaterno}
+                                         InputLabelProps={{
+                                             sx: redAsteriskStyle,
+                                             shrink: true,
+                                         }}
+                                         onKeyDown={(e) => handleKeyDown(e, null)}
+                                         inputRef={apellidoMaternoRef}
+                                     />
+                                 </Grid>
+                                 <Grid xs={12} sm={6} md={3}>
+                                     <TextField
+                                         size="small"
+                                         required
+                                         fullWidth
+                                         id="apellidoMaterno"
+                                         name="apellidoMaterno"
+                                         label="Apellido Materno"
+                                         value={formik.values.apellidoMaterno}
+                                         onChange={formik.handleChange}
+                                         onBlur={formik.handleBlur}
+                                         error={formik.touched.apellidoMaterno && Boolean(formik.errors.apellidoMaterno)}
+                                         helperText={formik.touched.apellidoMaterno && formik.errors.apellidoMaterno}
+                                         InputLabelProps={{
+                                             sx: redAsteriskStyle,
+                                             shrink: true,
+                                         }}
+                                         onKeyDown={(e) => handleKeyDown(e, null)}
+                                         inputRef={calleRef}
+                                     />
+                                 </Grid>
+                                 <Grid xs={12} sm={6} md={3}>
+                                     <TextField
+                                         size="small"
+                                         fullWidth
+                                         id="rfc"
+                                         name="rfc"
+                                         label="RFC"
+                                         value={formik.values.rfc}
+                                         onChange={formik.handleChange}
+                                         onBlur={formik.handleBlur}
+                                         error={formik.touched.rfc && Boolean(formik.errors.rfc)}
+                                         helperText={formik.touched.rfc && formik.errors.rfc}
+                                         InputLabelProps={{
+                                             shrink: true,
+                                         }}
+                                         onKeyDown={(e) => handleKeyDown(e, null)}
+                                     />
+                                 </Grid>
+                             </Grid>
+ 
+                             {/* Fila 2: Ocupación, Régimen, Teléfono 1, Teléfono 2 */}
+                             <Grid container spacing={1} sx={{ mb: 2 }}>
+                                 <Grid xs={12} sm={6} md={3}>
+                                     <TextField
+                                         size="small"
+                                         fullWidth
+                                         id="ocupacion"
+                                         name="ocupacion"
+                                         label="Ocupación"
+                                         value={formik.values.ocupacion}
+                                         onChange={formik.handleChange}
+                                         onBlur={formik.handleBlur}
+                                         error={formik.touched.ocupacion && Boolean(formik.errors.ocupacion)}
+                                         helperText={formik.touched.ocupacion && formik.errors.ocupacion}
+                                         InputLabelProps={{
+                                             shrink: true,
+                                         }}
+                                         onKeyDown={(e) => handleKeyDown(e, null)}
+                                     />
+                                 </Grid>
+                                 <Grid xs={12} sm={6} md={3}>
+                                     <TextField
+                                         size="small"
+                                         fullWidth
+                                         id="regimen"
+                                         name="regimen"
+                                         label="Régimen"
+                                         value={formik.values.regimen}
+                                         onChange={formik.handleChange}
+                                         onBlur={formik.handleBlur}
+                                         error={formik.touched.regimen && Boolean(formik.errors.regimen)}
+                                         helperText={formik.touched.regimen && formik.errors.regimen}
+                                         InputLabelProps={{
+                                             shrink: true,
+                                         }}
+                                         onKeyDown={(e) => handleKeyDown(e, null)}
+                                     />
+                                 </Grid>
+                                 <Grid xs={12} sm={6} md={3}>
+                                     <TextField
+                                         size="small"
+                                         fullWidth
+                                         id="telefono1"
+                                         name="telefono1"
+                                         label="Teléfono 1"
+                                         value={formik.values.telefono1}
+                                         onChange={formik.handleChange}
+                                         onBlur={formik.handleBlur}
+                                         error={formik.touched.telefono1 && Boolean(formik.errors.telefono1)}
+                                         helperText={formik.touched.telefono1 && formik.errors.telefono1}
+                                         InputLabelProps={{
+                                             shrink: true,
+                                         }}
+                                         onKeyDown={(e) => handleKeyDown(e, null)}
+                                         inputRef={telefono2Ref}
+                                     />
+                                 </Grid>
+                                 <Grid xs={12} sm={6} md={3}>
+                                     <TextField
+                                         size="small"
+                                         fullWidth
+                                         id="telefono2"
+                                         name="telefono2"
+                                         label="Teléfono 2"
+                                         value={formik.values.telefono2}
+                                         onChange={formik.handleChange}
+                                         onBlur={formik.handleBlur}
+                                         error={formik.touched.telefono2 && Boolean(formik.errors.telefono2)}
+                                         helperText={formik.touched.telefono2 && formik.errors.telefono2}
+                                         InputLabelProps={{
+                                             shrink: true,
+                                         }}
+                                         onKeyDown={(e) => handleKeyDown(e, null)}
+                                         inputRef={rfcRef}
+                                     />
+                                 </Grid>
+                             </Grid>
+ 
+                             {/* Fila 3: Fecha de nacimiento, Estado civil, Fecha de registro */}
+                             <Grid container spacing={1}>
+                                 <Grid xs={12} sm={6} md={3}>
+                                     <DateTimePicker
+                                         id="fechaNacimiento"
+                                         name="fechaNacimiento"
+                                         label="Fecha de nacimiento"
+                                         value={formik.values.fechaNacimiento}
+                                         onChange={(newValue) => {
+                                             formik.setFieldValue('fechaNacimiento', newValue)
+                                         }}
+                                         format="DD/MM/YYYY HH:mm:ss"
+                                         viewRenderers={{
+                                             hours: renderTimeViewClock,
+                                             minutes: renderTimeViewClock,
+                                             seconds: renderTimeViewClock,
+                                         }}
+                                         slotProps={{
+                                             textField: {
+                                                 name: "fechaNacimiento",
+                                                 onBlur: formik.handleBlur,
+                                                 error: formik.touched.fechaNacimiento && Boolean(formik.errors.fechaNacimiento),
+                                                 helperText: formik.touched.fechaNacimiento && formik.errors.fechaNacimiento,
+                                                 size: "small",
+                                                 fullWidth: true,
+                                                 InputLabelProps: {
+                                                     shrink: true,
+                                                 },
+                                                 onKeyDown: (e) => handleKeyDown(e, null),
+                                             },
+                                         }}
+                                     />
+                                 </Grid>
+                                 
+                                 <Grid xs={12} sm={6} md={3}>
+                                     <DateTimePicker
+                                         id="fechaRegistro"
+                                         name="fechaRegistro"
+                                         label="Fecha de registro"
+                                         required
+                                         value={formik.values.fechaRegistro}
+                                         onChange={(newValue) => {
+                                             const utcValue = newValue.utc();
+                                             formik.setFieldValue('fechaRegistro', newValue)
+                                         }}
+                                         format="DD/MM/YYYY HH:mm:ss"
+                                         viewRenderers={{
+                                             hours: renderTimeViewClock,
+                                             minutes: renderTimeViewClock,
+                                             seconds: renderTimeViewClock,
+                                         }}
+                                         slotProps={{
+                                             textField: {
+                                                 name: "fechaRegistro",
+                                                 onBlur: formik.handleBlur,
+                                                 error: formik.touched.fechaRegistro && Boolean(formik.errors.fechaRegistro),
+                                                 helperText: formik.touched.fechaRegistro && formik.errors.fechaRegistro,
+                                                 size: "small",
+                                                 fullWidth: true,
+                                                 InputLabelProps: {
+                                                     sx: redAsteriskStyle,
+                                                     shrink: true,
+                                                 },
+                                                 onKeyDown: (e) => handleKeyDown(e, estadoRef),
+                                                 inputRef: fechaRegistroRef,
+                                             },
+                                         }}
+                                     />
+                                 </Grid>
+                                 <Grid xs={12} sm={6} md={3}>
+                                     <TextField
+                                         select
+                                         size="small"
+                                         fullWidth
+                                         id="estadoCivilId"
+                                         name="estadoCivilId"
+                                         label="Estado civil"
+                                         value={formik.values.estadoCivilId === null ? '' : formik.values.estadoCivilId}
+                                         onChange={(e) => {
+                                             const newValue = e.target.value === '' ? '' : Number(e.target.value);
+                                             formik.setFieldValue('estadoCivilId', newValue);
+                                         }}
+                                         onBlur={formik.handleBlur}
+                                         error={formik.touched.estadoCivilId && Boolean(formik.errors.estadoCivilId)}
+                                         helperText={formik.touched.estadoCivilId && formik.errors.estadoCivilId}
+                                         InputLabelProps={{
+                                             shrink: true,
+                                         }}
+                                         onKeyDown={(e) => handleKeyDown(e, null)}
+                                     >
+                                         <MenuItem value="">Seleccionar estado civil</MenuItem>
+                                         {(estadosCiviles || []).map((estadoCivil) => (
+                                             <MenuItem key={estadoCivil.id} value={estadoCivil.id}>
+                                                 {estadoCivil.nombre}
+                                             </MenuItem>
+                                         ))}
+                                     </TextField>
+                                 </Grid>
+                                 <Grid xs={12} sm={6} md={3}></Grid>
+                             </Grid>
+                         </Paper>
+                        <Paper elevation={1} sx={{ p: 1, mb: 0 }}>
+                            <Typography sx={{ mb: 1 }}>Domicilios:</Typography>
+                            <List dense sx={{ width: '100%', bgcolor: 'background.paper', borderRadius: 0 }}>
+                                {(formik.values.domicilios || []).map((domicilio, index) => {
+                                    const resumen = `${domicilio.calle || ''} ${domicilio.numeroExterior || ''}${domicilio.numeroInterior ? ' Int ' + domicilio.numeroInterior : ''}, ${domicilio.colonia || ''}, ${domicilio.ciudad || ''} ${domicilio.codigoPostal ? 'CP ' + domicilio.codigoPostal : ''}`;
+                                    return (
+                                        <Box key={domicilio.id || index}>
+                                            <ListItem
+                                                secondaryAction={
+                                                    <Box>
+                                                        {indiceEditando === index ? (
+                                                            <IconButton edge="end" aria-label="done" onClick={() => setIndiceEditando(null)}>
+                                                                <CheckIcon color="success" />
+                                                            </IconButton>
+                                                        ) : (
+                                                            <IconButton edge="end" aria-label="edit" onClick={() => setIndiceEditando(index)}>
+                                                                <EditIcon color="primary" />
+                                                            </IconButton>
+                                                        )}
+                                                        <IconButton edge="end" aria-label="delete" onClick={() => {
+                                                            const arr = [...formik.values.domicilios];
+                                                            arr.splice(index, 1);
+                                                            formik.setFieldValue('domicilios', arr);
+                                                            if (indiceEditando === index) setIndiceEditando(null);
+                                                        }}>
+                                                            <DeleteIcon color="warning" />
                                                         </IconButton>
-                                                    ) : (
-                                                        <IconButton edge="end" aria-label="edit" onClick={() => setIndiceEditando(index)}>
-                                                            <EditIcon color="primary" />
-                                                        </IconButton>
-                                                    )}
-                                                    <IconButton edge="end" aria-label="delete" onClick={() => {
-                                                        const arr = [...formik.values.domicilios];
-                                                        arr.splice(index, 1);
-                                                        formik.setFieldValue('domicilios', arr);
-                                                        if (indiceEditando === index) setIndiceEditando(null);
-                                                    }}>
-                                                        <DeleteIcon color="warning" />
-                                                    </IconButton>
+                                                    </Box>
+                                                }
+                                            >
+                                                <ListItemText
+                                                    primary={resumen.trim() || `Domicilio ${index + 1}`}
+                                                    secondary={domicilio.entreCalles ? `Entre calles: ${domicilio.entreCalles}` : null}
+                                                />
+                                            </ListItem>
+                                            {indiceEditando === index && (
+                                                <Box sx={{ px: 2, pb: 1 }}>
+                                                    <Grid container spacing={1}>
+                                                        <Grid xs={12} sm={6} md={3}>
+                                                            <TextField size="small" fullWidth label="Calle" value={domicilio.calle}
+                                                                onChange={(e) => { const a = [...formik.values.domicilios]; a[index].calle = e.target.value; formik.setFieldValue('domicilios', a); }} />
+                                                        </Grid>
+                                                        <Grid xs={12} sm={3} md={1.5}>
+                                                            <TextField size="small" fullWidth label="Num. Interior" value={domicilio.numeroInterior}
+                                                                onChange={(e) => { const a = [...formik.values.domicilios]; a[index].numeroInterior = e.target.value; formik.setFieldValue('domicilios', a); }} />
+                                                        </Grid>
+                                                        <Grid xs={12} sm={3} md={1.5}>
+                                                            <TextField size="small" fullWidth label="Num. Exterior" value={domicilio.numeroExterior}
+                                                                onChange={(e) => { const a = [...formik.values.domicilios]; a[index].numeroExterior = e.target.value; formik.setFieldValue('domicilios', a); }} />
+                                                        </Grid>
+                                                        <Grid xs={12} sm={6} md={3}>
+                                                            <TextField size="small" fullWidth label="Colonia" value={domicilio.colonia}
+                                                                onChange={(e) => { const a = [...formik.values.domicilios]; a[index].colonia = e.target.value; formik.setFieldValue('domicilios', a); }} />
+                                                        </Grid>
+                                                        <Grid xs={12} sm={6} md={3}>
+                                                            <TextField size="small" fullWidth label="Ciudad" value={domicilio.ciudad}
+                                                                onChange={(e) => { const a = [...formik.values.domicilios]; a[index].ciudad = e.target.value; formik.setFieldValue('domicilios', a); }} />
+                                                        </Grid>
+                                                        <Grid xs={12} sm={3} md={1.5}>
+                                                            <TextField size="small" fullWidth label="CP" value={domicilio.codigoPostal}
+                                                                onChange={(e) => { const a = [...formik.values.domicilios]; a[index].codigoPostal = e.target.value; formik.setFieldValue('domicilios', a); }} />
+                                                        </Grid>
+                                                        <Grid xs={12} sm={6} md={3}>
+                                                            <TextField select size="small" fullWidth label="Estado" value={domicilio.estadoId || ''}
+                                                                onChange={(e) => { const a = [...formik.values.domicilios]; a[index].estadoId = e.target.value === '' ? '' : Number(e.target.value); formik.setFieldValue('domicilios', a); }}>
+                                                                <MenuItem value="">Seleccionar</MenuItem>
+                                                                {(estados || []).map((edo) => (
+                                                                    <MenuItem key={edo.id} value={edo.id}>{edo.nombre}</MenuItem>
+                                                                ))}
+                                                            </TextField>
+                                                        </Grid>
+                                                        <Grid xs={12} sm={3} md={1.5}>
+                                                            <TextField size="small" fullWidth label="Entre calles" value={domicilio.entreCalles}
+                                                                onChange={(e) => { const a = [...formik.values.domicilios]; a[index].entreCalles = e.target.value; formik.setFieldValue('domicilios', a); }} />
+                                                        </Grid>
+                                                    </Grid>
                                                 </Box>
-                                            }
-                                        >
-                                            <ListItemText
-                                                primary={resumen.trim() || `Domicilio ${index + 1}`}
-                                                secondary={domicilio.entreCalles ? `Entre calles: ${domicilio.entreCalles}` : null}
-                                            />
-                                        </ListItem>
-                                        {indiceEditando === index && (
-                                            <Box sx={{ px: 2, pb: 1 }}>
-                                                <Grid container spacing={1}>
-                                                    <Grid xs={12} sm={3}>
-                                                        <TextField size="small" fullWidth label="Calle" value={domicilio.calle}
-                                                            onChange={(e) => { const a = [...formik.values.domicilios]; a[index].calle = e.target.value; formik.setFieldValue('domicilios', a); }} />
-                                                    </Grid>
-                                                    <Grid xs={12} sm={2}>
-                                                        <TextField size="small" fullWidth label="Num. Interior" value={domicilio.numeroInterior}
-                                                            onChange={(e) => { const a = [...formik.values.domicilios]; a[index].numeroInterior = e.target.value; formik.setFieldValue('domicilios', a); }} />
-                                                    </Grid>
-                                                    <Grid xs={12} sm={2}>
-                                                        <TextField size="small" fullWidth label="Num. Exterior" value={domicilio.numeroExterior}
-                                                            onChange={(e) => { const a = [...formik.values.domicilios]; a[index].numeroExterior = e.target.value; formik.setFieldValue('domicilios', a); }} />
-                                                    </Grid>
-                                                    <Grid xs={12} sm={2}>
-                                                        <TextField size="small" fullWidth label="Colonia" value={domicilio.colonia}
-                                                            onChange={(e) => { const a = [...formik.values.domicilios]; a[index].colonia = e.target.value; formik.setFieldValue('domicilios', a); }} />
-                                                    </Grid>
-                                                    <Grid xs={12} sm={2}>
-                                                        <TextField size="small" fullWidth label="Ciudad" value={domicilio.ciudad}
-                                                            onChange={(e) => { const a = [...formik.values.domicilios]; a[index].ciudad = e.target.value; formik.setFieldValue('domicilios', a); }} />
-                                                    </Grid>
-                                                    <Grid xs={12} sm={1}>
-                                                        <TextField size="small" fullWidth label="CP" value={domicilio.codigoPostal}
-                                                            onChange={(e) => { const a = [...formik.values.domicilios]; a[index].codigoPostal = e.target.value; formik.setFieldValue('domicilios', a); }} />
-                                                    </Grid>
-                                                    <Grid xs={12} sm={4}>
-                                                        <TextField select size="small" fullWidth label="Estado" value={domicilio.estadoId || ''}
-                                                            onChange={(e) => { const a = [...formik.values.domicilios]; a[index].estadoId = e.target.value === '' ? '' : Number(e.target.value); formik.setFieldValue('domicilios', a); }}>
-                                                            <MenuItem value="">Seleccionar</MenuItem>
-                                                            {(estados || []).map((edo) => (
-                                                                <MenuItem key={edo.id} value={edo.id}>{edo.nombre}</MenuItem>
-                                                            ))}
-                                                        </TextField>
-                                                    </Grid>
-                                                    <Grid xs={12} sm={4}>
-                                                        <TextField size="small" fullWidth label="Entre calles" value={domicilio.entreCalles}
-                                                            onChange={(e) => { const a = [...formik.values.domicilios]; a[index].entreCalles = e.target.value; formik.setFieldValue('domicilios', a); }} />
-                                                    </Grid>
-                                                </Grid>
-                                            </Box>
-                                        )}
-                                        <Divider />
-                                    </Box>
-                                );
-                            })}
-                        </List>
-                        <Box sx={{ mt: 1 }}>
-                            <Button startIcon={<AddLocationAltIcon />} variant="contained" onClick={() => {
-                                setNuevoDomicilio({ calle: '', numeroInterior: '', numeroExterior: '', colonia: '', ciudad: '', codigoPostal: '', entreCalles: '', estadoId: '' });
-                                setDialogoDomicilioAbierto(true);
-                            }}>Agregar domicilio</Button>
-                        </Box>
-                    </Paper>
+                                            )}
+                                            <Divider />
+                                        </Box>
+                                    );
+                                })}
+                            </List>
+                            <Box sx={{ mt: 1 }}>
+                                <Button startIcon={<AddLocationAltIcon />} variant="contained" onClick={() => {
+                                    setNuevoDomicilio({ calle: '', numeroInterior: '', numeroExterior: '', colonia: '', ciudad: '', codigoPostal: '', entreCalles: '', estadoId: '' });
+                                    setDialogoDomicilioAbierto(true);
+                                }}>Agregar domicilio</Button>
+                            </Box>
+                        </Paper>
 
-                    <Dialog open={dialogoDomicilioAbierto} onClose={() => setDialogoDomicilioAbierto(false)} fullWidth maxWidth="sm">
-                        <DialogContent>
-                            <Typography variant="h6" gutterBottom>Nuevo domicilio</Typography>
-                            <Grid container spacing={1}>
-                                <Grid xs={12} sm={6}>
-                                    <TextField size="small" fullWidth label="Calle" required value={nuevoDomicilio.calle}
-                                        onChange={(e) => setNuevoDomicilio({ ...nuevoDomicilio, calle: e.target.value })}
-                                        InputLabelProps={{ sx: redAsteriskStyle, shrink: true }} />
+                        <Dialog open={dialogoDomicilioAbierto} onClose={() => setDialogoDomicilioAbierto(false)} fullWidth maxWidth="sm">
+                            <DialogContent>
+                                <Typography variant="h6" gutterBottom>Nuevo domicilio</Typography>
+                                <Grid container spacing={1}>
+                                    <Grid xs={12} sm={12}>
+                                        <TextField size="small" fullWidth label="Calle" required value={nuevoDomicilio.calle}
+                                            onChange={(e) => setNuevoDomicilio({ ...nuevoDomicilio, calle: e.target.value })}
+                                            InputLabelProps={{ sx: redAsteriskStyle, shrink: true }} />
+                                    </Grid>
+                                    <Grid xs={12} sm={6}>
+                                        <TextField size="small" fullWidth label="Num. Interior" value={nuevoDomicilio.numeroInterior}
+                                            onChange={(e) => setNuevoDomicilio({ ...nuevoDomicilio, numeroInterior: e.target.value })} />
+                                    </Grid>
+                                    <Grid xs={12} sm={6}>
+                                        <TextField size="small" fullWidth label="Num. Exterior" value={nuevoDomicilio.numeroExterior}
+                                            onChange={(e) => setNuevoDomicilio({ ...nuevoDomicilio, numeroExterior: e.target.value })} />
+                                    </Grid>
+                                    <Grid xs={12} sm={6}>
+                                        <TextField size="small" fullWidth label="Colonia" value={nuevoDomicilio.colonia}
+                                            onChange={(e) => setNuevoDomicilio({ ...nuevoDomicilio, colonia: e.target.value })} />
+                                    </Grid>
+                                    <Grid xs={12} sm={6}>
+                                        <TextField size="small" fullWidth label="Ciudad" value={nuevoDomicilio.ciudad}
+                                            onChange={(e) => setNuevoDomicilio({ ...nuevoDomicilio, ciudad: e.target.value })} />
+                                    </Grid>
+                                    <Grid xs={12} sm={6}>
+                                        <TextField size="small" fullWidth label="CP" value={nuevoDomicilio.codigoPostal}
+                                            onChange={(e) => setNuevoDomicilio({ ...nuevoDomicilio, codigoPostal: e.target.value })} />
+                                    </Grid>
+                                    <Grid xs={12} sm={6}>
+                                        <TextField select size="small" fullWidth label="Estado" value={nuevoDomicilio.estadoId || ''}
+                                            onChange={(e) => setNuevoDomicilio({ ...nuevoDomicilio, estadoId: e.target.value === '' ? '' : Number(e.target.value) })}>
+                                            <MenuItem value="">Seleccionar</MenuItem>
+                                            {(estados || []).map((edo) => (
+                                                <MenuItem key={edo.id} value={edo.id}>{edo.nombre}</MenuItem>
+                                            ))}
+                                        </TextField>
+                                    </Grid>
+                                    <Grid xs={12}>
+                                        <TextField size="small" fullWidth label="Entre calles" value={nuevoDomicilio.entreCalles}
+                                            onChange={(e) => setNuevoDomicilio({ ...nuevoDomicilio, entreCalles: e.target.value })} />
+                                    </Grid>
                                 </Grid>
-                                <Grid xs={12} sm={3}>
-                                    <TextField size="small" fullWidth label="Num. Interior" value={nuevoDomicilio.numeroInterior}
-                                        onChange={(e) => setNuevoDomicilio({ ...nuevoDomicilio, numeroInterior: e.target.value })} />
-                                </Grid>
-                                <Grid xs={12} sm={3}>
-                                    <TextField size="small" fullWidth label="Num. Exterior" value={nuevoDomicilio.numeroExterior}
-                                        onChange={(e) => setNuevoDomicilio({ ...nuevoDomicilio, numeroExterior: e.target.value })} />
-                                </Grid>
-                                <Grid xs={12} sm={6}>
-                                    <TextField size="small" fullWidth label="Colonia" value={nuevoDomicilio.colonia}
-                                        onChange={(e) => setNuevoDomicilio({ ...nuevoDomicilio, colonia: e.target.value })} />
-                                </Grid>
-                                <Grid xs={12} sm={4}>
-                                    <TextField size="small" fullWidth label="Ciudad" value={nuevoDomicilio.ciudad}
-                                        onChange={(e) => setNuevoDomicilio({ ...nuevoDomicilio, ciudad: e.target.value })} />
-                                </Grid>
-                                <Grid xs={12} sm={2}>
-                                    <TextField size="small" fullWidth label="CP" value={nuevoDomicilio.codigoPostal}
-                                        onChange={(e) => setNuevoDomicilio({ ...nuevoDomicilio, codigoPostal: e.target.value })} />
-                                </Grid>
-                                <Grid xs={12} sm={4}>
-                                    <TextField select size="small" fullWidth label="Estado" value={nuevoDomicilio.estadoId || ''}
-                                        onChange={(e) => setNuevoDomicilio({ ...nuevoDomicilio, estadoId: e.target.value === '' ? '' : Number(e.target.value) })}>
-                                        <MenuItem value="">Seleccionar</MenuItem>
-                                        {(estados || []).map((edo) => (
-                                            <MenuItem key={edo.id} value={edo.id}>{edo.nombre}</MenuItem>
-                                        ))}
-                                    </TextField>
-                                </Grid>
-                                <Grid xs={12}>
-                                    <TextField size="small" fullWidth label="Entre calles" value={nuevoDomicilio.entreCalles}
-                                        onChange={(e) => setNuevoDomicilio({ ...nuevoDomicilio, entreCalles: e.target.value })} />
-                                </Grid>
-                            </Grid>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button variant="text" onClick={() => setDialogoDomicilioAbierto(false)}>Cancelar</Button>
-                            <Button variant="contained" onClick={() => {
-                                const arr = [...(formik.values.domicilios || [])];
-                                arr.push({ ...nuevoDomicilio });
-                                formik.setFieldValue('domicilios', arr);
-                                setDialogoDomicilioAbierto(false);
-                            }}>Guardar</Button>
-                        </DialogActions>
-                    </Dialog>
-                    <Paper elevation={1} sx={{ p: 1, mb: 0 }}>
-                    <Stack direction="row" spacing={1}>
-                        <Button color="primary" startIcon={<SaveIcon />} variant="contained" type="submit" disabled={formik.isSubmitting}>
-                            {formik.values.id ? 'Actualizar' : 'Agregar'}
-                        </Button>
-                        <Button color="primary" startIcon={<RefreshIcon />} variant="contained" onClick={handleReset} disabled={formik.isSubmitting}>Reiniciar</Button>
-                        <Button color={operacionTerminada ? "primary" : "warning"}
-                            variant="contained"
-                            startIcon={operacionTerminada ? <ExitToAppIcon /> : <CancelIcon />}
-                            onClick={onClose}
-                            className="btn btn-warning" >
-                            {operacionTerminada ? "Salir" : "Cancelar"}
-                        </Button>
-                    </Stack>
-                    </Paper>
-                </Box>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button variant="text" onClick={() => setDialogoDomicilioAbierto(false)}>Cancelar</Button>
+                                <Button variant="contained" onClick={() => {
+                                    const arr = [...(formik.values.domicilios || [])];
+                                    arr.push({ ...nuevoDomicilio });
+                                    formik.setFieldValue('domicilios', arr);
+                                    setDialogoDomicilioAbierto(false);
+                                }}>Guardar</Button>
+                            </DialogActions>
+                        </Dialog>
+                        <Paper elevation={1} sx={{ p: 1, mb: 0 }}>
+                            <Stack direction="row" spacing={1}>
+                                <Button color="primary" startIcon={<SaveIcon />} variant="contained" type="submit" disabled={formik.isSubmitting}>
+                                    {formik.values.id ? 'Actualizar' : 'Agregar'}
+                                </Button>
+                                <Button color="primary" startIcon={<RefreshIcon />} variant="contained" onClick={handleReset} disabled={formik.isSubmitting}>Reiniciar</Button>
+                                <Button color={operacionTerminada ? "primary" : "warning"}
+                                    variant="contained"
+                                    startIcon={operacionTerminada ? <ExitToAppIcon /> : <CancelIcon />}
+                                    onClick={onClose}
+                                    className="btn btn-warning" >
+                                    {operacionTerminada ? "Salir" : "Cancelar"}
+                                </Button>
+                            </Stack>
+                        </Paper>
+                    </Box>
+                </LocalizationProvider>
             </DialogContent>
             <DialogActions>
             </DialogActions>
