@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { eliminarClienteApi } from "../../api/ClienteApiService";
 import { Button, Dialog, DialogTitle, DialogContent, Typography, Box, Chip, IconButton } from "@mui/material";
 import FormularioCliente from "./FormularioCliente";
@@ -46,7 +46,7 @@ export default function ListarClientes({ refrescar, regs }) {
       headerClassName: "super-app-theme--header",
       getActions: (params) => ActionButtons({
         onEdit: () => listadoHook.abrirFomularioEditar({ id: params.row.id }),
-        onDelete: () => listadoHook.abrirDialogoEliminar(params.id, regs)
+        onDelete: () => listadoHook.abrirDialogoEliminar(params.id, Array.isArray(regs?.rows) ? regs.rows : [])
       }),
     },
     { field: "id", headerName: "Id", width: 60, headerClassName: "super-app-theme--header", pinned: 'left' },
@@ -169,16 +169,35 @@ export default function ListarClientes({ refrescar, regs }) {
     </>
   );
 
+  const [paginationModel, setPaginationModel] = useState({ page: regs?.page ?? 0, pageSize: regs?.pageSize ?? 50 });
+
+  useEffect(() => {
+    if (typeof regs?.page === 'number' && typeof regs?.pageSize === 'number') {
+      setPaginationModel({ page: regs.page, pageSize: regs.pageSize });
+    }
+  }, [regs?.page, regs?.pageSize]);
+
   const DataGridComponent = () => (
     <DataGridBase
       columns={columnas}
-      rows={Array.isArray(regs) ? regs : []}
+      rows={Array.isArray(regs?.rows) ? regs.rows : []}
       onNew={listadoHook.abrirFomularioNuevo}
-      onRefresh={refrescar}
+      onRefresh={() => refrescar(paginationModel?.page ?? 0, paginationModel?.pageSize ?? 50)}
       commonGridProps={commonGridProps}
       localeText={localeText}
       tablaMaximizada={listadoHook.tablaMaximizada}
       controlarTabla={listadoHook.controlarTabla}
+      props={{
+        pagination: true,
+        paginationMode: 'server',
+        rowCount: regs?.total ?? 0,
+        paginationModel,
+        onPaginationModelChange: (model) => {
+          setPaginationModel(model);
+          refrescar(model.page, model.pageSize);
+        },
+        pageSizeOptions: [25, 50, 100],
+      }}
     />
   );
 

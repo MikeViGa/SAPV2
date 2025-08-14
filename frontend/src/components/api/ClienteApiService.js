@@ -14,8 +14,12 @@ export const crearClienteApi
 export const obtenerClienteApi
     = (id) => apiClient.get(`/clientes/${id}`)
 
-export const obtenerClientesApi = () => {
-    return apiClient.get(`/clientes`)
+export const obtenerClientesApi = (page = 0, size = 50, sort) => {
+    const params = new URLSearchParams();
+    params.append('page', page);
+    params.append('size', size);
+    if (sort) params.append('sort', sort);
+    return apiClient.get(`/clientes?${params.toString()}`)
 }
 
 export const obtenerClienteNombreApi

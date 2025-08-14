@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { Button } from "@mui/material";
 import { eliminarUsuarioApi, obtenerReporteUsuarioApi } from "../../api/UsuarioApiService";
 import StatusCell from "../dashboard/elementos/StatusCell";
@@ -35,7 +36,7 @@ export default function ListarUsuarios({ refrescar, regs }) {
       headerClassName: "super-app-theme--header",
       getActions: (params) => ActionButtons({
         onEdit: () => listadoHook.abrirFomularioEditar(params.row),
-        onDelete: () => listadoHook.abrirDialogoEliminar(params.id, regs)
+        onDelete: () => listadoHook.abrirDialogoEliminar(params.id, Array.isArray(regs?.rows) ? regs.rows : [])
       }),
     },
     { field: "id", headerName: "Id", width: 60, headerClassName: "super-app-theme--header", pinned: 'left' },
@@ -46,21 +47,34 @@ export default function ListarUsuarios({ refrescar, regs }) {
       width: 160,
       headerClassName: "super-app-theme--header",
       renderCell: (params) => (
-        <span>{params.row.rol?.nombre || 'Sin rol'}</span>
+        <span>{params.row.rolNombre || 'Sin rol'}</span>
       )
     }
   ];
 
+  const [paginationModel, setPaginationModel] = useState({ page: regs?.page ?? 0, pageSize: regs?.pageSize ?? 50 });
+
   const DataGridComponent = () => (
     <DataGridBase
       columns={columnas}
-      rows={regs}
+      rows={Array.isArray(regs?.rows) ? regs.rows : []}
       onNew={listadoHook.abrirFomularioNuevo}
-      onRefresh={refrescar}
+      onRefresh={() => refrescar(paginationModel?.page ?? 0, paginationModel?.pageSize ?? 50)}
       commonGridProps={commonGridProps}
       localeText={localeText}
       tablaMaximizada={listadoHook.tablaMaximizada}
       controlarTabla={listadoHook.controlarTabla}
+      props={{
+        pagination: true,
+        paginationMode: 'server',
+        rowCount: regs?.total ?? 0,
+        paginationModel,
+        onPaginationModelChange: (model) => {
+          setPaginationModel(model);
+          refrescar(model.page, model.pageSize);
+        },
+        pageSizeOptions: [25, 50, 100],
+      }}
     />
   );
 

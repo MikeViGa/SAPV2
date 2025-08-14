@@ -8,6 +8,9 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.pla.app.model.Usuario;
+import com.pla.app.dto.usuarios.UsuarioListadoProjection;
+import com.pla.app.dto.usuarios.UsuarioResponseDTO;
 import com.pla.app.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Date;
@@ -59,14 +64,12 @@ public class UsuarioController {
 	}
 
 	// READ ALL
-	@GetMapping("/usuarios")
-	public ResponseEntity<List<Usuario>> obtenerUsuarios() {
-		long startTime = System.currentTimeMillis();
-		List<Usuario> usuarios = usuarioServicio.obtenerUsuarios();
-		long stopTime = System.currentTimeMillis();
-        System.out.println("Tiempo total en seg: " + (stopTime - startTime)/1000);
-		return new ResponseEntity<>(usuarios, HttpStatus.OK);
-	}
+    @GetMapping("/usuarios")
+    public ResponseEntity<Page<UsuarioResponseDTO>> obtenerUsuarios(@PageableDefault(size = 50) Pageable pageable) {
+        Page<UsuarioListadoProjection> pagina = usuarioServicio.obtenerUsuariosPaginado(pageable);
+        Page<UsuarioResponseDTO> respuesta = pagina.map(p -> new UsuarioResponseDTO(p.getId(), p.getNombre(), p.getRolNombre()));
+        return new ResponseEntity<>(respuesta, HttpStatus.OK);
+    }
 
 	// GETALLBYNAME
 	@GetMapping("/obtenerusuarionombre")

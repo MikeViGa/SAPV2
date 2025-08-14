@@ -6,8 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.pla.app.model.EstadoCivil;
 import com.pla.app.service.EstadoCivilService;
+import com.pla.app.dto.estadosciviles.EstadoCivilOptionProjection;
 
 @RestController
 public class EstadoCivilController {
@@ -16,8 +16,8 @@ public class EstadoCivilController {
     private EstadoCivilService estadoCivilService;
 
     @GetMapping("/estadosciviles")
-    public ResponseEntity<List<EstadoCivil>> obtenerEstadosCiviles() {
-        return new ResponseEntity<>(estadoCivilService.obtenerEstadosCiviles(), HttpStatus.OK);
+    public ResponseEntity<List<EstadoCivilOptionProjection>> obtenerEstadosCiviles() {
+        return new ResponseEntity<>(estadoCivilService.obtenerEstadosCivilesOpciones(), HttpStatus.OK);
     }
 }
 

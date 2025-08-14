@@ -27,6 +27,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
 import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
 
+
 export default function FormularioCliente({ modo, registro, open, onClose, refrescar }) {
     const { addSnackbar } = useSnackbar();
     const [operacionTerminada, setOperacionTerminada] = useState(false);
@@ -134,17 +135,29 @@ export default function FormularioCliente({ modo, registro, open, onClose, refre
         if (!open) return;
         let isActive = true;
         setCatalogosCargados(false);
+
         (async () => {
             try {
-                const [respEc, respEstados] = await Promise.allSettled([
-                    obtenerEstadosCivilesApi(),
-                    obtenerEstadosApi(),
-                ]);
-                if (!isActive) return;
-                if (respEc.status === 'fulfilled') setEstadosCiviles(respEc.value.data || []);
-                else console.error('Error cargando estados civiles', respEc.reason);
-                if (respEstados.status === 'fulfilled') setEstados(respEstados.value.data || []);
-                else console.error('Error cargando estados', respEstados.reason);
+                const ecCache = sessionStorage.getItem('catalogo_estados_civiles');
+                const estadosCache = sessionStorage.getItem('catalogo_estados');
+
+                if (ecCache) setEstadosCiviles(JSON.parse(ecCache));
+                else {
+                    const resp = await obtenerEstadosCivilesApi();
+                    if (!isActive) return;
+                    const data = resp?.data || [];
+                    setEstadosCiviles(data);
+                    sessionStorage.setItem('catalogo_estados_civiles', JSON.stringify(data));
+                }
+
+                if (estadosCache) setEstados(JSON.parse(estadosCache));
+                else {
+                    const resp = await obtenerEstadosApi();
+                    if (!isActive) return;
+                    const data = resp?.data || [];
+                    setEstados(data);
+                    sessionStorage.setItem('catalogo_estados', JSON.stringify(data));
+                }
             } catch (e) {
                 if (!isActive) return;
                 console.error('Error cargando catálogos:', e);
@@ -153,6 +166,7 @@ export default function FormularioCliente({ modo, registro, open, onClose, refre
                 setCatalogosCargados(true);
             }
         })();
+
         return () => { isActive = false; };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open]);

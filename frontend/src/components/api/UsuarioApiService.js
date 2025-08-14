@@ -9,8 +9,13 @@ export const obtenerUsuarioApi
     = (id) => apiClient.get(`/usuarios/${id}`)
 
 //READ ALL
-export const obtenerUsuariosApi
-    = () => apiClient.get(`/usuarios`)
+export const obtenerUsuariosApi = (page = 0, size = 50, sort) => {
+    const params = new URLSearchParams();
+    params.append('page', page);
+    params.append('size', size);
+    if (sort) params.append('sort', sort);
+    return apiClient.get(`/usuarios?${params.toString()}`)
+}
 
 //AUTOCOMPLETE
 export const obtenerUsuarioNombreApi

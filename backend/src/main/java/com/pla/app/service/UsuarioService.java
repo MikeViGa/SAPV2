@@ -9,6 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import com.pla.app.model.Usuario;
 import com.pla.app.repository.UsuarioRepository;
+import com.pla.app.dto.usuarios.UsuarioListadoProjection;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import net.sf.jasperreports.engine.JasperRunManager;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +50,11 @@ public class UsuarioService {
     @Transactional(readOnly = true)
     public List<Usuario> obtenerUsuarios() {
         return usuarioRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<UsuarioListadoProjection> obtenerUsuariosPaginado(Pageable pageable) {
+        return usuarioRepository.findListado(pageable);
     }
 
     @Transactional(readOnly = true)

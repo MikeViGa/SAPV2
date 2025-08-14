@@ -10,6 +10,9 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.pla.app.model.Cliente;
 import com.pla.app.dto.clientes.ClienteResponseDTO;
+import com.pla.app.dto.clientes.ClienteListadoProjection;
 import com.pla.app.mapper.ClienteMapper;
 import com.pla.app.dto.clientes.ClienteConDomiciliosResponseDTO;
 import com.pla.app.service.ClienteService;
@@ -67,14 +71,28 @@ public class ClienteController {
     }
 
 	// READ ALL
-	@GetMapping("/clientes")
-	public ResponseEntity<List<ClienteResponseDTO>> obtenerClientes() {
-			List<Cliente> clientes = clienteServicio.obtenerClientes();
-			List<ClienteResponseDTO> respuesta = clientes.stream()
-					.map(clienteMapper::toResponseDTO)
-					.collect(Collectors.toList());
-			return new ResponseEntity<>(respuesta, HttpStatus.OK);
-	}
+    @GetMapping("/clientes")
+    public ResponseEntity<Page<ClienteResponseDTO>> obtenerClientes(@PageableDefault(size = 50) Pageable pageable) {
+            Page<ClienteListadoProjection> pagina = clienteServicio.obtenerClientesPaginado(pageable);
+            Page<ClienteResponseDTO> respuesta = pagina.map(p -> {
+                ClienteResponseDTO dto = new ClienteResponseDTO();
+                dto.setId(p.getId());
+                dto.setNombre(p.getNombre());
+                dto.setApellidoPaterno(p.getApellidoPaterno());
+                dto.setApellidoMaterno(p.getApellidoMaterno());
+                dto.setFechaNacimiento(p.getFechaNacimiento() != null ? new java.text.SimpleDateFormat("dd/MM/yyyy").format(p.getFechaNacimiento()) : null);
+                dto.setRfc(p.getRfc());
+                dto.setFechaRegistro(p.getFechaRegistro() != null ? p.getFechaRegistro().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) : null);
+                dto.setOcupacion(p.getOcupacion());
+                dto.setTelefono1(p.getTelefono1());
+                dto.setTelefono2(p.getTelefono2());
+                dto.setRegimen(p.getRegimen());
+                dto.setEstadoCivilNombre(p.getEstadoCivilNombre());
+                dto.setCantidadDomicilios(p.getCantidadDomicilios() != null ? p.getCantidadDomicilios().intValue() : 0);
+                return dto;
+            });
+            return new ResponseEntity<>(respuesta, HttpStatus.OK);
+    }
 
 /* 
 	@GetMapping("/obtenercoloniasclientes")

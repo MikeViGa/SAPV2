@@ -8,6 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import com.pla.app.model.Cliente;
 import com.pla.app.repository.ClienteRepository;
+import com.pla.app.dto.clientes.ClienteListadoProjection;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import net.sf.jasperreports.engine.JasperRunManager;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +44,11 @@ public class ClienteService {
     @Transactional(readOnly = true)
     public List<Cliente> obtenerClientes() {
         return clienteRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ClienteListadoProjection> obtenerClientesPaginado(Pageable pageable) {
+        return clienteRepository.findListado(pageable);
     }
 
     @Transactional(readOnly = true)

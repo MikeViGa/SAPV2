@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.pla.app.model.EstadoCivil;
 import com.pla.app.repository.EstadoCivilRepository;
+import com.pla.app.dto.estadosciviles.EstadoCivilOptionProjection;
 
 @Service
 public class EstadoCivilService {
@@ -15,6 +16,11 @@ public class EstadoCivilService {
     @Transactional(readOnly = true)
     public List<EstadoCivil> obtenerEstadosCiviles() {
         return estadoCivilRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public List<EstadoCivilOptionProjection> obtenerEstadosCivilesOpciones() {
+        return estadoCivilRepository.findAllOptions();
     }
 }
 
