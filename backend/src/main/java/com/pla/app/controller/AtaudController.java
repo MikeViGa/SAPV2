@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.pla.app.model.Ataud;
+import com.pla.app.dto.ataudes.AtaudResponseDTO;
 import com.pla.app.service.AtaudService;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Date;
@@ -39,12 +40,15 @@ public class AtaudController {
 	}
 
 	// READ 1
-	@GetMapping("/ataudes/{id}")
-	public ResponseEntity<Ataud> obtenerAtaud(@PathVariable Long id) {
+    @GetMapping("/ataudes/{id}")
+    public ResponseEntity<AtaudResponseDTO> obtenerAtaud(@PathVariable Long id) {
 		try {
 			Optional<Ataud> ataud = ataudServicio.obtenerAtaudPorId(id);
 			if (ataud.isPresent()) {
-				return new ResponseEntity<>(ataud.get(), HttpStatus.OK);
+                AtaudResponseDTO dto = new AtaudResponseDTO();
+                dto.setId(ataud.get().getId());
+                dto.setDescripcion(ataud.get().getDescripcion());
+                return new ResponseEntity<>(dto, HttpStatus.OK);
 			} else {
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
@@ -54,10 +58,16 @@ public class AtaudController {
 	}
 
 	// READ ALL
-	@GetMapping("/ataudes")
-	public ResponseEntity<List<Ataud>> obtenerAtaudes() {
-		List<Ataud> ataudes = ataudServicio.obtenerAtaudesTodos();
-		return new ResponseEntity<>(ataudes, HttpStatus.OK);
+    @GetMapping("/ataudes")
+    public ResponseEntity<List<AtaudResponseDTO>> obtenerAtaudes() {
+        List<Ataud> ataudes = ataudServicio.obtenerAtaudesTodos();
+        List<AtaudResponseDTO> respuesta = ataudes.stream().map(a -> {
+            AtaudResponseDTO dto = new AtaudResponseDTO();
+            dto.setId(a.getId());
+            dto.setDescripcion(a.getDescripcion());
+            return dto;
+        }).toList();
+        return new ResponseEntity<>(respuesta, HttpStatus.OK);
 	}
 
 	// DELETE

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.pla.app.model.ListaDePrecios;
+import com.pla.app.dto.listasprecios.ListaDePreciosResponseDTO;
 import com.pla.app.service.ListaDePreciosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Date;
@@ -39,12 +40,16 @@ public class ListaDePreciosController {
 	}
 
 	// READ 1
-	@GetMapping("/listasdeprecios/{id}")
-	public ResponseEntity<ListaDePrecios> obtenerListaDePrecios(@PathVariable Long id) {
+    @GetMapping("/listasdeprecios/{id}")
+    public ResponseEntity<ListaDePreciosResponseDTO> obtenerListaDePrecios(@PathVariable Long id) {
 		try {
 			Optional<ListaDePrecios> listaDePrecios = listaDePreciosServicio.obtenerListaDePreciosPorId(id);
 			if (listaDePrecios.isPresent()) {
-				return new ResponseEntity<>(listaDePrecios.get(), HttpStatus.OK);
+                ListaDePreciosResponseDTO dto = new ListaDePreciosResponseDTO();
+                dto.setId(listaDePrecios.get().getId());
+                dto.setClave(listaDePrecios.get().getClave());
+                dto.setNombre(listaDePrecios.get().getNombre());
+                return new ResponseEntity<>(dto, HttpStatus.OK);
 			} else {
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
@@ -54,10 +59,17 @@ public class ListaDePreciosController {
 	}
 
 	// READ ALL
-	@GetMapping("/listasdeprecios")
-	public ResponseEntity<List<ListaDePrecios>> obtenerListasDePrecios() {
-		List<ListaDePrecios> listasDePrecios = listaDePreciosServicio.obtenerListasDePreciosTodos();
-		return new ResponseEntity<>(listasDePrecios, HttpStatus.OK);
+    @GetMapping("/listasdeprecios")
+    public ResponseEntity<List<ListaDePreciosResponseDTO>> obtenerListasDePrecios() {
+        List<ListaDePrecios> listasDePrecios = listaDePreciosServicio.obtenerListasDePreciosTodos();
+        List<ListaDePreciosResponseDTO> respuesta = listasDePrecios.stream().map(lp -> {
+            ListaDePreciosResponseDTO dto = new ListaDePreciosResponseDTO();
+            dto.setId(lp.getId());
+            dto.setClave(lp.getClave());
+            dto.setNombre(lp.getNombre());
+            return dto;
+        }).toList();
+        return new ResponseEntity<>(respuesta, HttpStatus.OK);
 	}
 
 	// DELETE

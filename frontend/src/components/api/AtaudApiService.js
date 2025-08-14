@@ -25,4 +25,4 @@ export const eliminarAtaudApi
 
     //REPORT
 export const obtenerReporteAtaudApi
-= () => apiClient.get(`/reportevendedores`, { responseType: 'blob' })
+= () => apiClient.get(`/reporteataudes`, { responseType: 'blob' })

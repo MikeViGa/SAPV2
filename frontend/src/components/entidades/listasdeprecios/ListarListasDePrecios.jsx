@@ -11,6 +11,7 @@ export default function ListarListasDePrecios({ refrescar, regs }) {
 
   const listadoHook = useListado(eliminarListaDePreciosApi);
   const { addSnackbar } = useSnackbar();
+  const rowsData = Array.isArray(regs?.rows) ? regs.rows : (Array.isArray(regs) ? regs : []);
 
   const descargarReporte = async () => {
     listadoHook.setCargando(true);
@@ -36,17 +37,18 @@ export default function ListarListasDePrecios({ refrescar, regs }) {
       headerClassName: "super-app-theme--header",
       getActions: (params) => ActionButtons({
         onEdit: () => listadoHook.abrirFomularioEditar(params.row),
-        onDelete: () => listadoHook.abrirDialogoEliminar(params.id, regs)
+        onDelete: () => listadoHook.abrirDialogoEliminar(params.id, rowsData)
       }),
     },
     { field: "id", headerName: "Id", width: 100, headerClassName: "super-app-theme--header", pinned: 'left' },
-    { field: "descripcion", headerName: "Descripción", width: 500, headerClassName: "super-app-theme--header" },
+    { field: "clave", headerName: "Clave", width: 150, headerClassName: "super-app-theme--header" },
+    { field: "nombre", headerName: "Nombre", width: 500, headerClassName: "super-app-theme--header" },
   ];
 
   const DataGridComponent = () => (
     <DataGridBase
       columns={columnas}
-      rows={regs}
+      rows={rowsData}
       onNew={listadoHook.abrirFomularioNuevo}
       onRefresh={refrescar}
       commonGridProps={commonGridProps}

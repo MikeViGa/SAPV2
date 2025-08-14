@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.pla.app.model.Empleado;
+import com.pla.app.dto.empleados.EmpleadoResponseDTO;
 import com.pla.app.service.EmpleadoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Date;
@@ -44,11 +45,12 @@ public class EmpleadoController {
 
     // READ 1
     @GetMapping("/empleados/{id}")
-    public ResponseEntity<Empleado> obtenerEmpleado(@PathVariable Long id) {
+    public ResponseEntity<EmpleadoResponseDTO> obtenerEmpleado(@PathVariable Long id) {
         try {
             Optional<Empleado> empleado = empleadoServicio.obtenerEmpleadoPorId(id);
             if (empleado.isPresent()) {
-                return new ResponseEntity<>(empleado.get(), HttpStatus.OK);
+                EmpleadoResponseDTO dto = mapToDto(empleado.get());
+                return new ResponseEntity<>(dto, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
@@ -59,9 +61,23 @@ public class EmpleadoController {
 
     // READ ALL
     @GetMapping("/empleados")
-    public ResponseEntity<List<Empleado>> obtenerEmpleados() {
+    public ResponseEntity<List<EmpleadoResponseDTO>> obtenerEmpleados() {
         List<Empleado> empleados = empleadoServicio.obtenerEmpleadosTodos();
-        return new ResponseEntity<>(empleados, HttpStatus.OK);
+        List<EmpleadoResponseDTO> respuesta = empleados.stream().map(this::mapToDto).collect(Collectors.toList());
+        return new ResponseEntity<>(respuesta, HttpStatus.OK);
+    }
+
+    private EmpleadoResponseDTO mapToDto(Empleado e) {
+        EmpleadoResponseDTO dto = new EmpleadoResponseDTO();
+        dto.setId(e.getId());
+        dto.setNombre(e.getNombre());
+        dto.setApellidoPaterno(e.getApellidoPaterno());
+        dto.setApellidoMaterno(e.getApellidoMaterno());
+        dto.setCorreo(e.getCorreo());
+        dto.setTelefono(e.getTelefono());
+        dto.setFechaNacimiento(e.getFechaNacimiento() != null ? e.getFechaNacimiento().toString() : null);
+        dto.setFechaAlta(e.getFechaAlta() != null ? e.getFechaAlta().toString() : null);
+        return dto;
     }
 
     // GETALLBYNAME

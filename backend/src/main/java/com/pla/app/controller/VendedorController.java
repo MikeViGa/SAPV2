@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.pla.app.model.Vendedor;
+import com.pla.app.dto.vendedores.VendedorResponseDTO;
+import com.pla.app.dto.vendedores.SupervisorResumenDTO;
 import com.pla.app.service.VendedorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Date;
@@ -44,12 +46,12 @@ public class VendedorController {
 	}
 
 	// READ 1
-	@GetMapping("/vendedores/{id}")
-	public ResponseEntity<Vendedor> obtenerVendedor(@PathVariable Long id) {
+    @GetMapping("/vendedores/{id}")
+    public ResponseEntity<VendedorResponseDTO> obtenerVendedor(@PathVariable Long id) {
 		try {
 			Optional<Vendedor> vendedor = vendedorServicio.obtenerVendedorPorId(id);
 			if (vendedor.isPresent()) {
-				return new ResponseEntity<>(vendedor.get(), HttpStatus.OK);
+                return new ResponseEntity<>(mapToDto(vendedor.get()), HttpStatus.OK);
 			} else {
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
@@ -59,16 +61,18 @@ public class VendedorController {
 	}
 
 	// READ ALL
-	@GetMapping("/vendedores")
-	public ResponseEntity<List<Vendedor>> obtenerVendedores() {
-		List<Vendedor> vendedores = vendedorServicio.obtenerVendedores();
-		return new ResponseEntity<>(vendedores, HttpStatus.OK);
+    @GetMapping("/vendedores")
+    public ResponseEntity<List<VendedorResponseDTO>> obtenerVendedores() {
+        List<Vendedor> vendedores = vendedorServicio.obtenerVendedores();
+        List<VendedorResponseDTO> dtos = vendedores.stream().map(this::mapToDto).collect(Collectors.toList());
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
 	}
 
 	@GetMapping("/obtenersupervisadosporvendedor")
-	public ResponseEntity<List<Vendedor>> obtenerSupervisadosPorVendedor(@RequestParam Long idVendedor) {
-		List<Vendedor> vendedores = vendedorServicio.obtenerSupervisadosPorVendedor(idVendedor);
-		return new ResponseEntity<>(vendedores, HttpStatus.OK);
+    public ResponseEntity<List<VendedorResponseDTO>> obtenerSupervisadosPorVendedor(@RequestParam Long idVendedor) {
+        List<Vendedor> vendedores = vendedorServicio.obtenerSupervisadosPorVendedor(idVendedor);
+        List<VendedorResponseDTO> dtos = vendedores.stream().map(this::mapToDto).collect(Collectors.toList());
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
 	}
 
 	// GETALLBYNAME
@@ -132,4 +136,32 @@ public class VendedorController {
 			e.printStackTrace();
 		}
 	}
+    private VendedorResponseDTO mapToDto(Vendedor v) {
+        VendedorResponseDTO dto = new VendedorResponseDTO();
+        dto.setId(v.getId());
+        dto.setNombre(v.getNombre());
+        dto.setApellidoPaterno(v.getApellidoPaterno());
+        dto.setApellidoMaterno(v.getApellidoMaterno());
+        dto.setCalle(v.getCalle());
+        dto.setNumeroExterior(v.getNumeroExterior());
+        dto.setNumeroInterior(v.getNumeroInterior());
+        dto.setColonia(v.getColonia());
+        dto.setCiudad(v.getCiudad());
+        dto.setEstado(v.getEstado());
+        dto.setCodigoPostal(v.getCodigoPostal());
+        dto.setTelefono1(v.getTelefono1());
+        dto.setTelefono2(v.getTelefono2());
+        dto.setRegimen(v.getRegimen());
+        dto.setRfc(v.getRfc());
+        dto.setCurp(v.getCurp());
+        dto.setNumeroTarjeta(v.getNumeroTarjeta());
+        dto.setFechaAlta(v.getFechaAlta() != null ? v.getFechaAlta().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) : null);
+        if (v.getSupervisor() != null) {
+            SupervisorResumenDTO sup = new SupervisorResumenDTO();
+            sup.setId(v.getSupervisor().getId());
+            sup.setNombreCompleto(v.getSupervisor().getNombre() + " " + v.getSupervisor().getApellidoPaterno() + " " + v.getSupervisor().getApellidoMaterno());
+            dto.setSupervisor(sup);
+        }
+        return dto;
+    }
 }

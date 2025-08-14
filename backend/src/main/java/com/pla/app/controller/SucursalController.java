@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.pla.app.model.Sucursal;
+import com.pla.app.dto.SucursalResponseDTO;
 import com.pla.app.service.SucursalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Date;
@@ -44,12 +45,15 @@ public class SucursalController {
 	}
 
 	// READ 1
-	@GetMapping("/sucursales/{id}")
-	public ResponseEntity<Sucursal> obtenerSucursal(@PathVariable Long id) {
+    @GetMapping("/sucursales/{id}")
+    public ResponseEntity<SucursalResponseDTO> obtenerSucursal(@PathVariable Long id) {
 		try {
 			Optional<Sucursal> sucursal = sucursalServicio.obtenerSucursalPorId(id);
 			if (sucursal.isPresent()) {
-				return new ResponseEntity<>(sucursal.get(), HttpStatus.OK);
+                SucursalResponseDTO dto = new SucursalResponseDTO();
+                dto.setId(sucursal.get().getId());
+                dto.setNombre(sucursal.get().getNombre());
+                return new ResponseEntity<>(dto, HttpStatus.OK);
 			} else {
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
@@ -59,10 +63,16 @@ public class SucursalController {
 	}
 
 	// READ ALL
-	@GetMapping("/sucursales")
-	public ResponseEntity<List<Sucursal>> obtenerSucursales() {
-		List<Sucursal> sucursales = sucursalServicio.obtenerSucursales();
-		return new ResponseEntity<>(sucursales, HttpStatus.OK);
+    @GetMapping("/sucursales")
+    public ResponseEntity<List<SucursalResponseDTO>> obtenerSucursales() {
+        List<Sucursal> sucursales = sucursalServicio.obtenerSucursales();
+        List<SucursalResponseDTO> dtos = sucursales.stream().map(s -> {
+            SucursalResponseDTO dto = new SucursalResponseDTO();
+            dto.setId(s.getId());
+            dto.setNombre(s.getNombre());
+            return dto;
+        }).collect(Collectors.toList());
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
 	}
 
 	// GETALLBYNAME

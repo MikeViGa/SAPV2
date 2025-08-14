@@ -24,6 +24,8 @@ export default function ListarVendedores({ refrescar, regs }) {
   const options = ['Vendedores', 'Vendedores y subvendedores'];
   const descargarReporte = useReportHandler(obtenerReporteVendedorApi, addSnackbar, setCargando);
 
+  const rowsData = Array.isArray(regs?.rows) ? regs.rows : (Array.isArray(regs) ? regs : []);
+
   const columnas = [
     {
       field: 'acciones',
@@ -33,7 +35,7 @@ export default function ListarVendedores({ refrescar, regs }) {
       headerClassName: "super-app-theme--header",
       getActions: (params) => ActionButtons({
         onEdit: () => listadoHook.abrirFomularioEditar(params.row),
-        onDelete: () => listadoHook.abrirDialogoEliminar(params.id, regs)
+        onDelete: () => listadoHook.abrirDialogoEliminar(params.id, rowsData)
       }),
     },
     { field: "id", headerName: "Id", width: 60, headerClassName: "super-app-theme--header", pinned: 'left' },
@@ -71,7 +73,7 @@ export default function ListarVendedores({ refrescar, regs }) {
     <Box sx={{ width: '100%', height: '100%', overflow: 'auto' }}>
       <DataGridBase
         columns={columnas}
-        rows={regs}
+        rows={rowsData}
         onNew={listadoHook.abrirFomularioNuevo}
         onRefresh={refrescar}
         commonGridProps={{

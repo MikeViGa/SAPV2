@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { TextField, Button, Box, Typography } from '@mui/material';
-import { actualizarAtaudApi, crearAtaudApi, } from '../../api/AtaudApiService';
+import { actualizarListaDePreciosApi, crearListaDePreciosApi } from '../../api/ListaDePreciosApiService';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
@@ -85,7 +85,7 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
     },
 }));
 
-export default function FormularioAtaud({ modo, registro, open, onClose, refrescar }) {
+export default function FormularioListaDePrecios({ modo, registro, open, onClose, refrescar }) {
 
     const { addSnackbar } = useSnackbar();
     const [operacionTerminada, setOperacionTerminada] = useState(false);
@@ -97,11 +97,13 @@ export default function FormularioAtaud({ modo, registro, open, onClose, refresc
 
     const initialValues = {
         id: '',
-        descripcion: '',
+        clave: '',
+        nombre: '',
     };
 
     const validationSchema = Yup.object({
-        descripcion: Yup.string().required('Requerido'),
+        clave: Yup.string().required('Requerido'),
+        nombre: Yup.string().required('Requerido'),
     });
 
     const formik = useFormik({
@@ -112,10 +114,11 @@ export default function FormularioAtaud({ modo, registro, open, onClose, refresc
                 setLoading(true);
                 let formData = {
                     id: values.id,
-                    descripcion: values.descripcion,
+                    clave: values.clave,
+                    nombre: values.nombre,
                 };
 
-                const response = (modo === "editar" ? actualizarAtaudApi(formData.id, formData) : crearAtaudApi(formData))
+                const response = (modo === "editar" ? actualizarListaDePreciosApi(formData.id, formData) : crearListaDePreciosApi(formData))
                     .then(response => {
                         addSnackbar("Registro " + (modo === "editar" ? "actualizado" : "creado") + " correctamente", "success");
                         setOperacionTerminada(true);
@@ -196,31 +199,29 @@ export default function FormularioAtaud({ modo, registro, open, onClose, refresc
                         sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '950px', margin: 'auto', mt: 0 }}
                     >
                         <Typography variant="h5" component="h1" gutterBottom>
-                            {modo === 'editar' ? 'Editar ataud' : 'Crear ataud'}
+                            {modo === 'editar' ? 'Editar lista de precios' : 'Crear lista de precios'}
                         </Typography>
                         <Grid container spacing={2}>
                             <Grid xs={12} sm={6} md={3}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="descripcion"
-                                    name="descripcion"
-                                    label="Descripción"
-                                    value={formik.values.descripcion}
+                                <TextField size="small" required fullWidth id="clave" name="clave" label="Clave"
+                                    value={formik.values.clave}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
-                                    error={formik.touched.descripcion && Boolean(formik.errors.descripcion)}
-                                    helperText={formik.touched.descripcion && formik.errors.descripcion}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
+                                    error={formik.touched.clave && Boolean(formik.errors.clave)}
+                                    helperText={formik.touched.clave && formik.errors.clave}
+                                    InputLabelProps={{ sx: redAsteriskStyle, shrink: true }}
                                     onKeyDown={(e) => handleKeyDown(e, null)}
-                                    inputRef={descripcionRef}
-                                    InputProps={{
-                                        style: { width: `500px` },
-                                      }}
+                                />
+                            </Grid>
+                            <Grid xs={12} sm={6} md={3}>
+                                <TextField size="small" required fullWidth id="nombre" name="nombre" label="Nombre"
+                                    value={formik.values.nombre}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.nombre && Boolean(formik.errors.nombre)}
+                                    helperText={formik.touched.nombre && formik.errors.nombre}
+                                    InputLabelProps={{ sx: redAsteriskStyle, shrink: true }}
+                                    onKeyDown={(e) => handleKeyDown(e, null)}
                                 />
                             </Grid>
                          </Grid>

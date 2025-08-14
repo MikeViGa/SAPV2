@@ -28,6 +28,8 @@ export default function ListarEmpleados({ refrescar, regs }) {
     }
   };
 
+  const rowsData = Array.isArray(regs?.rows) ? regs.rows : (Array.isArray(regs) ? regs : []);
+
   const columnas = [
     {
       field: 'acciones',
@@ -37,7 +39,7 @@ export default function ListarEmpleados({ refrescar, regs }) {
       headerClassName: "super-app-theme--header",
       getActions: (params) => ActionButtons({
         onEdit: () => listadoHook.abrirFomularioEditar(params.row),
-        onDelete: () => listadoHook.abrirDialogoEliminar(params.id, regs)
+        onDelete: () => listadoHook.abrirDialogoEliminar(params.id, rowsData)
       }),
     },
 
@@ -71,7 +73,7 @@ export default function ListarEmpleados({ refrescar, regs }) {
   const DataGridComponent = () => (
     <DataGridBase
       columns={columnas}
-      rows={regs}
+      rows={rowsData}
       onNew={listadoHook.abrirFomularioNuevo}
       onRefresh={refrescar}
       commonGridProps={commonGridProps}

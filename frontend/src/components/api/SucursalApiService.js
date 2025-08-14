@@ -25,4 +25,4 @@ export const eliminarSucursalApi
 
     //REPORT
 export const obtenerReporteSucursalApi
-= () => apiClient.get(`/reportevendedores`, { responseType: 'blob' })
+= () => apiClient.get(`/reportesucursales`, { responseType: 'blob' })

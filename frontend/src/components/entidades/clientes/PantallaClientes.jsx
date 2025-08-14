@@ -71,9 +71,14 @@ export default function PantallaClientes() {
     } = useScreenCommon('Clientes', async (setRegistros, setCargando, addSnackbar) => {
         try {
             setCargando(true);
-            const response = await obtenerClientesApi();
+            const response = await obtenerClientesApi(0, 50);
             const data = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
-            setRegistros(Array.isArray(data) ? data : []);
+            setRegistros({
+                rows: Array.isArray(data?.content) ? data.content : (Array.isArray(data) ? data : []),
+                total: typeof data?.totalElements === 'number' ? data.totalElements : (Array.isArray(data) ? data.length : 0),
+                page: typeof data?.number === 'number' ? data.number : 0,
+                pageSize: typeof data?.size === 'number' ? data.size : 50,
+            });
             addSnackbar("Registros cargados exitosamente", "success");
         } catch (error) {
             if (error.message == 'Request failed with status code 401')
@@ -98,17 +103,22 @@ export default function PantallaClientes() {
         }
     };
 
-    const mostrarRegistros = async () => {
+    const mostrarRegistros = async (page = 0, size = 50) => {
         setCargando(true);
         try {
             if (idRegistro) {
                 const respuesta = await obtenerClienteApi(idRegistro);
                 const detalle = typeof respuesta.data === 'string' ? JSON.parse(respuesta.data) : respuesta.data;
-                setRegistros(detalle ? [detalle] : []);
+                setRegistros({ rows: detalle ? [detalle] : [], total: detalle ? 1 : 0, page: 0, pageSize: size });
             } else {
-                const respuesta = await obtenerClientesApi();
-                const lista = typeof respuesta.data === 'string' ? JSON.parse(respuesta.data) : respuesta.data;
-                setRegistros(Array.isArray(lista) ? lista : []);
+                const respuesta = await obtenerClientesApi(page, size);
+                const data = typeof respuesta.data === 'string' ? JSON.parse(respuesta.data) : respuesta.data;
+                setRegistros({
+                    rows: Array.isArray(data?.content) ? data.content : (Array.isArray(data) ? data : []),
+                    total: typeof data?.totalElements === 'number' ? data.totalElements : (Array.isArray(data) ? data.length : 0),
+                    page: typeof data?.number === 'number' ? data.number : page,
+                    pageSize: typeof data?.size === 'number' ? data.size : size,
+                });
             }
             addSnackbar("Registros actualizados correctamente", "success");
         } catch (error) {

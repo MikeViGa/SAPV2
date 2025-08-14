@@ -12,6 +12,8 @@ export default function ListarSucursales({ refrescar, regs }) {
   const listadoHook = useListado(eliminarSucursalApi);
   const { addSnackbar } = useSnackbar();
 
+  const rowsData = Array.isArray(regs?.rows) ? regs.rows : (Array.isArray(regs) ? regs : []);
+
   const descargarReporte = async () => {
     listadoHook.setCargando(true);
     try {
@@ -36,7 +38,7 @@ export default function ListarSucursales({ refrescar, regs }) {
       headerClassName: "super-app-theme--header",
       getActions: (params) => ActionButtons({
         onEdit: () => listadoHook.abrirFomularioEditar(params.row),
-        onDelete: () => listadoHook.abrirDialogoEliminar(params.id, regs)
+        onDelete: () => listadoHook.abrirDialogoEliminar(params.id, rowsData)
       }),
     },
     { field: "id", headerName: "Id", width: 60, headerClassName: "super-app-theme--header", pinned: 'left' },
@@ -46,7 +48,7 @@ export default function ListarSucursales({ refrescar, regs }) {
   const DataGridComponent = () => (
     <DataGridBase
       columns={columnas}
-      rows={regs}
+      rows={rowsData}
       onNew={listadoHook.abrirFomularioNuevo}
       onRefresh={refrescar}
       commonGridProps={commonGridProps}
