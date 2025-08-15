@@ -6,6 +6,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "plazosdepago")
@@ -21,6 +22,7 @@ public class PlazoDePago implements Serializable {
 	private String nombre;
 
 	@OneToMany(mappedBy = "plazoDePago", cascade = CascadeType.ALL)
+	@JsonIgnore
     private List<Paquete> paquetes = new ArrayList<>();
 
 }

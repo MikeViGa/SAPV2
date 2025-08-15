@@ -7,6 +7,7 @@ import java.util.List;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "solicitudes")
@@ -80,9 +81,11 @@ public class Solicitud implements Serializable {
     private Usuario usuario;
 
 	@OneToMany(mappedBy = "solicitud_anterior", cascade = CascadeType.ALL)
+	@JsonIgnore
     private List<Movimiento> movimientos_anterior = new ArrayList<>();
 
 	@OneToMany(mappedBy = "solicitud_nueva", cascade = CascadeType.ALL)
+	@JsonIgnore
     private List<Movimiento> movimientos_nueva = new ArrayList<>();
 	
 	@Column(length = 100)

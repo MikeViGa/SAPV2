@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "paquetes")
@@ -63,6 +64,7 @@ public class Paquete implements Serializable {
     private Long gavetas;
 
     @OneToMany(mappedBy = "paquete", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Solicitud> solicitudes = new ArrayList<>();
 
     @ManyToOne

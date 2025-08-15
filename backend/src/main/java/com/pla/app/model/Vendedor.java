@@ -77,6 +77,7 @@ public class Vendedor implements Serializable {
     private LocalDateTime fechaAlta;
 
     @OneToMany(mappedBy = "vendedor", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Solicitud> solicitudes = new ArrayList<>();
  
     @ManyToOne

@@ -1,4 +1,5 @@
 import { Box, Button } from "@mui/material";
+import { useMemo } from "react";
 import { eliminarPaqueteApi, obtenerReportePaqueteApi } from "../../api/PaqueteApiService";
 import StatusCell from "../../base/dashboard/elementos/StatusCell";
 import FormularioPaquete from "./FormularioPaquete";
@@ -11,7 +12,9 @@ export default function ListarPaquetes({ refrescar, regs }) {
 
   const listadoHook = useListado(eliminarPaqueteApi);
   const { addSnackbar } = useSnackbar();
-  const rowsData = Array.isArray(regs?.rows) ? regs.rows : (Array.isArray(regs) ? regs : []);
+  const rowsData = useMemo(() => (
+    Array.isArray(regs?.rows) ? regs.rows : (Array.isArray(regs) ? regs : [])
+  ), [regs]);
 
   const descargarReporte = async () => {
     listadoHook.setCargando(true);
@@ -28,7 +31,7 @@ export default function ListarPaquetes({ refrescar, regs }) {
     }
   };
 
-  const columnas = [
+  const columnas = useMemo(() => [
     {
       field: 'acciones',
       type: 'actions',
@@ -52,19 +55,36 @@ export default function ListarPaquetes({ refrescar, regs }) {
     { field: "periodicidadNombre", headerName: "Periodicidad", width: 120, headerClassName: "super-app-theme--header", valueGetter: (params) => params.row.periodicidadNombre || params.row.periodicidad?.nombre || '' },
     { field: "bovedas", headerName: "Bovedas", width: 100, headerClassName: "super-app-theme--header" },
     { field: "gavetas", headerName: "Gavetas", width: 100, headerClassName: "super-app-theme--header" },
-  ];
+  ], [listadoHook, rowsData]);
+
+  const dataGridExtraProps = useMemo(() => ({
+    initialState: {
+      ...commonGridProps.initialState,
+      pagination: {
+        paginationModel: { pageSize: 25, page: 0 },
+      },
+    },
+    pageSizeOptions: [10, 25, 50, 100],
+    pagination: true,
+    rowBuffer: 2,
+    disableRowSelectionOnClick: true,
+    loading: listadoHook.cargando,
+  }), [listadoHook.cargando]);
 
   const DataGridComponent = () => (
-    <DataGridBase
-      columns={columnas}
-      rows={rowsData}
-      onNew={listadoHook.abrirFomularioNuevo}
-      onRefresh={refrescar}
-      commonGridProps={commonGridProps}
-      localeText={localeText}
-      tablaMaximizada={listadoHook.tablaMaximizada}
-      controlarTabla={listadoHook.controlarTabla}
-    />
+    <Box sx={{ width: '100%', height: '100%', overflow: 'auto' }}>
+      <DataGridBase
+        columns={columnas}
+        rows={rowsData}
+        onNew={listadoHook.abrirFomularioNuevo}
+        onRefresh={refrescar}
+        commonGridProps={{ ...commonGridProps }}
+        localeText={localeText}
+        tablaMaximizada={listadoHook.tablaMaximizada}
+        controlarTabla={listadoHook.controlarTabla}
+        props={dataGridExtraProps}
+      />
+    </Box>
   );
 
   const dialogComponents = (

@@ -8,6 +8,9 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -67,6 +70,15 @@ public class VendedorController {
         List<VendedorResponseDTO> dtos = vendedores.stream().map(this::mapToDto).collect(Collectors.toList());
         return new ResponseEntity<>(dtos, HttpStatus.OK);
 	}
+
+    @GetMapping("/vendedores/page")
+    public ResponseEntity<Page<com.pla.app.dto.vendedores.VendedorListRowDTO>> obtenerVendedoresPaginados(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "25") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<com.pla.app.dto.vendedores.VendedorListRowDTO> result = vendedorServicio.obtenerVendedoresPaginados(pageable);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 
 	@GetMapping("/obtenersupervisadosporvendedor")
     public ResponseEntity<List<VendedorResponseDTO>> obtenerSupervisadosPorVendedor(@RequestParam Long idVendedor) {
@@ -159,6 +171,9 @@ public class VendedorController {
         if (v.getSupervisor() != null) {
             SupervisorResumenDTO sup = new SupervisorResumenDTO();
             sup.setId(v.getSupervisor().getId());
+            sup.setNombre(v.getSupervisor().getNombre());
+            sup.setApellidoPaterno(v.getSupervisor().getApellidoPaterno());
+            sup.setApellidoMaterno(v.getSupervisor().getApellidoMaterno());
             sup.setNombreCompleto(v.getSupervisor().getNombre() + " " + v.getSupervisor().getApellidoPaterno() + " " + v.getSupervisor().getApellidoMaterno());
             dto.setSupervisor(sup);
         }

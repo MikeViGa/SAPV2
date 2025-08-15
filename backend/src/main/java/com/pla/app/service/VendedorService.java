@@ -11,6 +11,9 @@ import com.pla.app.dto.ClaveSupervisadoDTO;
 import com.pla.app.model.Supervisor;
 import com.pla.app.repository.VendedorRepository;
 import net.sf.jasperreports.engine.JasperRunManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import com.pla.app.dto.vendedores.VendedorListRowDTO;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -44,7 +47,12 @@ public class VendedorService {
 
     @Transactional(readOnly = true)
     public List<Vendedor> obtenerVendedores() {
-        return vendedorRepository.findAll();
+        return vendedorRepository.findAllWithSupervisor();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<VendedorListRowDTO> obtenerVendedoresPaginados(Pageable pageable) {
+        return vendedorRepository.findAllListRows(pageable);
     }
 
     @Transactional(readOnly = true)

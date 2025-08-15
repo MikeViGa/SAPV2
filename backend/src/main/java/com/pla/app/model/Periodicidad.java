@@ -6,6 +6,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "periodicidad")
@@ -21,6 +22,7 @@ public class Periodicidad implements Serializable {
 	private String nombre;
 
 	@OneToMany(mappedBy = "periodicidad", cascade = CascadeType.ALL)
+	@JsonIgnore
     private List<Paquete> paquete = new ArrayList<>();
 
 

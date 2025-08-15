@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { eliminarVendedorApi, obtenerReporteVendedorApi } from "../../api/VendedorApiService";
 import FormularioVendedor from "./FormularioVendedor";
 import {
@@ -24,9 +24,11 @@ export default function ListarVendedores({ refrescar, regs }) {
   const options = ['Vendedores', 'Vendedores y subvendedores'];
   const descargarReporte = useReportHandler(obtenerReporteVendedorApi, addSnackbar, setCargando);
 
-  const rowsData = Array.isArray(regs?.rows) ? regs.rows : (Array.isArray(regs) ? regs : []);
+  const rowsData = useMemo(() => (
+    Array.isArray(regs?.rows) ? regs.rows : (Array.isArray(regs) ? regs : [])
+  ), [regs]);
 
-  const columnas = [
+  const columnas = useMemo(() => [
     {
       field: 'acciones',
       type: 'actions',
@@ -67,7 +69,23 @@ export default function ListarVendedores({ refrescar, regs }) {
         return `${supervisor.nombre} ${supervisor.apellidoPaterno} ${supervisor.apellidoMaterno}`;
       }
     },
-  ];
+  ], [listadoHook, rowsData]);
+
+  const dataGridExtraProps = useMemo(() => ({
+    // Keep existing initialState from commonGridProps and add client pagination defaults
+    initialState: {
+      ...commonGridProps.initialState,
+      pagination: {
+        paginationModel: { pageSize: 25, page: 0 },
+      },
+    },
+    pageSizeOptions: [10, 25, 50, 100],
+    pagination: true,
+    rowBuffer: 2,
+
+    disableRowSelectionOnClick: true,
+    loading: cargando,
+  }), [cargando]);
 
   const DataGridComponent = () => (
     <Box sx={{ width: '100%', height: '100%', overflow: 'auto' }}>
@@ -82,6 +100,7 @@ export default function ListarVendedores({ refrescar, regs }) {
         localeText={localeText}
         tablaMaximizada={listadoHook.tablaMaximizada}
         controlarTabla={listadoHook.controlarTabla}
+        props={dataGridExtraProps}
       />
     </Box>
   );

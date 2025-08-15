@@ -6,6 +6,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity
@@ -23,6 +24,7 @@ public class Ataud implements Serializable {
 	private String descripcion;
 	
 	@OneToMany(mappedBy = "ataud", cascade = CascadeType.ALL)
+	@JsonIgnore
     private List<Paquete> paquetes = new ArrayList<>();
 
 }
