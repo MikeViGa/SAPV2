@@ -50,12 +50,15 @@ export default function ListarPaquetes({ refrescar, regs }) {
     { field: "valorTotal", headerName: "Valor total", width: 120, headerClassName: "super-app-theme--header" },
     { field: "enganche", headerName: "Enganche", width: 120, headerClassName: "super-app-theme--header" },
     { field: "importe", headerName: "Importe", width: 120, headerClassName: "super-app-theme--header" },
-    { field: "plazoDePagoNombre", headerName: "Plazo de pago", width: 150, headerClassName: "super-app-theme--header", valueGetter: (params) => params.row.plazoDePagoNombre || params.row.plazoDePago?.nombre || '' },
-    { field: "listaDePreciosNombre", headerName: "Lista de precios", width: 150, headerClassName: "super-app-theme--header", valueGetter: (params) => params.row.listaDePreciosNombre || params.row.listaDePrecios?.nombre || '' },
-    { field: "periodicidadNombre", headerName: "Periodicidad", width: 120, headerClassName: "super-app-theme--header", valueGetter: (params) => params.row.periodicidadNombre || params.row.periodicidad?.nombre || '' },
+    { field: "plazoDePagoNombre", headerName: "Plazo de pago", width: 150, headerClassName: "super-app-theme--header",
+      renderCell: (params) => (params?.row?.plazoDePagoNombre ?? params?.row?.plazoDePago?.nombre ?? '') },
+    { field: "listaDePreciosNombre", headerName: "Lista de precios", width: 170, headerClassName: "super-app-theme--header",
+      renderCell: (params) => (params?.row?.listaDePreciosNombre ?? params?.row?.listaDePrecios?.nombre ?? '') },
+    { field: "periodicidadNombre", headerName: "Periodicidad", width: 140, headerClassName: "super-app-theme--header",
+      renderCell: (params) => (params?.row?.periodicidadNombre ?? params?.row?.periodicidad?.nombre ?? '') },
     { field: "bovedas", headerName: "Bovedas", width: 100, headerClassName: "super-app-theme--header" },
     { field: "gavetas", headerName: "Gavetas", width: 100, headerClassName: "super-app-theme--header" },
-  ], [listadoHook, rowsData]);
+  ], [listadoHook]);
 
   const dataGridExtraProps = useMemo(() => ({
     initialState: {

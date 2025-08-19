@@ -3,6 +3,7 @@ package com.pla.app.controller;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.pla.app.model.Paquete;
 import com.pla.app.service.PaqueteService;
+import com.pla.app.dto.paquetes.PaqueteResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Date;
 import jakarta.servlet.http.HttpServletResponse;
@@ -40,11 +42,12 @@ public class PaqueteController {
 
 	// READ 1
 	@GetMapping("/paquetes/{id}")
-	public ResponseEntity<Paquete> obtenerPaquete(@PathVariable Long id) {
+	public ResponseEntity<PaqueteResponseDTO> obtenerPaquete(@PathVariable Long id) {
 		try {
 			Optional<Paquete> paquete = paqueteServicio.obtenerPaquetePorId(id);
 			if (paquete.isPresent()) {
-				return new ResponseEntity<>(paquete.get(), HttpStatus.OK);
+				PaqueteResponseDTO dto = mapToDto(paquete.get());
+				return new ResponseEntity<>(dto, HttpStatus.OK);
 			} else {
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
@@ -55,9 +58,12 @@ public class PaqueteController {
 
 	// READ ALL
 	@GetMapping("/paquetes")
-	public ResponseEntity<List<Paquete>> obtenerPaquetes() {
+	public ResponseEntity<List<PaqueteResponseDTO>> obtenerPaquetes() {
 		List<Paquete> paquetes = paqueteServicio.obtenerPaquetesTodos();
-		return new ResponseEntity<>(paquetes, HttpStatus.OK);
+		List<PaqueteResponseDTO> dtos = paquetes.stream()
+			.map(this::mapToDto)
+			.collect(Collectors.toList());
+		return new ResponseEntity<>(dtos, HttpStatus.OK);
 	}
 
 	// DELETE
@@ -98,5 +104,52 @@ public class PaqueteController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private PaqueteResponseDTO mapToDto(Paquete paquete) {
+		PaqueteResponseDTO dto = new PaqueteResponseDTO();
+		dto.setId(paquete.getId());
+		dto.setClave(paquete.getClave());
+		dto.setServicios(paquete.getServicios());
+		dto.setNumeroPagos(paquete.getNumeroPagos());
+		dto.setValorTotal(paquete.getValorTotal());
+		dto.setEnganche(paquete.getEnganche());
+		dto.setImporte(paquete.getImporte());
+		dto.setBovedas(paquete.getBovedas());
+		dto.setGavetas(paquete.getGavetas());
+		
+		// Mapear PlazoDePago
+		if (paquete.getPlazoDePago() != null) {
+			PaqueteResponseDTO.PlazoDePagoSimpleDTO plazoDto = new PaqueteResponseDTO.PlazoDePagoSimpleDTO();
+			plazoDto.setId(paquete.getPlazoDePago().getId());
+			plazoDto.setNombre(paquete.getPlazoDePago().getNombre());
+			dto.setPlazoDePago(plazoDto);
+		}
+		
+		// Mapear ListaDePrecios
+		if (paquete.getListaDePrecios() != null) {
+			PaqueteResponseDTO.ListaDePreciosSimpleDTO listaDto = new PaqueteResponseDTO.ListaDePreciosSimpleDTO();
+			listaDto.setId(paquete.getListaDePrecios().getId());
+			listaDto.setNombre(paquete.getListaDePrecios().getNombre());
+			dto.setListaDePrecios(listaDto);
+		}
+		
+		// Mapear Periodicidad
+		if (paquete.getPeriodicidad() != null) {
+			PaqueteResponseDTO.PeriodicidadSimpleDTO periodicidadDto = new PaqueteResponseDTO.PeriodicidadSimpleDTO();
+			periodicidadDto.setId(paquete.getPeriodicidad().getId());
+			periodicidadDto.setNombre(paquete.getPeriodicidad().getNombre());
+			dto.setPeriodicidad(periodicidadDto);
+		}
+		
+		// Mapear Ataud
+		if (paquete.getAtaud() != null) {
+			PaqueteResponseDTO.AtaudSimpleDTO ataudDto = new PaqueteResponseDTO.AtaudSimpleDTO();
+			ataudDto.setId(paquete.getAtaud().getId());
+			ataudDto.setDescripcion(paquete.getAtaud().getDescripcion());
+			dto.setAtaud(ataudDto);
+		}
+		
+		return dto;
 	}
 }

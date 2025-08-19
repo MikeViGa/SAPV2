@@ -1,4 +1,5 @@
 import { Box, Button } from "@mui/material";
+import { useState, useEffect } from "react";
 import { eliminarSolicitudApi, obtenerReporteSolicitudApi } from "../../api/SolicitudApiService";
 import StatusCell from "../../base/dashboard/elementos/StatusCell";
 import FormularioSolicitud from "./FormularioSolicitud";
@@ -27,6 +28,8 @@ export default function ListarSolicitudes({ refrescar, regs }) {
     }
   };
 
+  const rowsData = Array.isArray(regs?.rows) ? regs.rows : [];
+
   const columnas = [
     {
       field: 'acciones',
@@ -36,23 +39,55 @@ export default function ListarSolicitudes({ refrescar, regs }) {
       headerClassName: "super-app-theme--header",
       getActions: (params) => ActionButtons({
         onEdit: () => listadoHook.abrirFomularioEditar(params.row),
-        onDelete: () => listadoHook.abrirDialogoEliminar(params.id, regs)
+        onDelete: () => listadoHook.abrirDialogoEliminar(params.id, rowsData)
       }),
     },
-    { field: "id", headerName: "Id", width: 60, headerClassName: "super-app-theme--header", pinned: 'left' },
-    { field: "nombre", headerName: "Nombre", width: 200, headerClassName: "super-app-theme--header" },
+    { field: "id", headerName: "Id", width: 80, headerClassName: "super-app-theme--header", pinned: 'left' },
+    { field: "claveSolicitud", headerName: "Clave", width: 120, headerClassName: "super-app-theme--header" },
+    { field: "claveContrato", headerName: "Contrato", width: 130, headerClassName: "super-app-theme--header" },
+    { field: "comision", headerName: "Comisión", width: 110, headerClassName: "super-app-theme--header" },
+    { field: "fechaAlta", headerName: "Fecha alta", width: 120, headerClassName: "super-app-theme--header" },
+    { field: "fechaVenta", headerName: "Fecha venta", width: 120, headerClassName: "super-app-theme--header" },
+    { field: "fechaVencimiento", headerName: "Fecha venc.", width: 120, headerClassName: "super-app-theme--header" },
+    { field: "fechaEntrega", headerName: "Fecha entrega", width: 120, headerClassName: "super-app-theme--header" },
+    { field: "vendedorNombre", headerName: "Vendedor", width: 160, headerClassName: "super-app-theme--header" },
+    { field: "clienteNombre", headerName: "Cliente", width: 160, headerClassName: "super-app-theme--header" },
+    { field: "sucursalNombre", headerName: "Sucursal", width: 160, headerClassName: "super-app-theme--header" },
+    { field: "paqueteClave", headerName: "Paquete", width: 120, headerClassName: "super-app-theme--header" },
   ];
+
+  // Paginación server-side (mismo patrón que ListarClientes)
+  const [paginationModel, setPaginationModel] = useState({ page: regs?.page ?? 0, pageSize: regs?.pageSize ?? 50 });
+
+  useEffect(() => {
+    if (typeof regs?.page === 'number' && typeof regs?.pageSize === 'number') {
+      setPaginationModel({ page: regs.page, pageSize: regs.pageSize });
+    }
+  }, [regs?.page, regs?.pageSize]);
 
   const DataGridComponent = () => (
     <DataGridBase
       columns={columnas}
-      rows={regs}
+      rows={rowsData}
       onNew={listadoHook.abrirFomularioNuevo}
-      onRefresh={refrescar}
+      onRefresh={() => refrescar(paginationModel?.page ?? 0, paginationModel?.pageSize ?? 50)}
       commonGridProps={commonGridProps}
       localeText={localeText}
       tablaMaximizada={listadoHook.tablaMaximizada}
       controlarTabla={listadoHook.controlarTabla}
+      props={{
+        pagination: true,
+        paginationMode: 'server',
+        rowCount: regs?.total ?? 0,
+        paginationModel,
+        onPaginationModelChange: (model) => {
+          console.log('onPaginationModelChange llamado con model:', model);
+          setPaginationModel(model);
+          console.log('Llamando refrescar con page:', model.page, 'pageSize:', model.pageSize);
+          refrescar(model.page, model.pageSize);
+        },
+        pageSizeOptions: [25, 50, 100],
+      }}
     />
   );
 

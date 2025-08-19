@@ -6,6 +6,7 @@ import { actualizarRolApi, crearRolApi, } from "../../api/RolApiService"
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { useDraggableDialog } from '../common/useDraggableDialog';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -21,6 +22,7 @@ import { useSnackbar } from '../dashboard/elementos/SnackbarContext';
 export default function FormularioRol({ modo, registro, open, onClose, refrescar }) {
     const { addSnackbar } = useSnackbar();
     const [loading, setLoading] = useState(false);
+    const { paperProps: dialogPaperProps, titleProps: dialogTitleProps } = useDraggableDialog(open);
 
     const formik = useFormik({
         initialValues: {
@@ -65,8 +67,8 @@ export default function FormularioRol({ modo, registro, open, onClose, refrescar
     };
 
     return (
-        <Dialog open={open} onClose={onClose}>
-            <DialogTitle sx={{ bgcolor: '#1976d2', color: '#fff', py: 1, px: 2 }}>
+        <Dialog open={open} onClose={onClose} PaperProps={dialogPaperProps}>
+            <DialogTitle {...dialogTitleProps} sx={{ bgcolor: '#1976d2', color: '#fff', py: 1, px: 2, cursor: 'move' }}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Typography variant="h6" sx={{ color: 'inherit' }}>
                         {modo === 'editar' ? 'Editar rol' : 'Crear rol'}
@@ -85,9 +87,7 @@ export default function FormularioRol({ modo, registro, open, onClose, refrescar
                         onSubmit={formik.handleSubmit}
                         sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: 400, pt: 1 }}
                     >
-                        <Typography variant="h5" gutterBottom>
-                            {modo === 'editar' ? 'Editar rol' : 'Crear rol'}
-                        </Typography>
+                       
 
                         <TextField
                             size="small"

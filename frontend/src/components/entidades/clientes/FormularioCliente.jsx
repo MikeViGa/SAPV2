@@ -12,6 +12,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddLocationAltIcon from '@mui/icons-material/AddLocationAlt';
 import CheckIcon from '@mui/icons-material/Check';
 import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { useDraggableDialog } from '../../base/common/useDraggableDialog';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import CloseIcon from '@mui/icons-material/Close';
@@ -29,6 +30,7 @@ import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
 
 
 export default function FormularioCliente({ modo, registro, open, onClose, refrescar }) {
+    const { paperProps: dialogPaperProps, titleProps: dialogTitleProps } = useDraggableDialog(open);
     const { addSnackbar } = useSnackbar();
     const [operacionTerminada, setOperacionTerminada] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -270,8 +272,8 @@ export default function FormularioCliente({ modo, registro, open, onClose, refre
     // const colEstadoCivilMd = modo === 'editar' ? 3 : 4; // Removed dynamic width var
 
     return (
-        <Dialog open={open} onClose={onClose} fullWidth={true} maxWidth="lg" >
-            <DialogTitle sx={{ bgcolor: '#1976d2', color: '#fff', py: 1, px: 2 }}>
+        <Dialog open={open} onClose={onClose} fullWidth={true} maxWidth="lg" PaperProps={dialogPaperProps}>
+            <DialogTitle {...dialogTitleProps} sx={{ bgcolor: '#1976d2', color: '#fff', py: 1, px: 2, cursor: 'move' }}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Typography variant="h6" sx={{ color: 'inherit' }}>
                         {modo === 'editar' ? 'Editar cliente' : 'Crear cliente'}

@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { TextField, Button, Box, Typography, } from '@mui/material';
+import { TextField, Button, Box, Typography, Paper, Stack } from '@mui/material';
 import { actualizarModuloApi, crearModuloApi, obtenerModulosApi } from "../../api/ModuloApiService"
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { Dialog, Autocomplete, FormControlLabel, DialogContent, DialogTitle } from '@mui/material';
+import { useDraggableDialog } from '../common/useDraggableDialog';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -18,6 +19,7 @@ export default function FormularioModulo({ modo, registro, open, onClose, refres
     const [loading, setLoading] = useState(false);
     const [superModulos, setSuperModulos] = useState([]);
     const [loadingData, setLoadingData] = useState(false);
+    const { paperProps: dialogPaperProps, titleProps: dialogTitleProps } = useDraggableDialog(open, [loading, loadingData]);
 
     const formik = useFormik({
         initialValues: {
@@ -130,8 +132,8 @@ export default function FormularioModulo({ modo, registro, open, onClose, refres
     };
 
     return (
-        <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-            <DialogTitle sx={{ bgcolor: '#1976d2', color: '#fff', py: 1, px: 2 }}>
+        <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth PaperProps={dialogPaperProps}>
+            <DialogTitle {...dialogTitleProps} sx={{ bgcolor: '#1976d2', color: '#fff', py: 1, px: 2, cursor: 'move' }}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Typography variant="h6" sx={{ color: 'inherit' }}>
                         {modo === 'editar' ? 'Editar módulo' : 'Crear módulo'}
@@ -145,131 +147,135 @@ export default function FormularioModulo({ modo, registro, open, onClose, refres
                 {loading || loadingData ? (
                     <Cargando loading={loading || loadingData} />
                 ) : (
+
                     <Box
                         component="form"
                         onSubmit={formik.handleSubmit}
                         sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}
                     >
-                        <Typography variant="h5" gutterBottom>
-                            {modo === 'editar' ? 'Editar módulo' : 'Crear módulo'}
-                        </Typography>
+                        <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
+                            <TextField
+                                size="small"
+                                required
+                                fullWidth
+                                name="nombre"
+                                label="Nombre"
+                                value={formik.values.nombre}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.nombre && Boolean(formik.errors.nombre)}
+                                helperText={formik.touched.nombre && formik.errors.nombre}
+                                autoFocus
+                            />
 
-                        <TextField
-                            size="small"
-                            required
-                            fullWidth
-                            name="nombre"
-                            label="Nombre"
-                            value={formik.values.nombre}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            error={formik.touched.nombre && Boolean(formik.errors.nombre)}
-                            helperText={formik.touched.nombre && formik.errors.nombre}
-                            autoFocus
-                        />
+                            <TextField
+                                size="small"
+                                required
+                                fullWidth
+                                name="ruta"
+                                label="Ruta"
+                                value={formik.values.ruta}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.ruta && Boolean(formik.errors.ruta)}
+                                helperText={formik.touched.ruta && formik.errors.ruta}
+                                placeholder="/ejemplo/ruta"
+                            />
 
-                        <TextField
-                            size="small"
-                            required
-                            fullWidth
-                            name="ruta"
-                            label="Ruta"
-                            value={formik.values.ruta}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            error={formik.touched.ruta && Boolean(formik.errors.ruta)}
-                            helperText={formik.touched.ruta && formik.errors.ruta}
-                            placeholder="/ejemplo/ruta"
-                        />
+                            <TextField
+                                size="small"
+                                fullWidth
+                                name="icono"
+                                label="Icono"
+                                value={formik.values.icono}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.icono && Boolean(formik.errors.icono)}
+                                helperText={formik.touched.icono && formik.errors.icono}
+                                placeholder="dashboard, settings, etc."
+                            />
 
-                        <TextField
-                            size="small"
-                            fullWidth
-                            name="icono"
-                            label="Icono"
-                            value={formik.values.icono}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            error={formik.touched.icono && Boolean(formik.errors.icono)}
-                            helperText={formik.touched.icono && formik.errors.icono}
-                            placeholder="dashboard, settings, etc."
-                        />
+                            <TextField
+                                size="small"
+                                required
+                                fullWidth
+                                name="orden"
+                                label="Orden"
+                                type="number"
+                                value={formik.values.orden}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.orden && Boolean(formik.errors.orden)}
+                                helperText={formik.touched.orden && formik.errors.orden}
+                            />
 
-                        <TextField
-                            size="small"
-                            required
-                            fullWidth
-                            name="orden"
-                            label="Orden"
-                            type="number"
-                            value={formik.values.orden}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            error={formik.touched.orden && Boolean(formik.errors.orden)}
-                            helperText={formik.touched.orden && formik.errors.orden}
-                        />
+                            <Autocomplete
+                                size="small"
+                                options={superModulos}
+                                getOptionLabel={(option) => option.nombre || ''}
+                                value={formik.values.superModulo}
+                                onChange={(event, newValue) => {
+                                    formik.setFieldValue('superModulo', newValue);
+                                }}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label="Supermódulo"
+                                        placeholder="Seleccionar supermódulo (opcional)"
+                                    />
+                                )}
+                                isOptionEqualToValue={(option, value) => {
+                                    if (!option || !value) return option === value;
+                                    return option.id === value.id;
+                                }}
+                                noOptionsText="No hay supermódulos disponibles"
+                            />
 
-                        <Autocomplete
-                            size="small"
-                            options={superModulos}
-                            getOptionLabel={(option) => option.nombre || ''}
-                            value={formik.values.superModulo}
-                            onChange={(event, newValue) => {
-                                formik.setFieldValue('superModulo', newValue);
-                            }}
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    label="Supermódulo"
-                                    placeholder="Seleccionar supermódulo (opcional)"
-                                />
-                            )}
-                            isOptionEqualToValue={(option, value) => {
-                                if (!option || !value) return option === value;
-                                return option.id === value.id;
-                            }}
-                            noOptionsText="No hay supermódulos disponibles"
-                        />
-
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={formik.values.visible}
-                                    onChange={(event) => {
-                                        formik.setFieldValue('visible', event.target.checked);
-                                    }}
-                                    name="visible"
-                                />
-                            }
-                            label="Visible"
-                        />
-                        <Button
-                            variant="contained"
-                            type="submit"
-                            disabled={formik.isSubmitting}
-                            startIcon={<SaveIcon />}
-                            fullWidth
-                        >
-                            {modo === 'editar' ? 'Actualizar' : 'Agregar'}
-                        </Button>
-                        <Button
-                            variant="contained"
-                            onClick={handleReset}
-                            disabled={formik.isSubmitting}
-                            startIcon={<RefreshIcon />}
-                            fullWidth
-                        >
-                            Reiniciar
-                        </Button>
-                        <Button
-                            variant="contained"
-                            color="warning"
-                            onClick={onClose}
-                            startIcon={<CancelIcon />}
-                            fullWidth
-                        >
-                            Cancelar
-                        </Button>
+                            <FormControlLabel
+                                control={
+                                    <Switch
+                                        checked={formik.values.visible}
+                                        onChange={(event) => {
+                                            formik.setFieldValue('visible', event.target.checked);
+                                        }}
+                                        name="visible"
+                                    />
+                                }
+                                label="Visible"
+                            />
+                            </Paper>
+                            <Paper elevation={1} sx={{ p: 1, mb: 0 }}>
+                                <Stack direction="row" spacing={1}>
+                                    <Button
+                                        variant="contained"
+                                        type="submit"
+                                        disabled={formik.isSubmitting}
+                                        startIcon={<SaveIcon />}
+                                        fullWidth
+                                    >
+                                        {modo === 'editar' ? 'Actualizar' : 'Agregar'}
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        onClick={handleReset}
+                                        disabled={formik.isSubmitting}
+                                        startIcon={<RefreshIcon />}
+                                        fullWidth
+                                    >
+                                        Reiniciar
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        color="warning"
+                                        onClick={onClose}
+                                        startIcon={<CancelIcon />}
+                                        fullWidth
+                                    >
+                                        Cancelar
+                                    </Button>
+                                </Stack>
+                            </Paper>
+                        
                     </Box>
                 )}
             </DialogContent>

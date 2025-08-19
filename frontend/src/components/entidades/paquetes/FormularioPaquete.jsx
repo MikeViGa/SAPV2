@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { TextField, Button, Box, Typography } from '@mui/material';
-import { actualizarPaqueteApi, crearPaqueteApi, } from '../../api/PaqueteApiService';
+import { TextField, Button, Box, Typography, MenuItem, Paper } from '@mui/material';
+import { actualizarPaqueteApi, crearPaqueteApi, obtenerPaqueteApi } from '../../api/PaqueteApiService';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { useDraggableDialog } from '../../base/common/useDraggableDialog';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -18,14 +19,15 @@ import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import { useSnackbar } from '../../base/dashboard/elementos/SnackbarContext';
 import Grid from '@mui/material/Grid2';
-import Paper from '@mui/material/Paper';
 import { Divider } from '@mui/material';
 import { Stack } from '@mui/material';
 import { Autocomplete } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
 import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
-import { obtenerSupervisoresApi } from '../../api/SupervisorApiService';
+import { obtenerPlazosDePagoApi } from '../../api/PlazosDePagoApiService';
+import { obtenerPeriodicidadesApi } from '../../api/PeriodicidadApiService';
+import { obtenerListasDePreciosApi } from '../../api/ListaDePreciosApiService';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: '#fff',
@@ -90,6 +92,9 @@ export default function FormularioPaquete({ modo, registro, open, onClose, refre
     const { addSnackbar } = useSnackbar();
     const [operacionTerminada, setOperacionTerminada] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [catalogoPlazos, setCatalogoPlazos] = useState([]);
+    const [catalogoListas, setCatalogoListas] = useState([]);
+    const [catalogoPeriodicidades, setCatalogoPeriodicidades] = useState([]);
    
     dayjs.extend(utc);
     dayjs.extend(timezone);
@@ -97,11 +102,31 @@ export default function FormularioPaquete({ modo, registro, open, onClose, refre
 
     const initialValues = {
         id: '',
-        descripcion: '',
+        clave: '',
+        servicios: '',
+        numeroPagos: '',
+        valorTotal: '',
+        enganche: '',
+        importe: '',
+        bovedas: '',
+        gavetas: '',
+        plazoDePagoId: '',
+        listaDePreciosId: '',
+        periodicidadId: '',
     };
 
     const validationSchema = Yup.object({
-        descripcion: Yup.string().required('Requerido'),
+        clave: Yup.string().required('Requerido'),
+        servicios: Yup.number().typeError('Numérico').required('Requerido'),
+        numeroPagos: Yup.number().typeError('Numérico').required('Requerido'),
+        valorTotal: Yup.number().typeError('Numérico').required('Requerido'),
+        enganche: Yup.number().typeError('Numérico').required('Requerido'),
+        importe: Yup.number().typeError('Numérico').required('Requerido'),
+        bovedas: Yup.number().typeError('Numérico').required('Requerido'),
+        gavetas: Yup.number().typeError('Numérico').required('Requerido'),
+        plazoDePagoId: Yup.number().typeError('Seleccione un valor').required('Requerido'),
+        listaDePreciosId: Yup.number().typeError('Seleccione un valor').required('Requerido'),
+        periodicidadId: Yup.number().typeError('Seleccione un valor').required('Requerido'),
     });
 
     const formik = useFormik({
@@ -112,7 +137,17 @@ export default function FormularioPaquete({ modo, registro, open, onClose, refre
                 setLoading(true);
                 let formData = {
                     id: values.id,
-                    descripcion: values.descripcion,
+                    clave: values.clave,
+                    servicios: Number(values.servicios),
+                    numeroPagos: Number(values.numeroPagos),
+                    valorTotal: Number(values.valorTotal),
+                    enganche: Number(values.enganche),
+                    importe: Number(values.importe),
+                    bovedas: Number(values.bovedas),
+                    gavetas: Number(values.gavetas),
+                    plazoDePago: values.plazoDePagoId ? { id: Number(values.plazoDePagoId) } : null,
+                    listaDePrecios: values.listaDePreciosId ? { id: Number(values.listaDePreciosId) } : null,
+                    periodicidad: values.periodicidadId ? { id: Number(values.periodicidadId) } : null,
                 };
 
                 const response = (modo === "editar" ? actualizarPaqueteApi(formData.id, formData) : crearPaqueteApi(formData))
@@ -138,18 +173,65 @@ export default function FormularioPaquete({ modo, registro, open, onClose, refre
     });
 
     useEffect(() => {
-        if (open) {
-            if (modo === "editar" && registro) {
-                formik.setValues({
-                    ...registro,
-                });
-            } else {
-                formik.resetForm({
-                    values: initialValues,
-                });
-            }
+        if (!open) return;
+        
+        // Resetear formulario si es crear
+        if (modo === 'crear') {
+            formik.resetForm({ values: initialValues });
         }
-    }, [registro, modo, open]);
+        
+        // Cargar catálogos
+        (async () => {
+            try {
+                const [plazos, listas, periodicidades] = await Promise.all([
+                    obtenerPlazosDePagoApi(),
+                    obtenerListasDePreciosApi(),
+                    obtenerPeriodicidadesApi(),
+                ]);
+                
+               
+                const catalogoPlazosActualizado = plazos?.data || [];
+                const catalogoListasActualizado = listas?.data || [];
+                const catalogoPeriodicidadesActualizado = periodicidades?.data || [];
+                
+               // Actualizar estados de catálogos
+                setCatalogoPlazos(catalogoPlazosActualizado);
+                setCatalogoListas(catalogoListasActualizado);
+                setCatalogoPeriodicidades(catalogoPeriodicidadesActualizado);
+                
+                // Si es modo editar, cargar datos del paquete
+                if (modo === 'editar' && registro?.id) {
+                    const resp = await obtenerPaqueteApi(registro.id);
+                    const det = typeof resp.data === 'string' ? JSON.parse(resp.data) : resp.data;
+                     
+                    if (det) {
+                        // Esperar un tick para que los estados se actualicen
+                        setTimeout(() => {
+                            const valoresFormulario = {
+                                id: det.id || '',
+                                clave: det.clave || '',
+                                servicios: det.servicios || '',
+                                numeroPagos: det.numeroPagos || '',
+                                valorTotal: det.valorTotal || '',
+                                enganche: det.enganche || '',
+                                importe: det.importe || '',
+                                bovedas: det.bovedas || '',
+                                gavetas: det.gavetas || '',
+                                plazoDePagoId: det.plazoDePago?.id || '',
+                                listaDePreciosId: det.listaDePrecios?.id || '',
+                                periodicidadId: det.periodicidad?.id || '',
+                            };
+                            
+                            formik.setValues(valoresFormulario);
+                        }, 100);
+                    }
+                }
+            } catch (e) {
+                console.error('Error cargando datos:', e);
+            }
+        })();
+    }, [registro?.id, modo, open]);
+
 
     const handleReset = () => {
         formik.resetForm({
@@ -163,7 +245,9 @@ export default function FormularioPaquete({ modo, registro, open, onClose, refre
         },
     };
 
-    const descripcionRef = useRef();
+    const claveRef = useRef();
+    // Draggable dialog state/refs
+    const { paperProps: dialogPaperProps, titleProps: dialogTitleProps } = useDraggableDialog(open);
     
     const handleKeyDown = (event, nextRef) => {
         if (event.key === 'Enter') {
@@ -175,8 +259,8 @@ export default function FormularioPaquete({ modo, registro, open, onClose, refre
     };
 
     return (
-        <Dialog open={open} onClose={onClose} fullWidth={true} maxWidth="lg" >
-            <DialogTitle sx={{ bgcolor: '#1976d2', color: '#fff', py: 1, px: 2 }}>
+        <Dialog open={open} onClose={onClose} fullWidth={true} maxWidth="lg" PaperProps={dialogPaperProps}>
+            <DialogTitle {...dialogTitleProps} sx={{ bgcolor: '#1976d2', color: '#fff', py: 1, px: 2, cursor: 'move' }}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Typography variant="h6" sx={{ color: 'inherit' }}>
                         {modo === 'editar' ? 'Editar paquete' : 'Crear paquete'}
@@ -193,37 +277,163 @@ export default function FormularioPaquete({ modo, registro, open, onClose, refre
                     <Box
                         component="form"
                         onSubmit={formik.handleSubmit}
-                        sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '950px', margin: 'auto', mt: 0 }}
+                        sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%', maxWidth: 1200, margin: 'auto', mt: 0 }}
                     >
-                        <Typography variant="h5" component="h1" gutterBottom>
-                            {modo === 'editar' ? 'Editar paquete' : 'Crear paquete'}
-                        </Typography>
-                        <Grid container spacing={2}>
-                            <Grid xs={12} sm={6} md={3}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="descripcion"
-                                    name="descripcion"
-                                    label="Descripción"
-                                    value={formik.values.descripcion}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.descripcion && Boolean(formik.errors.descripcion)}
-                                    helperText={formik.touched.descripcion && formik.errors.descripcion}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, null)}
-                                    inputRef={descripcionRef}
-                                    InputProps={{
-                                        style: { width: `500px` },
-                                      }}
-                                />
-                            </Grid>
-                         </Grid>
+                        
+                        <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
+                          <Typography sx={{ mb: 2 }}>Datos del paquete:</Typography>
+                          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }, gap: 2, '& .MuiTextField-root': { width: '100%' } }}>
+                            <Box>
+                              <TextField size="small" required fullWidth id="clave" name="clave" label="Clave"
+                                value={formik.values.clave}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.clave && Boolean(formik.errors.clave)}
+                                helperText={formik.touched.clave && formik.errors.clave}
+                                InputLabelProps={{ sx: redAsteriskStyle, shrink: true }}
+                                onKeyDown={(e) => handleKeyDown(e, null)}
+                                inputRef={claveRef}
+
+                              />
+                            </Box>
+                            <Box>
+                              <TextField size="small" required fullWidth id="servicios" name="servicios" label="Servicios"
+                                value={formik.values.servicios}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.servicios && Boolean(formik.errors.servicios)}
+                                helperText={formik.touched.servicios && formik.errors.servicios}
+                                InputLabelProps={{ sx: redAsteriskStyle, shrink: true }}
+                                onKeyDown={(e) => handleKeyDown(e, null)}
+
+                              />
+                            </Box>
+                            <Box>
+                              <TextField size="small" required fullWidth id="numeroPagos" name="numeroPagos" label="Número de pagos"
+                                value={formik.values.numeroPagos}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.numeroPagos && Boolean(formik.errors.numeroPagos)}
+                                helperText={formik.touched.numeroPagos && formik.errors.numeroPagos}
+                                InputLabelProps={{ sx: redAsteriskStyle, shrink: true }}
+                                onKeyDown={(e) => handleKeyDown(e, null)}
+
+                              />
+                            </Box>
+                            <Box>
+                              <TextField size="small" required fullWidth id="valorTotal" name="valorTotal" label="Valor total"
+                                value={formik.values.valorTotal}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.valorTotal && Boolean(formik.errors.valorTotal)}
+                                helperText={formik.touched.valorTotal && formik.errors.valorTotal}
+                                InputLabelProps={{ sx: redAsteriskStyle, shrink: true }}
+                                onKeyDown={(e) => handleKeyDown(e, null)}
+
+                              />
+                            </Box>
+                            <Box>
+                              <TextField size="small" required fullWidth id="enganche" name="enganche" label="Enganche"
+                                value={formik.values.enganche}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.enganche && Boolean(formik.errors.enganche)}
+                                helperText={formik.touched.enganche && formik.errors.enganche}
+                                InputLabelProps={{ sx: redAsteriskStyle, shrink: true }}
+                                onKeyDown={(e) => handleKeyDown(e, null)}
+
+                              />
+                            </Box>
+                            <Box>
+                              <TextField size="small" required fullWidth id="importe" name="importe" label="Importe"
+                                value={formik.values.importe}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.importe && Boolean(formik.errors.importe)}
+                                helperText={formik.touched.importe && formik.errors.importe}
+                                InputLabelProps={{ sx: redAsteriskStyle, shrink: true }}
+                                onKeyDown={(e) => handleKeyDown(e, null)}
+
+                              />
+                            </Box>
+                            <Box>
+                              <TextField size="small" required fullWidth id="bovedas" name="bovedas" label="Bóvedas"
+                                value={formik.values.bovedas}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.bovedas && Boolean(formik.errors.bovedas)}
+                                helperText={formik.touched.bovedas && formik.errors.bovedas}
+                                InputLabelProps={{ sx: redAsteriskStyle, shrink: true }}
+                                onKeyDown={(e) => handleKeyDown(e, null)}
+
+                              />
+                            </Box>
+                            <Box>
+                              <TextField size="small" required fullWidth id="gavetas" name="gavetas" label="Gavetas"
+                                value={formik.values.gavetas}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.gavetas && Boolean(formik.errors.gavetas)}
+                                helperText={formik.touched.gavetas && formik.errors.gavetas}
+                                InputLabelProps={{ sx: redAsteriskStyle, shrink: true }}
+                                onKeyDown={(e) => handleKeyDown(e, null)}
+
+                              />
+                            </Box>
+                            <Box>
+                              <TextField select size="small" required fullWidth id="plazoDePagoId" name="plazoDePagoId" label="Plazo de pago"
+                                value={formik.values.plazoDePagoId === null ? '' : formik.values.plazoDePagoId}
+                                onChange={(e) => {
+                                  formik.setFieldValue('plazoDePagoId', e.target.value === '' ? '' : Number(e.target.value));
+                                }}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.plazoDePagoId && Boolean(formik.errors.plazoDePagoId)}
+                                helperText={formik.touched.plazoDePagoId && formik.errors.plazoDePagoId}
+                                InputLabelProps={{ sx: redAsteriskStyle, shrink: true }}
+>
+                                <MenuItem value="">Seleccionar</MenuItem>
+                                {(catalogoPlazos || []).map((p) => {
+                                  return <MenuItem key={p.id} value={p.id}>{p.nombre}</MenuItem>;
+                                })}
+                              </TextField>
+                            </Box>
+                            <Box>
+                              <TextField select size="small" required fullWidth id="listaDePreciosId" name="listaDePreciosId" label="Lista de precios"
+                                value={formik.values.listaDePreciosId === null ? '' : formik.values.listaDePreciosId}
+                                onChange={(e) => {
+                                  formik.setFieldValue('listaDePreciosId', e.target.value === '' ? '' : Number(e.target.value));
+                                }}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.listaDePreciosId && Boolean(formik.errors.listaDePreciosId)}
+                                helperText={formik.touched.listaDePreciosId && formik.errors.listaDePreciosId}
+                                InputLabelProps={{ sx: redAsteriskStyle, shrink: true }}
+>
+                                <MenuItem value="">Seleccionar</MenuItem>
+                                {(catalogoListas || []).map((l) => {
+                                  
+                                  return <MenuItem key={l.id} value={l.id}>{l.nombre}</MenuItem>;
+                                })}
+                              </TextField>
+                            </Box>
+                            <Box>
+                              <TextField select size="small" required fullWidth id="periodicidadId" name="periodicidadId" label="Periodicidad"
+                                value={formik.values.periodicidadId === null ? '' : formik.values.periodicidadId}
+                                onChange={(e) => {
+                                  formik.setFieldValue('periodicidadId', e.target.value === '' ? '' : Number(e.target.value));
+                                }}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.periodicidadId && Boolean(formik.errors.periodicidadId)}
+                                helperText={formik.touched.periodicidadId && formik.errors.periodicidadId}
+                                InputLabelProps={{ sx: redAsteriskStyle, shrink: true }}
+>
+                                <MenuItem value="">Seleccionar</MenuItem>
+                                {(catalogoPeriodicidades || []).map((pd) => {
+                                  return <MenuItem key={pd.id} value={pd.id}>{pd.nombre}</MenuItem>;
+                                })}
+                              </TextField>
+                            </Box>
+                          </Box>
+                        </Paper>
                         <Divider />
                         <Stack direction="row" spacing={1}>
                             <Button color="primary" startIcon={<SaveIcon />} variant="contained" type="submit" disabled={formik.isSubmitting}>

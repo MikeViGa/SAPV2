@@ -10,7 +10,7 @@ export const obtenerSolicitudApi
     = (id) => apiClient.get(`/solicitudes/${id}`)
 
 export const obtenerSolicitudesApi
-    = () => apiClient.get(`/solicitudes`)
+    = (page = 0, size = 50) => apiClient.get(`/solicitudes`, { params: { page, size } })
 
 export const obtenerSolicitudNombreApi
     = (query) => apiClient.get(`/obtenersolicitudnombre?nombre=${query}`);

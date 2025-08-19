@@ -72,7 +72,7 @@ export default function PantallaSolicitudes() {
         } = useScreenCommon('Solicitudes', async (setRegistros, setCargando, addSnackbar) => {
             try {
                 setCargando(true);
-                const response = await obtenerSolicitudesApi();
+                const response = await obtenerSolicitudesApi(0, 50);
                 setRegistros(response.data);
                 addSnackbar("Registros cargados exitosamente", "success");
             } catch (error) {
@@ -98,14 +98,17 @@ export default function PantallaSolicitudes() {
             }
         };
     
-        const mostrarRegistros = async () => {
+        const mostrarRegistros = async (page = 0, size = 50) => {
+            console.log('mostrarRegistros llamado con page:', page, 'size:', size);
             setCargando(true);
             try {
                 if (idRegistro) {
                     const respuesta = await obtenerSolicitudApi(idRegistro);
-                    setRegistros([respuesta.data]);
+                    setRegistros({ rows: [respuesta.data], total: 1, page: 0, pageSize: size });
                 } else {
-                    const respuesta = await obtenerSolicitudesApi();
+                    console.log('Llamando obtenerSolicitudesApi con page:', page, 'size:', size);
+                    const respuesta = await obtenerSolicitudesApi(page, size);
+                    console.log('Respuesta de la API:', respuesta.data);
                     setRegistros(respuesta.data);
                 }
                 addSnackbar("Registros actualizados correctamente", "success");
