@@ -1,7 +1,6 @@
 package com.pla.app.controller;
 
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +19,12 @@ import java.util.Date;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import java.util.Map;
+import java.util.HashMap;
+import com.pla.app.dto.solicitudes.SolicitudResponseDTO;
 
 @RestController
 @Validated
@@ -41,9 +46,9 @@ public class SolicitudController {
 
 	// READ 1
 	@GetMapping("/solicitudes/{id}")
-	public ResponseEntity<Solicitud> obtenerSolicitud(@PathVariable Long id) {
+	public ResponseEntity<SolicitudResponseDTO> obtenerSolicitud(@PathVariable Long id) {
 		try {
-			Optional<Solicitud> solicitud = solicitudServicio.obtenerSolicitudPorId(id);
+			Optional<SolicitudResponseDTO> solicitud = solicitudServicio.obtenerSolicitudDTO(id);
 			if (solicitud.isPresent()) {
 				return new ResponseEntity<>(solicitud.get(), HttpStatus.OK);
 			} else {
@@ -56,9 +61,14 @@ public class SolicitudController {
 
 	// READ ALL
 	@GetMapping("/solicitudes")
-	public ResponseEntity<List<Solicitud>> obtenerSucursales() {
-		List<Solicitud> solicitudes = solicitudServicio.obtenerSolicitudes();
-		return new ResponseEntity<>(solicitudes, HttpStatus.OK);
+	public ResponseEntity<Map<String, Object>> obtenerSucursales(@PageableDefault(size = 50) Pageable pageable) {
+		Page<SolicitudResponseDTO> pagina = solicitudServicio.obtenerSolicitudesPaginadoDTO(pageable);
+		Map<String, Object> body = new HashMap<>();
+		body.put("rows", pagina.getContent());
+		body.put("total", pagina.getTotalElements());
+		body.put("page", pagina.getNumber());
+		body.put("pageSize", pagina.getSize());
+		return new ResponseEntity<>(body, HttpStatus.OK);
 	}
 
 	// DELETE
