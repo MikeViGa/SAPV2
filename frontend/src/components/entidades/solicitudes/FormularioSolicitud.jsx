@@ -291,7 +291,7 @@ export default function FormularioSolicitud({ modo, registro, open, onClose, ref
                             }}
                         >
                             {/* Datos básicos */}
-                            <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
+                            <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
                                 <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 2, '& .MuiTextField-root': { width: '100%' } }}>
                                     <Box>
                                         <TextField size="small" required fullWidth id="claveSolicitud" name="claveSolicitud" label="Clave de solicitud" value={formik.values.claveSolicitud} onChange={formik.handleChange} onBlur={formik.handleBlur} error={formik.touched.claveSolicitud && Boolean(formik.errors.claveSolicitud)} helperText={formik.touched.claveSolicitud && formik.errors.claveSolicitud} InputLabelProps={{ sx: redAsteriskStyle, shrink: true }} />
@@ -378,15 +378,11 @@ export default function FormularioSolicitud({ modo, registro, open, onClose, ref
                                 {/* Campo usuario eliminado: se toma de la sesión */}
 
                             </Paper>
-                            <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
-                                <Typography variant="h6" gutterBottom color="primary">
-                                    Beneficiarios
-                                </Typography>
+                            <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
+                               
 
                                 {/* Beneficiario 1 */}
-                                <Typography variant="subtitle2" gutterBottom color="text.secondary">
-                                    Beneficiario 1
-                                </Typography>
+                                
                                 <Grid
                                     container
                                     spacing={2}
@@ -399,7 +395,7 @@ export default function FormularioSolicitud({ modo, registro, open, onClose, ref
                                             fullWidth
                                             id="nombreBeneficiario1"
                                             name="nombreBeneficiario1"
-                                            label="Nombre"
+                                            label="Nombre beneficiario 1"
                                             value={formik.values.nombreBeneficiario1}
                                             onChange={formik.handleChange}
                                             InputLabelProps={{ shrink: true }}
@@ -432,9 +428,7 @@ export default function FormularioSolicitud({ modo, registro, open, onClose, ref
                                 </Grid>
 
                                 {/* Beneficiario 2 */}
-                                <Typography variant="subtitle2" gutterBottom color="text.secondary">
-                                    Beneficiario 2
-                                </Typography>
+                                
                                 <Grid
                                     container
                                     spacing={2}
@@ -447,7 +441,7 @@ export default function FormularioSolicitud({ modo, registro, open, onClose, ref
                                             fullWidth
                                             id="nombreBeneficiario2"
                                             name="nombreBeneficiario2"
-                                            label="Nombre"
+                                            label="Nombre beneficiario 2"
                                             value={formik.values.nombreBeneficiario2}
                                             onChange={formik.handleChange}
                                             InputLabelProps={{ shrink: true }}
@@ -480,9 +474,7 @@ export default function FormularioSolicitud({ modo, registro, open, onClose, ref
                                 </Grid>
 
                                 {/* Beneficiario 3 */}
-                                <Typography variant="subtitle2" gutterBottom color="text.secondary">
-                                    Beneficiario 3
-                                </Typography>
+                                
                                 <Grid
                                     container
                                     spacing={2}
@@ -495,7 +487,7 @@ export default function FormularioSolicitud({ modo, registro, open, onClose, ref
                                             fullWidth
                                             id="nombreBeneficiario3"
                                             name="nombreBeneficiario3"
-                                            label="Nombre"
+                                            label="Nombre beneficiario 3"
                                             value={formik.values.nombreBeneficiario3}
                                             onChange={formik.handleChange}
                                             InputLabelProps={{ shrink: true }}
@@ -528,7 +520,7 @@ export default function FormularioSolicitud({ modo, registro, open, onClose, ref
                                 </Grid>
                             </Paper>
 
-                            <Divider />
+                            <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
                             <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
                                 <Button
                                     color="primary"
@@ -557,6 +549,7 @@ export default function FormularioSolicitud({ modo, registro, open, onClose, ref
                                     {operacionTerminada ? "Salir" : "Cancelar"}
                                 </Button>
                             </Stack>
+                            </Paper>
                         </Box>
                     </LocalizationProvider>
                 )}

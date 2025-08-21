@@ -13,6 +13,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import Cargando from '../../base/dashboard/elementos/Cargando';
 import Switch from '@mui/material/Switch';
 import { useSnackbar } from '../../base/dashboard/elementos/SnackbarContext';
+import Grid from '@mui/material/Grid2';
 
 export default function FormularioModulo({ modo, registro, open, onClose, refrescar }) {
     const { addSnackbar } = useSnackbar();
@@ -151,131 +152,144 @@ export default function FormularioModulo({ modo, registro, open, onClose, refres
                     <Box
                         component="form"
                         onSubmit={formik.handleSubmit}
-                        sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}
+                        sx={{ display: 'flex', flexDirection: 'column', gap: 1, pt: 1, mt: 1 }}
                     >
-                        <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
-                            <TextField
-                                size="small"
-                                required
-                                fullWidth
-                                name="nombre"
-                                label="Nombre"
-                                value={formik.values.nombre}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                error={formik.touched.nombre && Boolean(formik.errors.nombre)}
-                                helperText={formik.touched.nombre && formik.errors.nombre}
-                                autoFocus
-                            />
-
-                            <TextField
-                                size="small"
-                                required
-                                fullWidth
-                                name="ruta"
-                                label="Ruta"
-                                value={formik.values.ruta}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                error={formik.touched.ruta && Boolean(formik.errors.ruta)}
-                                helperText={formik.touched.ruta && formik.errors.ruta}
-                                placeholder="/ejemplo/ruta"
-                            />
-
-                            <TextField
-                                size="small"
-                                fullWidth
-                                name="icono"
-                                label="Icono"
-                                value={formik.values.icono}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                error={formik.touched.icono && Boolean(formik.errors.icono)}
-                                helperText={formik.touched.icono && formik.errors.icono}
-                                placeholder="dashboard, settings, etc."
-                            />
-
-                            <TextField
-                                size="small"
-                                required
-                                fullWidth
-                                name="orden"
-                                label="Orden"
-                                type="number"
-                                value={formik.values.orden}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                error={formik.touched.orden && Boolean(formik.errors.orden)}
-                                helperText={formik.touched.orden && formik.errors.orden}
-                            />
-
-                            <Autocomplete
-                                size="small"
-                                options={superModulos}
-                                getOptionLabel={(option) => option.nombre || ''}
-                                value={formik.values.superModulo}
-                                onChange={(event, newValue) => {
-                                    formik.setFieldValue('superModulo', newValue);
-                                }}
-                                renderInput={(params) => (
+                        <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
+                            <Grid container spacing={1} sx={{ mb: 2 }}>
+                                <Grid xs={12} sm={6} md={3}>
                                     <TextField
-                                        {...params}
-                                        label="Supermódulo"
-                                        placeholder="Seleccionar supermódulo (opcional)"
+                                        size="small"
+                                        required
+                                        fullWidth
+                                        name="nombre"
+                                        label="Nombre"
+                                        value={formik.values.nombre}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={formik.touched.nombre && Boolean(formik.errors.nombre)}
+                                        helperText={formik.touched.nombre && formik.errors.nombre}
+                                        autoFocus
                                     />
-                                )}
-                                isOptionEqualToValue={(option, value) => {
-                                    if (!option || !value) return option === value;
-                                    return option.id === value.id;
-                                }}
-                                noOptionsText="No hay supermódulos disponibles"
-                            />
-
-                            <FormControlLabel
-                                control={
-                                    <Switch
-                                        checked={formik.values.visible}
-                                        onChange={(event) => {
-                                            formik.setFieldValue('visible', event.target.checked);
+                                </Grid>
+                                <Grid xs={12} sm={6} md={3}>
+                                    <TextField
+                                        size="small"
+                                        required
+                                        fullWidth
+                                        name="ruta"
+                                        label="Ruta"
+                                        value={formik.values.ruta}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={formik.touched.ruta && Boolean(formik.errors.ruta)}
+                                        helperText={formik.touched.ruta && formik.errors.ruta}
+                                        placeholder="/ejemplo/ruta"
+                                    />
+                                </Grid>
+                                <Grid xs={12} sm={6} md={3}>
+                                    <TextField
+                                        size="small"
+                                        fullWidth
+                                        name="icono"
+                                        label="Icono"
+                                        value={formik.values.icono}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={formik.touched.icono && Boolean(formik.errors.icono)}
+                                        helperText={formik.touched.icono && formik.errors.icono}
+                                        placeholder="dashboard, settings, etc."
+                                    />
+                                </Grid>
+                                <Grid xs={12} sm={6} md={3}>
+                                    <TextField
+                                        size="small"
+                                        required
+                                        fullWidth
+                                        name="orden"
+                                        label="Orden"
+                                        type="number"
+                                        value={formik.values.orden}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={formik.touched.orden && Boolean(formik.errors.orden)}
+                                        helperText={formik.touched.orden && formik.errors.orden}
+                                    />
+                                </Grid>
+                                <Grid xs={12} sm={6} md={3}>
+                                <Box sx={{ display: 'flex', border: 0 }} >
+                                    <Autocomplete
+                                        style={{ width: 220 }}
+                                        freeSolo
+                                        options={superModulos}
+                                        getOptionLabel={(option) => option.nombre || ''}
+                                        value={formik.values.superModulo}
+                                        onChange={(event, newValue) => {
+                                            formik.setFieldValue('superModulo', newValue);
                                         }}
-                                        name="visible"
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                fullWidth
+                                                size="small"
+                                                label="Supermódulo"
+                                                placeholder="Seleccionar supermódulo (opcional)"
+                                            />
+                                        )}
+                                        isOptionEqualToValue={(option, value) => {
+                                            if (!option || !value) return option === value;
+                                            return option.id === value.id;
+                                        }}
+                                        noOptionsText="No hay supermódulos disponibles"
                                     />
-                                }
-                                label="Visible"
-                            />
-                            </Paper>
-                            <Paper elevation={1} sx={{ p: 1, mb: 0 }}>
-                                <Stack direction="row" spacing={1}>
-                                    <Button
-                                        variant="contained"
-                                        type="submit"
-                                        disabled={formik.isSubmitting}
-                                        startIcon={<SaveIcon />}
-                                        fullWidth
-                                    >
-                                        {modo === 'editar' ? 'Actualizar' : 'Agregar'}
-                                    </Button>
-                                    <Button
-                                        variant="contained"
-                                        onClick={handleReset}
-                                        disabled={formik.isSubmitting}
-                                        startIcon={<RefreshIcon />}
-                                        fullWidth
-                                    >
-                                        Reiniciar
-                                    </Button>
-                                    <Button
-                                        variant="contained"
-                                        color="warning"
-                                        onClick={onClose}
-                                        startIcon={<CancelIcon />}
-                                        fullWidth
-                                    >
-                                        Cancelar
-                                    </Button>
-                                </Stack>
-                            </Paper>
-                        
+                                    </Box>
+                                </Grid>
+                                <Grid xs={12} sm={6} md={3}>
+                                    <FormControlLabel
+                                        control={
+                                            <Switch
+                                                checked={formik.values.visible}
+                                                onChange={(event) => {
+                                                    formik.setFieldValue('visible', event.target.checked);
+                                                }}
+                                                name="visible"
+                                            />
+                                        }
+                                        label="Visible"
+                                    />
+                                </Grid>
+                            </Grid>
+                        </Paper>
+                        <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
+                            <Stack direction="row" spacing={1}>
+                                <Button
+                                    variant="contained"
+                                    type="submit"
+                                    disabled={formik.isSubmitting}
+                                    startIcon={<SaveIcon />}
+                                    fullWidth
+                                >
+                                    {modo === 'editar' ? 'Actualizar' : 'Agregar'}
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    onClick={handleReset}
+                                    disabled={formik.isSubmitting}
+                                    startIcon={<RefreshIcon />}
+                                    fullWidth
+                                >
+                                    Reiniciar
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    color="warning"
+                                    onClick={onClose}
+                                    startIcon={<CancelIcon />}
+                                    fullWidth
+                                >
+                                    Cancelar
+                                </Button>
+                            </Stack>
+                        </Paper>
                     </Box>
                 )}
             </DialogContent>

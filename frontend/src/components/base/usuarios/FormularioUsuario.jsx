@@ -139,7 +139,7 @@ export default function FormularioUsuario({ modo, registro, open, onClose, refre
     };
 
     return (
-        <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth PaperProps={dialogPaperProps}>
+        <Dialog open={open} onClose={onClose} PaperProps={dialogPaperProps}>
             <DialogTitle {...dialogTitleProps} sx={{ bgcolor: '#1976d2', color: '#fff', py: 1, px: 2, cursor: 'move' }}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Typography variant="h6" sx={{ color: 'inherit' }}>
@@ -157,12 +157,11 @@ export default function FormularioUsuario({ modo, registro, open, onClose, refre
                     <Box
                         component="form"
                         onSubmit={formik.handleSubmit}
-                        sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '650px', margin: 'auto', mt: 2 }}
+                        sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: 400, pt: 1 }}
                     >
-                        <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
-                            <Typography sx={{ mb: 2 }}>Datos del usuario:</Typography>
-                            <Grid container spacing={1} sx={{ mb: 2 }}>
-                                <Grid xs={12} sm={6} md={3}>
+                        <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
+                            <Grid container spacing={1}>
+                            <Grid xs={12} sm={4}>
                                     <TextField
                                         size="small"
                                         required
@@ -177,7 +176,7 @@ export default function FormularioUsuario({ modo, registro, open, onClose, refre
                                         autoFocus
                                     />
                                 </Grid>
-                                <Grid xs={12} sm={6} md={3}>
+                                <Grid xs={12} sm={4}>
                                     <TextField
                                         size="small"
                                         required
@@ -201,7 +200,7 @@ export default function FormularioUsuario({ modo, registro, open, onClose, refre
                                         }}
                                     />
                                 </Grid>
-                                <Grid xs={12} sm={6} md={3}>
+                                <Grid xs={12} sm={4}>
                                     <FormControl
                                         size="small"
                                         fullWidth
@@ -227,13 +226,11 @@ export default function FormularioUsuario({ modo, registro, open, onClose, refre
                                         )}
                                     </FormControl>
                                 </Grid>
-                                <Grid xs={12} sm={6} md={3} />
                             </Grid>
                         </Paper>
-
-                        <Paper elevation={1} sx={{ p: 1, mb: 0 }}>
+                        <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
                             <Stack direction="row" spacing={1}>
-                                <Button variant="contained" type="submit" disabled={formik.isSubmitting} startIcon={<SaveIcon />}> 
+                                <Button variant="contained" type="submit" disabled={formik.isSubmitting} startIcon={<SaveIcon />}>
                                     {modo === 'editar' ? 'Actualizar' : 'Agregar'}
                                 </Button>
                                 <Button variant="contained" onClick={handleReset} disabled={formik.isSubmitting} startIcon={<RefreshIcon />}>Reiniciar</Button>

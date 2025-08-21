@@ -279,9 +279,7 @@ export default function FormularioPaquete({ modo, registro, open, onClose, refre
                         onSubmit={formik.handleSubmit}
                         sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%', maxWidth: 1200, margin: 'auto', mt: 0 }}
                     >
-                        
-                        <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
-                          <Typography sx={{ mb: 2 }}>Datos del paquete:</Typography>
+                         <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
                           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }, gap: 2, '& .MuiTextField-root': { width: '100%' } }}>
                             <Box>
                               <TextField size="small" required fullWidth id="clave" name="clave" label="Clave"
@@ -391,7 +389,7 @@ export default function FormularioPaquete({ modo, registro, open, onClose, refre
                                 helperText={formik.touched.plazoDePagoId && formik.errors.plazoDePagoId}
                                 InputLabelProps={{ sx: redAsteriskStyle, shrink: true }}
 >
-                                <MenuItem value="">Seleccionar</MenuItem>
+                               
                                 {(catalogoPlazos || []).map((p) => {
                                   return <MenuItem key={p.id} value={p.id}>{p.nombre}</MenuItem>;
                                 })}
@@ -408,7 +406,7 @@ export default function FormularioPaquete({ modo, registro, open, onClose, refre
                                 helperText={formik.touched.listaDePreciosId && formik.errors.listaDePreciosId}
                                 InputLabelProps={{ sx: redAsteriskStyle, shrink: true }}
 >
-                                <MenuItem value="">Seleccionar</MenuItem>
+                                
                                 {(catalogoListas || []).map((l) => {
                                   
                                   return <MenuItem key={l.id} value={l.id}>{l.nombre}</MenuItem>;
@@ -426,7 +424,7 @@ export default function FormularioPaquete({ modo, registro, open, onClose, refre
                                 helperText={formik.touched.periodicidadId && formik.errors.periodicidadId}
                                 InputLabelProps={{ sx: redAsteriskStyle, shrink: true }}
 >
-                                <MenuItem value="">Seleccionar</MenuItem>
+                                
                                 {(catalogoPeriodicidades || []).map((pd) => {
                                   return <MenuItem key={pd.id} value={pd.id}>{pd.nombre}</MenuItem>;
                                 })}
@@ -434,7 +432,7 @@ export default function FormularioPaquete({ modo, registro, open, onClose, refre
                             </Box>
                           </Box>
                         </Paper>
-                        <Divider />
+                        <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
                         <Stack direction="row" spacing={1}>
                             <Button color="primary" startIcon={<SaveIcon />} variant="contained" type="submit" disabled={formik.isSubmitting}>
                                 {formik.values.id ? 'Actualizar' : 'Agregar'}
@@ -448,6 +446,7 @@ export default function FormularioPaquete({ modo, registro, open, onClose, refre
                                 {operacionTerminada ? "Salir" : "Cancelar"}
                             </Button>
                         </Stack>
+                        </Paper>
                     </Box>
                 )}
             </DialogContent>

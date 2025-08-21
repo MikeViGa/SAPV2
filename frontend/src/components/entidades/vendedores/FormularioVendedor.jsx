@@ -88,7 +88,7 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
 
     useEffect(() => {
         if (open) {
-            console.log("MODOOOOOOOOOO: "+ modo);
+            console.log("MODOOOOOOOOOO: " + modo);
             cargarSupervisores();
             cargarVendedores();
             if (modo === "editar" && registro) {
@@ -143,7 +143,7 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
         telefono2: '',
         idSupervisor: '',
         clavesSupervisados: '',
-        supervisor:'',
+        supervisor: '',
     };
 
     const validationSchema = Yup.object({
@@ -265,500 +265,495 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                     <Box
                         component="form"
                         onSubmit={formik.handleSubmit}
-                        sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '1100px', margin: 'auto', mt: 0 }}
+                        sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '1100px', margin: 'auto', mt: 2 }}
                     >
-                        <Typography variant="h5" component="h1" gutterBottom>
-                            {modo === 'editar' ? 'Editar vendedor' : 'Crear vendedor'}
-                        </Typography>
-                        <Typography >Datos personales:</Typography>
-                        <Grid container spacing={2}>
-                            <Grid xs={12} sm={6} md={3}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="nombre"
-                                    name="nombre"
-                                    label="Nombre"
-                                    value={formik.values.nombre}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.nombre && Boolean(formik.errors.nombre)}
-                                    helperText={formik.touched.nombre && formik.errors.nombre}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, apellidoPaternoRef)}
-                                    inputRef={nombreRef}
-                                />
-                            </Grid>
-                            <Grid xs={12} sm={4}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="apellidoPaterno"
-                                    name="apellidoPaterno"
-                                    label="Apellido paterno"
-                                    value={formik.values.apellidoPaterno}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.apellidoPaterno && Boolean(formik.errors.apellidoPaterno)}
-                                    helperText={formik.touched.apellidoPaterno && formik.errors.apellidoPaterno}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, apellidoMaternoRef)}
-                                    inputRef={apellidoPaternoRef}
-                                />
-                            </Grid>
-                            <Grid xs={12} sm={4}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="apellidoMaterno"
-                                    name="apellidoMaterno"
-                                    label="Apellido Materno"
-                                    value={formik.values.apellidoMaterno}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.apellidoMaterno && Boolean(formik.errors.apellidoMaterno)}
-                                    helperText={formik.touched.apellidoMaterno && formik.errors.apellidoMaterno}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, calleRef)}
-                                    inputRef={apellidoMaternoRef}
-                                />
-                            </Grid>
-                        </Grid>
-                        <Divider />
-                        <Typography > Domicilio:</Typography>
-                        <Grid container spacing={2}>
-                            <Grid xs={12} sm={4}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="calle"
-                                    name="calle"
-                                    label="Calle"
-                                    value={formik.values.calle}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.calle && Boolean(formik.errors.calle)}
-                                    helperText={formik.touched.calle && formik.errors.calle}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, numeroInteriorRef)}
-                                    inputRef={calleRef}
-                                />
-                            </Grid>
-                            <Grid xs={12} sm={4}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="numeroInterior"
-                                    name="numeroInterior"
-                                    label="Número interior"
-                                    value={formik.values.numeroInterior}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.numeroInterior && Boolean(formik.errors.numeroInterior)}
-                                    helperText={formik.touched.numeroInterior && formik.errors.numeroInterior}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, numeroExteriorRef)}
-                                    inputRef={numeroInteriorRef}
-                                />
-                            </Grid>
-                            <Grid xs={12} sm={4}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="numeroExterior"
-                                    name="numeroExterior"
-                                    label="Número exterior"
-                                    value={formik.values.numeroExterior}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.numeroExterior && Boolean(formik.errors.numeroExterior)}
-                                    helperText={formik.touched.numeroExterior && formik.errors.numeroExterior}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, coloniaRef)}
-                                    inputRef={numeroExteriorRef}
-                                />
-                            </Grid>
-                            <Grid xs={12} sm={4}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="colonia"
-                                    name="colonia"
-                                    label="Colonia"
-                                    value={formik.values.colonia}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.colonia && Boolean(formik.errors.colonia)}
-                                    helperText={formik.touched.colonia && formik.errors.colonia}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, ciudadRef)}
-                                    inputRef={coloniaRef}
-                                />
-                            </Grid>
-                            <Grid xs={12} sm={4}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="ciudad"
-                                    name="ciudad"
-                                    label="Ciudad"
-                                    value={formik.values.ciudad}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.ciudad && Boolean(formik.errors.ciudad)}
-                                    helperText={formik.touched.ciudad && formik.errors.ciudad}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, estadoRef)}
-                                    inputRef={ciudadRef}
-                                />
-                            </Grid>
-                            <Grid xs={12} sm={4}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="estado"
-                                    name="estado"
-                                    label="Estado"
-                                    value={formik.values.estado}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.estado && Boolean(formik.errors.estado)}
-                                    helperText={formik.touched.estado && formik.errors.estado}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, codigoPostalRef)}
-                                    inputRef={estadoRef}
-                                />
-                            </Grid>
-                            <Grid xs={12} sm={4}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="codigoPostal"
-                                    name="codigoPostal"
-                                    label="Código postal"
-                                    value={formik.values.codigoPostal}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.codigoPostal && Boolean(formik.errors.codigoPostal)}
-                                    helperText={formik.touched.codigoPostal && formik.errors.codigoPostal}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, telefono1Ref)}
-                                    inputRef={codigoPostalRef}
-                                />
-                            </Grid>
-                        </Grid>
-                        <Divider />
-                        <Typography > Otros datos: </Typography>
-                        <Grid container spacing={2}>
-                            <Grid xs={12} sm={4}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="telefono1"
-                                    name="telefono1"
-                                    label="Télefono 1"
-                                    value={formik.values.telefono1}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.telefono1 && Boolean(formik.errors.telefono1)}
-                                    helperText={formik.touched.telefono1 && formik.errors.telefono1}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, telefono2Ref)}
-                                    inputRef={telefono1Ref}
-                                />
-                            </Grid>
-                            <Grid xs={12} sm={4}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="telefono2"
-                                    name="telefono2"
-                                    label="Télefono 2"
-                                    value={formik.values.telefono2}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.telefono2 && Boolean(formik.errors.telefono2)}
-                                    helperText={formik.touched.telefono2 && formik.errors.telefono2}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, regimenRef)}
-                                    inputRef={telefono2Ref}
-                                />
-                            </Grid>
-                            <Grid xs={12} sm={4}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="regimen"
-                                    name="regimen"
-                                    label="Régimen"
-                                    value={formik.values.regimen}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.regimen && Boolean(formik.errors.regimen)}
-                                    helperText={formik.touched.regimen && formik.errors.regimen}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, rfcRef)}
-                                    inputRef={regimenRef}
-                                />
-                            </Grid>
-                            <Grid xs={12} sm={4}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="rfc"
-                                    name="rfc"
-                                    label="RFC"
-                                    value={formik.values.rfc}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.rfc && Boolean(formik.errors.rfc)}
-                                    helperText={formik.touched.rfc && formik.errors.rfc}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, curpRef)}
-                                    inputRef={rfcRef}
-                                />
-                            </Grid>
-                            <Grid xs={12} sm={4}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="curp"
-                                    name="curp"
-                                    label="CURP"
-                                    value={formik.values.curp}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.curp && Boolean(formik.errors.curp)}
-                                    helperText={formik.touched.curp && formik.errors.curp}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, numeroTarjetaRef)}
-                                    inputRef={curpRef}
-                                />
-                            </Grid>
-                            <Grid xs={12} sm={4}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="numeroTarjeta"
-                                    name="numeroTarjeta"
-                                    label="Número tarjeta"
-                                    value={formik.values.numeroTarjeta}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.numeroTarjeta && Boolean(formik.errors.numeroTarjeta)}
-                                    helperText={formik.touched.numeroTarjeta && formik.errors.numeroTarjeta}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) =>handleKeyDown(e, fechaAltaRef) }
-                                    inputRef={numeroTarjetaRef}
-                                />
-                            </Grid>
-                            <Grid xs={12} sm={4}>
-                                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-                                    <DateTimePicker
-                                        id="fechaAlta"
-                                        name="fechaAlta"
-                                        label="Fecha de alta"
+                        <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
+                            <Grid container spacing={1}>
+                                <Grid xs={12} sm={6} md={3}>
+                                    <TextField
+                                        size="small"
                                         required
-                                        value={formik.values.fechaAlta}
-                                        onChange={(newValue) => {
-                                            const utcValue = newValue.utc();
-                                            formik.setFieldValue('fechaAlta', newValue)
+                                        fullWidth
+                                        id="nombre"
+                                        name="nombre"
+                                        label="Nombre"
+                                        value={formik.values.nombre}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={formik.touched.nombre && Boolean(formik.errors.nombre)}
+                                        helperText={formik.touched.nombre && formik.errors.nombre}
+                                        InputLabelProps={{
+                                            sx: redAsteriskStyle,
+                                            shrink: true,
                                         }}
-                                        format="DD/MM/YYYY HH:mm:ss"
-                                        viewRenderers={{
-                                            hours: renderTimeViewClock,
-                                            minutes: renderTimeViewClock,
-                                            seconds: renderTimeViewClock,
-                                        }}
-                                        inputRef={fechaAltaRef}
-                                        onKeyDown={(e) =>handleKeyDown(e, supervisorRef)}
-                                        slotProps={{
-                                            textField: {
-                                                name: "fechaAlta",
-                                                onBlur: formik.handleBlur,
-                                                error: formik.touched.fechaAlta && Boolean(formik.errors.fechaAlta),
-                                                helperText: formik.touched.fechaAlta && formik.errors.fechaAlta,
-                                                size: "small",
-                                                InputLabelProps: {
-                                                    sx: redAsteriskStyle,
-                                                    shrink: true,
-                                                },
-                                            },
-                                        }}
+                                        onKeyDown={(e) => handleKeyDown(e, apellidoPaternoRef)}
+                                        inputRef={nombreRef}
                                     />
-                                </LocalizationProvider>
-                            </Grid>
-                        </Grid>
-                        <Divider />
-                        <Typography >Supervisor:</Typography>
-                        <Grid container spacing={2}>
-                            <Grid xs={12} sm={4}>
-                                <Box sx={{ display: 'flex', border: 0 }} >
-                                    <Box sx={{ display: 'flex', border: 0 }} >
-                                        <Autocomplete
-                                            options={supervisores}
-                                            getOptionLabel={(option) => option.nombre + " " + option.apellidoPaterno + " " + option.apellidoMaterno}
-                                            style={{ width: 400 }}
-                                            value={formik.values.supervisor}
-                                            onChange={(event, newValue) => {
-                                                setSupervisorSeleccionado(newValue);
+                                </Grid>
+                                <Grid xs={12} sm={4}>
+                                    <TextField
+                                        size="small"
+                                        required
+                                        fullWidth
+                                        id="apellidoPaterno"
+                                        name="apellidoPaterno"
+                                        label="Apellido paterno"
+                                        value={formik.values.apellidoPaterno}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={formik.touched.apellidoPaterno && Boolean(formik.errors.apellidoPaterno)}
+                                        helperText={formik.touched.apellidoPaterno && formik.errors.apellidoPaterno}
+                                        InputLabelProps={{
+                                            sx: redAsteriskStyle,
+                                            shrink: true,
+                                        }}
+                                        onKeyDown={(e) => handleKeyDown(e, apellidoMaternoRef)}
+                                        inputRef={apellidoPaternoRef}
+                                    />
+                                </Grid>
+                                <Grid xs={12} sm={4}>
+                                    <TextField
+                                        size="small"
+                                        required
+                                        fullWidth
+                                        id="apellidoMaterno"
+                                        name="apellidoMaterno"
+                                        label="Apellido Materno"
+                                        value={formik.values.apellidoMaterno}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={formik.touched.apellidoMaterno && Boolean(formik.errors.apellidoMaterno)}
+                                        helperText={formik.touched.apellidoMaterno && formik.errors.apellidoMaterno}
+                                        InputLabelProps={{
+                                            sx: redAsteriskStyle,
+                                            shrink: true,
+                                        }}
+                                        onKeyDown={(e) => handleKeyDown(e, calleRef)}
+                                        inputRef={apellidoMaternoRef}
+                                    />
+                                </Grid>
+                                <Grid xs={12} sm={4}>
+                                    <TextField
+                                        size="small"
+                                        required
+                                        fullWidth
+                                        id="telefono1"
+                                        name="telefono1"
+                                        label="Télefono 1"
+                                        value={formik.values.telefono1}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={formik.touched.telefono1 && Boolean(formik.errors.telefono1)}
+                                        helperText={formik.touched.telefono1 && formik.errors.telefono1}
+                                        InputLabelProps={{
+                                            sx: redAsteriskStyle,
+                                            shrink: true,
+                                        }}
+                                        onKeyDown={(e) => handleKeyDown(e, telefono2Ref)}
+                                        inputRef={telefono1Ref}
+                                    />
+                                </Grid>
+                                <Grid xs={12} sm={4}>
+                                    <TextField
+                                        size="small"
+                                        required
+                                        fullWidth
+                                        id="telefono2"
+                                        name="telefono2"
+                                        label="Télefono 2"
+                                        value={formik.values.telefono2}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={formik.touched.telefono2 && Boolean(formik.errors.telefono2)}
+                                        helperText={formik.touched.telefono2 && formik.errors.telefono2}
+                                        InputLabelProps={{
+                                            sx: redAsteriskStyle,
+                                            shrink: true,
+                                        }}
+                                        onKeyDown={(e) => handleKeyDown(e, regimenRef)}
+                                        inputRef={telefono2Ref}
+                                    />
+                                </Grid>
+                                <Grid xs={12} sm={4}>
+                                    <TextField
+                                        size="small"
+                                        required
+                                        fullWidth
+                                        id="regimen"
+                                        name="regimen"
+                                        label="Régimen"
+                                        value={formik.values.regimen}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={formik.touched.regimen && Boolean(formik.errors.regimen)}
+                                        helperText={formik.touched.regimen && formik.errors.regimen}
+                                        InputLabelProps={{
+                                            sx: redAsteriskStyle,
+                                            shrink: true,
+                                        }}
+                                        onKeyDown={(e) => handleKeyDown(e, rfcRef)}
+                                        inputRef={regimenRef}
+                                    />
+                                </Grid>
+                                <Grid xs={12} sm={4}>
+                                    <TextField
+                                        size="small"
+                                        required
+                                        fullWidth
+                                        id="rfc"
+                                        name="rfc"
+                                        label="RFC"
+                                        value={formik.values.rfc}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={formik.touched.rfc && Boolean(formik.errors.rfc)}
+                                        helperText={formik.touched.rfc && formik.errors.rfc}
+                                        InputLabelProps={{
+                                            sx: redAsteriskStyle,
+                                            shrink: true,
+                                        }}
+                                        onKeyDown={(e) => handleKeyDown(e, curpRef)}
+                                        inputRef={rfcRef}
+                                    />
+                                </Grid>
+                                <Grid xs={12} sm={4}>
+                                    <TextField
+                                        size="small"
+                                        required
+                                        fullWidth
+                                        id="curp"
+                                        name="curp"
+                                        label="CURP"
+                                        value={formik.values.curp}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={formik.touched.curp && Boolean(formik.errors.curp)}
+                                        helperText={formik.touched.curp && formik.errors.curp}
+                                        InputLabelProps={{
+                                            sx: redAsteriskStyle,
+                                            shrink: true,
+                                        }}
+                                        onKeyDown={(e) => handleKeyDown(e, numeroTarjetaRef)}
+                                        inputRef={curpRef}
+                                    />
+                                </Grid>
+                                <Grid xs={12} sm={4}>
+                                    <TextField
+                                        size="small"
+                                        required
+                                        fullWidth
+                                        id="numeroTarjeta"
+                                        name="numeroTarjeta"
+                                        label="Número tarjeta"
+                                        value={formik.values.numeroTarjeta}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={formik.touched.numeroTarjeta && Boolean(formik.errors.numeroTarjeta)}
+                                        helperText={formik.touched.numeroTarjeta && formik.errors.numeroTarjeta}
+                                        InputLabelProps={{
+                                            sx: redAsteriskStyle,
+                                            shrink: true,
+                                        }}
+                                        onKeyDown={(e) => handleKeyDown(e, fechaAltaRef)}
+                                        inputRef={numeroTarjetaRef}
+                                    />
+                                </Grid>
+                                <Grid xs={12} sm={4}>
+                                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+                                        <DateTimePicker
+                                            id="fechaAlta"
+                                            name="fechaAlta"
+                                            label="Fecha de alta"
+                                            required
+                                            value={formik.values.fechaAlta}
+                                            onChange={(newValue) => {
+                                                const utcValue = newValue.utc();
+                                                formik.setFieldValue('fechaAlta', newValue)
                                             }}
-                                            includeInputInList
-                                            freeSolo
-                                            isOptionEqualToValue={(option, value) =>
-                                                option.id === value.id
-                                            }
-                                            inputRef={supervisorRef}
-                                            onKeyDown={(e) =>handleKeyDown(e, null)}
-                                            renderInput={(params) => (
+                                            format="DD/MM/YYYY HH:mm:ss"
+                                            viewRenderers={{
+                                                hours: renderTimeViewClock,
+                                                minutes: renderTimeViewClock,
+                                                seconds: renderTimeViewClock,
+                                            }}
+                                            inputRef={fechaAltaRef}
+                                            onKeyDown={(e) => handleKeyDown(e, supervisorRef)}
+                                            slotProps={{
+                                                textField: {
+                                                    name: "fechaAlta",
+                                                    onBlur: formik.handleBlur,
+                                                    error: formik.touched.fechaAlta && Boolean(formik.errors.fechaAlta),
+                                                    helperText: formik.touched.fechaAlta && formik.errors.fechaAlta,
+                                                    size: "small",
+                                                    InputLabelProps: {
+                                                        sx: redAsteriskStyle,
+                                                        shrink: true,
+                                                    },
+                                                },
+                                            }}
+                                        />
+                                    </LocalizationProvider>
+                                </Grid>
+                            </Grid>
+                        </Paper>
+                        <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
+                            <Grid container spacing={1}>
+                                <Grid xs={12} sm={4}>
+                                    <TextField
+                                        size="small"
+                                        required
+                                        fullWidth
+                                        id="calle"
+                                        name="calle"
+                                        label="Calle"
+                                        value={formik.values.calle}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={formik.touched.calle && Boolean(formik.errors.calle)}
+                                        helperText={formik.touched.calle && formik.errors.calle}
+                                        InputLabelProps={{
+                                            sx: redAsteriskStyle,
+                                            shrink: true,
+                                        }}
+                                        onKeyDown={(e) => handleKeyDown(e, numeroInteriorRef)}
+                                        inputRef={calleRef}
+                                    />
+                                </Grid>
+                                <Grid xs={12} sm={4}>
+                                    <TextField
+                                        size="small"
+                                        required
+                                        fullWidth
+                                        id="numeroInterior"
+                                        name="numeroInterior"
+                                        label="Número interior"
+                                        value={formik.values.numeroInterior}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={formik.touched.numeroInterior && Boolean(formik.errors.numeroInterior)}
+                                        helperText={formik.touched.numeroInterior && formik.errors.numeroInterior}
+                                        InputLabelProps={{
+                                            sx: redAsteriskStyle,
+                                            shrink: true,
+                                        }}
+                                        onKeyDown={(e) => handleKeyDown(e, numeroExteriorRef)}
+                                        inputRef={numeroInteriorRef}
+                                    />
+                                </Grid>
+                                <Grid xs={12} sm={4}>
+                                    <TextField
+                                        size="small"
+                                        required
+                                        fullWidth
+                                        id="numeroExterior"
+                                        name="numeroExterior"
+                                        label="Número exterior"
+                                        value={formik.values.numeroExterior}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={formik.touched.numeroExterior && Boolean(formik.errors.numeroExterior)}
+                                        helperText={formik.touched.numeroExterior && formik.errors.numeroExterior}
+                                        InputLabelProps={{
+                                            sx: redAsteriskStyle,
+                                            shrink: true,
+                                        }}
+                                        onKeyDown={(e) => handleKeyDown(e, coloniaRef)}
+                                        inputRef={numeroExteriorRef}
+                                    />
+                                </Grid>
+                                <Grid xs={12} sm={4}>
+                                    <TextField
+                                        size="small"
+                                        required
+                                        fullWidth
+                                        id="colonia"
+                                        name="colonia"
+                                        label="Colonia"
+                                        value={formik.values.colonia}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={formik.touched.colonia && Boolean(formik.errors.colonia)}
+                                        helperText={formik.touched.colonia && formik.errors.colonia}
+                                        InputLabelProps={{
+                                            sx: redAsteriskStyle,
+                                            shrink: true,
+                                        }}
+                                        onKeyDown={(e) => handleKeyDown(e, ciudadRef)}
+                                        inputRef={coloniaRef}
+                                    />
+                                </Grid>
+                                <Grid xs={12} sm={4}>
+                                    <TextField
+                                        size="small"
+                                        required
+                                        fullWidth
+                                        id="ciudad"
+                                        name="ciudad"
+                                        label="Ciudad"
+                                        value={formik.values.ciudad}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={formik.touched.ciudad && Boolean(formik.errors.ciudad)}
+                                        helperText={formik.touched.ciudad && formik.errors.ciudad}
+                                        InputLabelProps={{
+                                            sx: redAsteriskStyle,
+                                            shrink: true,
+                                        }}
+                                        onKeyDown={(e) => handleKeyDown(e, estadoRef)}
+                                        inputRef={ciudadRef}
+                                    />
+                                </Grid>
+                                <Grid xs={12} sm={4}>
+                                    <TextField
+                                        size="small"
+                                        required
+                                        fullWidth
+                                        id="estado"
+                                        name="estado"
+                                        label="Estado"
+                                        value={formik.values.estado}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={formik.touched.estado && Boolean(formik.errors.estado)}
+                                        helperText={formik.touched.estado && formik.errors.estado}
+                                        InputLabelProps={{
+                                            sx: redAsteriskStyle,
+                                            shrink: true,
+                                        }}
+                                        onKeyDown={(e) => handleKeyDown(e, codigoPostalRef)}
+                                        inputRef={estadoRef}
+                                    />
+                                </Grid>
+                                <Grid xs={12} sm={4}>
+                                    <TextField
+                                        size="small"
+                                        required
+                                        fullWidth
+                                        id="codigoPostal"
+                                        name="codigoPostal"
+                                        label="Código postal"
+                                        value={formik.values.codigoPostal}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={formik.touched.codigoPostal && Boolean(formik.errors.codigoPostal)}
+                                        helperText={formik.touched.codigoPostal && formik.errors.codigoPostal}
+                                        InputLabelProps={{
+                                            sx: redAsteriskStyle,
+                                            shrink: true,
+                                        }}
+                                        onKeyDown={(e) => handleKeyDown(e, telefono1Ref)}
+                                        inputRef={codigoPostalRef}
+                                    />
+                                </Grid>
+                            </Grid>
+                        </Paper>
+                        <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
+                            <Grid container spacing={2}>
+                                <Grid xs={12} sm={4}>
+                                    <Box sx={{ display: 'flex', border: 0 }} >
+                                        <Box sx={{ display: 'flex', border: 0 }} >
+                                            <Autocomplete
+                                                options={supervisores}
+                                                getOptionLabel={(option) => option.nombre + " " + option.apellidoPaterno + " " + option.apellidoMaterno}
+                                                style={{ width: 400 }}
+                                                value={formik.values.supervisor}
+                                                onChange={(event, newValue) => {
+                                                    setSupervisorSeleccionado(newValue);
+                                                }}
+                                                includeInputInList
+                                                freeSolo
+                                                isOptionEqualToValue={(option, value) =>
+                                                    option.id === value.id
+                                                }
+                                                inputRef={supervisorRef}
+                                                onKeyDown={(e) => handleKeyDown(e, null)}
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        label="Seleccionar supervisor"
+                                                        fullWidth
+                                                        size="small"
+                                                        InputLabelProps={{
+                                                            sx: redAsteriskStyle,
+                                                            shrink: true,
+                                                        }}
+                                                    />
+                                                )}
+                                            />
+                                        </Box>
+                                    </Box>
+                                </Grid>
+                                <Typography >Supervisados:</Typography>
+                                <Grid xs={12} sm={4}>
+                                    <Grid container spacing={2} >
+                                        <Autocomplete
+                                            options={vendedores}
+                                            getOptionLabel={(option) => `${option.nombre} ${option.apellidoPaterno} ${option.apellidoMaterno} (ID: ${option.id})`}
+                                            sx={{ width: 300, marginBottom: '16px', '& .MuiInputBase-root': { height: 40 } }} // Adjust height here
+                                            value={supervisadoSeleccionado}
+                                            onChange={(event, newValue) => setSupervisadoSeleccionado(newValue)}
+                                            renderInput={(params) =>
                                                 <TextField
                                                     {...params}
-                                                    label="Seleccionar supervisor"
-                                                    fullWidth
-                                                    size="small"
+                                                    label="Seleccionar vendedor"
+                                                    variant="outlined"
                                                     InputLabelProps={{
                                                         sx: redAsteriskStyle,
                                                         shrink: true,
                                                     }}
-                                                />
-                                            )}
+                                                />}
                                         />
+                                        <Button
+                                            variant="contained"
+                                            color="primary"
+                                            startIcon={<Add />}
+                                            onClick={addItem}
+                                            disabled={!supervisadoSeleccionado}
+                                            sx={{ marginBottom: '16px' }}
+                                        >
+                                            Agregar
+                                        </Button>
+                                    </Grid>
+                                    <Box sx={{ height: '100px', maxHeight: '100px', overflowY: 'auto', border: '1px solid #ccc' }}>
+                                        <List>
+                                            {supervisados.map((item, index) => (
+                                                <ListItem
+                                                    key={item.id}
+                                                    sx={{
+                                                        display: 'flex',
+                                                        justifyContent: 'space-between',
+                                                        padding: '1px 4px',
+                                                        marginBottom: 'px'
+                                                    }}
+                                                >
+                                                    <ListItemText
+                                                        primary={`${item.id}.- ${item.nombre} ${item.apellidoPaterno} ${item.apellidoMaterno}`}
+                                                    />
+                                                    <IconButton onClick={() => deleteItem(index)} color="warning" size="small">
+                                                        <Delete />
+                                                    </IconButton>
+                                                </ListItem>
+                                            ))}
+                                        </List>
                                     </Box>
-                                </Box>
-                            </Grid>
-                            <Divider />
-                            <Typography >Supervisados:</Typography>
-                            <Grid xs={12} sm={4}>
-                                <Grid container spacing={2} >
-                                    <Autocomplete
-                                        options={vendedores}
-                                        getOptionLabel={(option) => `${option.nombre} ${option.apellidoPaterno} ${option.apellidoMaterno} (ID: ${option.id})`}
-                                        sx={{ width: 300, marginBottom: '16px', '& .MuiInputBase-root': { height: 40 } }} // Adjust height here
-                                        value={supervisadoSeleccionado}
-                                        onChange={(event, newValue) => setSupervisadoSeleccionado(newValue)}
-                                        renderInput={(params) =>
-                                            <TextField
-                                                {...params}
-                                                label="Seleccionar vendedor"
-                                                variant="outlined"
-                                                InputLabelProps={{
-                                                    sx: redAsteriskStyle,
-                                                    shrink: true,
-                                                }}
-                                            />}
-                                    />
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        startIcon={<Add />}
-                                        onClick={addItem}
-                                        disabled={!supervisadoSeleccionado}
-                                        sx={{ marginBottom: '16px' }}
-                                    >
-                                        Agregar
-                                    </Button>
                                 </Grid>
-                                <Box sx={{ height: '100px', maxHeight: '100px', overflowY: 'auto', border: '1px solid #ccc' }}>
-                                    <List>
-                                        {supervisados.map((item, index) => (
-                                            <ListItem
-                                                key={item.id}
-                                                sx={{
-                                                    display: 'flex',
-                                                    justifyContent: 'space-between',
-                                                    padding: '1px 4px',
-                                                    marginBottom: 'px' 
-                                                }}
-                                            >
-                                                <ListItemText
-                                                    primary={`${item.id}.- ${item.nombre} ${item.apellidoPaterno} ${item.apellidoMaterno}`}
-                                                />
-                                                <IconButton onClick={() => deleteItem(index)} color="warning" size="small">
-                                                    <Delete />
-                                                </IconButton>
-                                            </ListItem>
-                                        ))}
-                                    </List>
-                                </Box>
                             </Grid>
-                        </Grid>
-                        <Stack direction="row" spacing={1}>
-                            <Button color="primary" startIcon={<SaveIcon />} variant="contained" type="submit" disabled={formik.isSubmitting}>
-                                {formik.values.id ? 'Actualizar' : 'Agregar'}
-                            </Button>
-                            <Button color="primary" startIcon={<RefreshIcon />} variant="contained" onClick={handleReset} disabled={formik.isSubmitting}>Reiniciar</Button>
-                            <Button color={operacionTerminada ? "primary" : "warning"}
-                                variant="contained"
-                                startIcon={operacionTerminada ? <ExitToAppIcon /> : <CancelIcon />}
-                                onClick={onClose}
-                                className="btn btn-warning" >
-                                {operacionTerminada ? "Salir" : "Cancelar"}
-                            </Button>
-                        </Stack>
+                        </Paper>
+                        <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
+                            <Stack direction="row" spacing={1}>
+                                <Button color="primary" startIcon={<SaveIcon />} variant="contained" type="submit" disabled={formik.isSubmitting}>
+                                    {formik.values.id ? 'Actualizar' : 'Agregar'}
+                                </Button>
+                                <Button color="primary" startIcon={<RefreshIcon />} variant="contained" onClick={handleReset} disabled={formik.isSubmitting}>Reiniciar</Button>
+                                <Button color={operacionTerminada ? "primary" : "warning"}
+                                    variant="contained"
+                                    startIcon={operacionTerminada ? <ExitToAppIcon /> : <CancelIcon />}
+                                    onClick={onClose}
+                                    className="btn btn-warning" >
+                                    {operacionTerminada ? "Salir" : "Cancelar"}
+                                </Button>
+                            </Stack>
+                        </Paper>
                     </Box>
                 )}
             </DialogContent>

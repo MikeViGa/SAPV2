@@ -92,7 +92,7 @@ export default function FormularioSucursal({ modo, registro, open, onClose, refr
     const { addSnackbar } = useSnackbar();
     const [operacionTerminada, setOperacionTerminada] = useState(false);
     const [loading, setLoading] = useState(false);
-   
+
     dayjs.extend(utc);
     dayjs.extend(timezone);
     dayjs.tz.setDefault("America/Mexico_City");
@@ -166,7 +166,7 @@ export default function FormularioSucursal({ modo, registro, open, onClose, refr
     };
 
     const nombreRef = useRef();
-    
+
     const handleKeyDown = (event, nextRef) => {
         if (event.key === 'Enter') {
             event.preventDefault();
@@ -177,7 +177,7 @@ export default function FormularioSucursal({ modo, registro, open, onClose, refr
     };
 
     return (
-        <Dialog open={open} onClose={onClose} fullWidth={true} maxWidth="lg" PaperProps={dialogPaperProps}>
+        <Dialog open={open} onClose={onClose} PaperProps={dialogPaperProps}>
             <DialogTitle {...dialogTitleProps} sx={{ bgcolor: '#1976d2', color: '#fff', py: 1, px: 2, cursor: 'move' }}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Typography variant="h6" sx={{ color: 'inherit' }}>
@@ -195,48 +195,48 @@ export default function FormularioSucursal({ modo, registro, open, onClose, refr
                     <Box
                         component="form"
                         onSubmit={formik.handleSubmit}
-                        sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '950px', margin: 'auto', mt: 0 }}
+                        sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '450px', margin: 'auto', mt: 1 }}
                     >
-                        <Typography variant="h5" component="h1" gutterBottom>
-                            {modo === 'editar' ? 'Editar sucursal' : 'Crear sucursal'}
-                        </Typography>
-                        <Grid container spacing={2}>
-                            <Grid xs={12} sm={6} md={3}>
-                                <TextField
-                                    size="small"
-                                    required
-                                    fullWidth
-                                    id="nombre"
-                                    name="nombre"
-                                    label="Nombre"
-                                    value={formik.values.nombre}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.nombre && Boolean(formik.errors.nombre)}
-                                    helperText={formik.touched.nombre && formik.errors.nombre}
-                                    InputLabelProps={{
-                                        sx: redAsteriskStyle,
-                                        shrink: true,
-                                    }}
-                                    onKeyDown={(e) => handleKeyDown(e, null)}
-                                    inputRef={nombreRef}
-                                />
+                        <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
+                            <Grid container spacing={2}>
+                                <Grid xs={12} sm={6} md={3}>
+                                    <TextField
+                                        size="small"
+                                        required
+                                        fullWidth
+                                        id="nombre"
+                                        name="nombre"
+                                        label="Nombre"
+                                        value={formik.values.nombre}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={formik.touched.nombre && Boolean(formik.errors.nombre)}
+                                        helperText={formik.touched.nombre && formik.errors.nombre}
+                                        InputLabelProps={{
+                                            sx: redAsteriskStyle,
+                                            shrink: true,
+                                        }}
+                                        onKeyDown={(e) => handleKeyDown(e, null)}
+                                        inputRef={nombreRef}
+                                    />
+                                </Grid>
                             </Grid>
-                         </Grid>
-                        <Divider />
-                        <Stack direction="row" spacing={1}>
-                            <Button color="primary" startIcon={<SaveIcon />} variant="contained" type="submit" disabled={formik.isSubmitting}>
-                                {formik.values.id ? 'Actualizar' : 'Agregar'}
-                            </Button>
-                            <Button color="primary" startIcon={<RefreshIcon />} variant="contained" onClick={handleReset} disabled={formik.isSubmitting}>Reiniciar</Button>
-                            <Button color={operacionTerminada ? "primary" : "warning"}
-                                variant="contained"
-                                startIcon={operacionTerminada ? <ExitToAppIcon /> : <CancelIcon />}
-                                onClick={onClose}
-                                className="btn btn-warning" >
-                                {operacionTerminada ? "Salir" : "Cancelar"}
-                            </Button>
-                        </Stack>
+                        </Paper>
+                        <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
+                            <Stack direction="row" spacing={1}>
+                                <Button color="primary" startIcon={<SaveIcon />} variant="contained" type="submit" disabled={formik.isSubmitting}>
+                                    {formik.values.id ? 'Actualizar' : 'Agregar'}
+                                </Button>
+                                <Button color="primary" startIcon={<RefreshIcon />} variant="contained" onClick={handleReset} disabled={formik.isSubmitting}>Reiniciar</Button>
+                                <Button color={operacionTerminada ? "primary" : "warning"}
+                                    variant="contained"
+                                    startIcon={operacionTerminada ? <ExitToAppIcon /> : <CancelIcon />}
+                                    onClick={onClose}
+                                    className="btn btn-warning" >
+                                    {operacionTerminada ? "Salir" : "Cancelar"}
+                                </Button>
+                            </Stack>
+                        </Paper>
                     </Box>
                 )}
             </DialogContent>
