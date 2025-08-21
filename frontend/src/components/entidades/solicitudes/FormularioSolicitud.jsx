@@ -258,9 +258,9 @@ export default function FormularioSolicitud({ modo, registro, open, onClose, ref
         <Dialog
             open={open}
             onClose={onClose}
-            fullWidth={true}
-            maxWidth="xl"
-            PaperProps={dialogPaperProps}
+            fullWidth={false}
+            maxWidth={false}
+            PaperProps={{ ...dialogPaperProps, sx: { ...(dialogPaperProps?.sx || {}), width: 'fit-content' } }}
         >
             <DialogTitle {...dialogTitleProps} sx={{ bgcolor: '#1976d2', color: '#fff', py: 1, px: 2, cursor: 'move' }}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -284,15 +284,13 @@ export default function FormularioSolicitud({ modo, registro, open, onClose, ref
                                 display: 'flex',
                                 flexDirection: 'column',
                                 gap: 1,
-                                width: '100%',
-                                maxWidth: 1200,
+                                width: 'fit-content',
                                 margin: 'auto',
                                 mt: 1
                             }}
                         >
-                            {/* Datos básicos */}
                             <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
-                                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 2, '& .MuiTextField-root': { width: '100%' } }}>
+                                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 1, '& .MuiTextField-root': { width: '100%' } }}>
                                     <Box>
                                         <TextField size="small" required fullWidth id="claveSolicitud" name="claveSolicitud" label="Clave de solicitud" value={formik.values.claveSolicitud} onChange={formik.handleChange} onBlur={formik.handleBlur} error={formik.touched.claveSolicitud && Boolean(formik.errors.claveSolicitud)} helperText={formik.touched.claveSolicitud && formik.errors.claveSolicitud} InputLabelProps={{ sx: redAsteriskStyle, shrink: true }} />
                                     </Box>
@@ -338,7 +336,7 @@ export default function FormularioSolicitud({ modo, registro, open, onClose, ref
                                                         const resp = await obtenerClienteNombreApi(nuevoValor);
                                                         const lista = Array.isArray(resp.data) ? resp.data : [];
                                                         setClienteOpciones(lista);
-                                                    } catch (e) {}
+                                                    } catch (e) { }
                                                 }
                                             }}
                                             onChange={(event, nuevoValor) => {
@@ -374,181 +372,67 @@ export default function FormularioSolicitud({ modo, registro, open, onClose, ref
                                         </TextField>
                                     </Box>
                                 </Box>
-
-                                {/* Campo usuario eliminado: se toma de la sesión */}
-
                             </Paper>
                             <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
-                               
-
-                                {/* Beneficiario 1 */}
-                                
-                                <Grid
-                                    container
-                                    spacing={2}
-                                    columns={{ xs: 12, sm: 12, md: 12 }}
-                                    sx={{ '& .MuiTextField-root': { width: '100%' }, mb: 2 }}
-                                >
-                                    <Grid xs={12} sm={4} md={4}>
-                                        <TextField
-                                            size="small"
-                                            fullWidth
-                                            id="nombreBeneficiario1"
-                                            name="nombreBeneficiario1"
-                                            label="Nombre beneficiario 1"
-                                            value={formik.values.nombreBeneficiario1}
-                                            onChange={formik.handleChange}
-                                            InputLabelProps={{ shrink: true }}
-                                        />
-                                    </Grid>
-                                    <Grid xs={12} sm={4} md={4}>
-                                        <TextField
-                                            size="small"
-                                            fullWidth
-                                            id="apellidoPaternoBeneficiario1"
-                                            name="apellidoPaternoBeneficiario1"
-                                            label="Apellido paterno"
-                                            value={formik.values.apellidoPaternoBeneficiario1}
-                                            onChange={formik.handleChange}
-                                            InputLabelProps={{ shrink: true }}
-                                        />
-                                    </Grid>
-                                    <Grid xs={12} sm={4} md={4}>
-                                        <TextField
-                                            size="small"
-                                            fullWidth
-                                            id="apellidoMaternoBeneficiario1"
-                                            name="apellidoMaternoBeneficiario1"
-                                            label="Apellido materno"
-                                            value={formik.values.apellidoMaternoBeneficiario1}
-                                            onChange={formik.handleChange}
-                                            InputLabelProps={{ shrink: true }}
-                                        />
-                                    </Grid>
-                                </Grid>
-
-                                {/* Beneficiario 2 */}
-                                
-                                <Grid
-                                    container
-                                    spacing={2}
-                                    columns={{ xs: 12, sm: 12, md: 12 }}
-                                    sx={{ '& .MuiTextField-root': { width: '100%' }, mb: 2 }}
-                                >
-                                    <Grid xs={12} sm={4} md={4}>
-                                        <TextField
-                                            size="small"
-                                            fullWidth
-                                            id="nombreBeneficiario2"
-                                            name="nombreBeneficiario2"
-                                            label="Nombre beneficiario 2"
-                                            value={formik.values.nombreBeneficiario2}
-                                            onChange={formik.handleChange}
-                                            InputLabelProps={{ shrink: true }}
-                                        />
-                                    </Grid>
-                                    <Grid xs={12} sm={4} md={4}>
-                                        <TextField
-                                            size="small"
-                                            fullWidth
-                                            id="apellidoPaternoBeneficiario2"
-                                            name="apellidoPaternoBeneficiario2"
-                                            label="Apellido paterno"
-                                            value={formik.values.apellidoPaternoBeneficiario2}
-                                            onChange={formik.handleChange}
-                                            InputLabelProps={{ shrink: true }}
-                                        />
-                                    </Grid>
-                                    <Grid xs={12} sm={4} md={4}>
-                                        <TextField
-                                            size="small"
-                                            fullWidth
-                                            id="apellidoMaternoBeneficiario2"
-                                            name="apellidoMaternoBeneficiario2"
-                                            label="Apellido materno"
-                                            value={formik.values.apellidoMaternoBeneficiario2}
-                                            onChange={formik.handleChange}
-                                            InputLabelProps={{ shrink: true }}
-                                        />
-                                    </Grid>
-                                </Grid>
-
-                                {/* Beneficiario 3 */}
-                                
-                                <Grid
-                                    container
-                                    spacing={2}
-                                    columns={{ xs: 12, sm: 12, md: 12 }}
-                                    sx={{ '& .MuiTextField-root': { width: '100%' } }}
-                                >
-                                    <Grid xs={12} sm={4} md={4}>
-                                        <TextField
-                                            size="small"
-                                            fullWidth
-                                            id="nombreBeneficiario3"
-                                            name="nombreBeneficiario3"
-                                            label="Nombre beneficiario 3"
-                                            value={formik.values.nombreBeneficiario3}
-                                            onChange={formik.handleChange}
-                                            InputLabelProps={{ shrink: true }}
-                                        />
-                                    </Grid>
-                                    <Grid xs={12} sm={4} md={4}>
-                                        <TextField
-                                            size="small"
-                                            fullWidth
-                                            id="apellidoPaternoBeneficiario3"
-                                            name="apellidoPaternoBeneficiario3"
-                                            label="Apellido paterno"
-                                            value={formik.values.apellidoPaternoBeneficiario3}
-                                            onChange={formik.handleChange}
-                                            InputLabelProps={{ shrink: true }}
-                                        />
-                                    </Grid>
-                                    <Grid xs={12} sm={4} md={4}>
-                                        <TextField
-                                            size="small"
-                                            fullWidth
-                                            id="apellidoMaternoBeneficiario3"
-                                            name="apellidoMaternoBeneficiario3"
-                                            label="Apellido materno"
-                                            value={formik.values.apellidoMaternoBeneficiario3}
-                                            onChange={formik.handleChange}
-                                            InputLabelProps={{ shrink: true }}
-                                        />
-                                    </Grid>
-                                </Grid>
+                                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }, gap: 1, '& .MuiTextField-root': { width: '100%' } }}>
+                                    <Box>
+                                        <TextField size="small" fullWidth id="nombreBeneficiario1" name="nombreBeneficiario1" label="Nombre beneficiario 1" value={formik.values.nombreBeneficiario1} onChange={formik.handleChange} InputLabelProps={{ shrink: true }} />
+                                    </Box>
+                                    <Box>
+                                        <TextField size="small" fullWidth id="apellidoPaternoBeneficiario1" name="apellidoPaternoBeneficiario1" label="Apellido paterno" value={formik.values.apellidoPaternoBeneficiario1} onChange={formik.handleChange} InputLabelProps={{ shrink: true }} />
+                                    </Box>
+                                    <Box>
+                                        <TextField size="small" fullWidth id="apellidoMaternoBeneficiario1" name="apellidoMaternoBeneficiario1" label="Apellido materno" value={formik.values.apellidoMaternoBeneficiario1} onChange={formik.handleChange} InputLabelProps={{ shrink: true }} />
+                                    </Box>
+                                    <Box>
+                                        <TextField size="small" fullWidth id="nombreBeneficiario2" name="nombreBeneficiario2" label="Nombre beneficiario 2" value={formik.values.nombreBeneficiario2} onChange={formik.handleChange} InputLabelProps={{ shrink: true }} />
+                                    </Box>
+                                    <Box>
+                                        <TextField size="small" fullWidth id="apellidoPaternoBeneficiario2" name="apellidoPaternoBeneficiario2" label="Apellido paterno" value={formik.values.apellidoPaternoBeneficiario2} onChange={formik.handleChange} InputLabelProps={{ shrink: true }} />
+                                    </Box>
+                                    <Box>
+                                        <TextField size="small" fullWidth id="apellidoMaternoBeneficiario2" name="apellidoMaternoBeneficiario2" label="Apellido materno" value={formik.values.apellidoMaternoBeneficiario2} onChange={formik.handleChange} InputLabelProps={{ shrink: true }} />
+                                    </Box>
+                                    <Box>
+                                        <TextField size="small" fullWidth id="nombreBeneficiario3" name="nombreBeneficiario3" label="Nombre beneficiario 3" value={formik.values.nombreBeneficiario3} onChange={formik.handleChange} InputLabelProps={{ shrink: true }} />
+                                    </Box>
+                                    <Box>
+                                        <TextField size="small" fullWidth id="apellidoPaternoBeneficiario3" name="apellidoPaternoBeneficiario3" label="Apellido paterno" value={formik.values.apellidoPaternoBeneficiario3} onChange={formik.handleChange} InputLabelProps={{ shrink: true }} />
+                                    </Box>
+                                    <Box>
+                                        <TextField size="small" fullWidth id="apellidoMaternoBeneficiario3" name="apellidoMaternoBeneficiario3" label="Apellido materno" value={formik.values.apellidoMaternoBeneficiario3} onChange={formik.handleChange} InputLabelProps={{ shrink: true }} />
+                                    </Box>
+                                </Box>
                             </Paper>
-
                             <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
-                            <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
-                                <Button
-                                    color="primary"
-                                    startIcon={<SaveIcon />}
-                                    variant="contained"
-                                    type="submit"
-                                    disabled={formik.isSubmitting}
-                                >
-                                    {formik.values.id ? 'Actualizar' : 'Agregar'}
-                                </Button>
-                                <Button
-                                    color="primary"
-                                    startIcon={<RefreshIcon />}
-                                    variant="contained"
-                                    onClick={handleReset}
-                                    disabled={formik.isSubmitting}
-                                >
-                                    Reiniciar
-                                </Button>
-                                <Button
-                                    color={operacionTerminada ? "primary" : "warning"}
-                                    variant="contained"
-                                    startIcon={operacionTerminada ? <ExitToAppIcon /> : <CancelIcon />}
-                                    onClick={onClose}
-                                >
-                                    {operacionTerminada ? "Salir" : "Cancelar"}
-                                </Button>
-                            </Stack>
+                                <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+                                    <Button
+                                        color="primary"
+                                        startIcon={<SaveIcon />}
+                                        variant="contained"
+                                        type="submit"
+                                        disabled={formik.isSubmitting}
+                                    >
+                                        {formik.values.id ? 'Actualizar' : 'Agregar'}
+                                    </Button>
+                                    <Button
+                                        color="primary"
+                                        startIcon={<RefreshIcon />}
+                                        variant="contained"
+                                        onClick={handleReset}
+                                        disabled={formik.isSubmitting}
+                                    >
+                                        Reiniciar
+                                    </Button>
+                                    <Button
+                                        color={operacionTerminada ? "primary" : "warning"}
+                                        variant="contained"
+                                        startIcon={operacionTerminada ? <ExitToAppIcon /> : <CancelIcon />}
+                                        onClick={onClose}
+                                    >
+                                        {operacionTerminada ? "Salir" : "Cancelar"}
+                                    </Button>
+                                </Stack>
                             </Paper>
                         </Box>
                     </LocalizationProvider>

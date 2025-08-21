@@ -192,7 +192,7 @@ export default function FormularioEmpleado({ modo, registro, open, onClose, refr
     };
 
     return (
-        <Dialog open={open} onClose={onClose} fullWidth={true}  PaperProps={dialogPaperProps}>
+        <Dialog open={open} onClose={onClose} fullWidth={false}  PaperProps={{ ...dialogPaperProps, sx: { ...(dialogPaperProps?.sx || {}), width: 'fit-content' } }}>
             <DialogTitle {...dialogTitleProps} sx={{ bgcolor: '#1976d2', color: '#fff', py: 1, px: 2, cursor: 'move' }}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Typography variant="h6" sx={{ color: 'inherit' }}>
@@ -210,10 +210,10 @@ export default function FormularioEmpleado({ modo, registro, open, onClose, refr
                     <Box
                         component="form"
                         onSubmit={formik.handleSubmit}
-                        sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '550px', margin: 'auto', mt: 2 }}
+                        sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: 'fit-content', margin: 'auto', mt: 2 }}
                     >
                         <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
-                            <Grid container spacing={1}>
+                            <Grid container spacing={1} sx={{ '& > .MuiGrid2-root': { flexBasis: { xs: '100% !important', sm: '50% !important', md: '25% !important' }, maxWidth: { xs: '100% !important', sm: '50% !important', md: '25% !important' } }, '& .MuiTextField-root': { width: '100%' } }}>
                                 <Grid xs={12} sm={6} md={3}>
                                     <TextField
                                         size="small"
@@ -235,7 +235,7 @@ export default function FormularioEmpleado({ modo, registro, open, onClose, refr
                                         onKeyDown={(e) => handleKeyDown(e, apellidoPaternoRef)}
                                     />
                                 </Grid>
-                                <Grid xs={12} sm={4}>
+                                <Grid xs={12} sm={6} md={3}>
                                     <TextField
                                         size="small"
                                         required
@@ -256,7 +256,7 @@ export default function FormularioEmpleado({ modo, registro, open, onClose, refr
                                         onKeyDown={(e) => handleKeyDown(e, apellidoMaternoRef)}
                                     />
                                 </Grid>
-                                <Grid xs={12} sm={4}>
+                                <Grid xs={12} sm={6} md={3}>
                                     <TextField
                                         size="small"
                                         required
@@ -277,7 +277,7 @@ export default function FormularioEmpleado({ modo, registro, open, onClose, refr
                                         onKeyDown={(e) => handleKeyDown(e, correoRef)}
                                     />
                                 </Grid>
-                                <Grid xs={12} sm={4}>
+                                <Grid xs={12} sm={6} md={3}>
                                     <TextField
                                         size="small"
                                         required
@@ -298,7 +298,7 @@ export default function FormularioEmpleado({ modo, registro, open, onClose, refr
                                         onKeyDown={(e) => handleKeyDown(e, telefonoRef)}
                                     />
                                 </Grid>
-                                <Grid xs={12} sm={4}>
+                                <Grid xs={12} sm={6} md={3}>
                                     <TextField
                                         size="small"
                                         required
@@ -319,7 +319,7 @@ export default function FormularioEmpleado({ modo, registro, open, onClose, refr
                                         onKeyDown={(e) => handleKeyDown(e, fechaNacimientoRef)}
                                     />
                                 </Grid>
-                                <Grid xs={12} sm={4}>
+                                <Grid xs={12} sm={6} md={3}>
                                     <TextField
                                         size="small"
                                         required
@@ -341,7 +341,7 @@ export default function FormularioEmpleado({ modo, registro, open, onClose, refr
                                         onKeyDown={(e) => handleKeyDown(e, fechaAltaRef)}
                                     />
                                 </Grid>
-                                <Grid xs={12} sm={4}>
+                                <Grid xs={12} sm={6} md={3}>
                                     <TextField
                                         size="small"
                                         required
@@ -364,7 +364,7 @@ export default function FormularioEmpleado({ modo, registro, open, onClose, refr
                                     />
                                 </Grid>
 
-                                <Grid xs={12} sm={4}>
+                                <Grid xs={12} sm={6} md={3}>
                                     <Stack direction="row" spacing={1}>
                                         <Typography>Cancelado</Typography>
                                         <AntSwitch

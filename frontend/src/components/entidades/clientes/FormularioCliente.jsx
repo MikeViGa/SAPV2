@@ -28,7 +28,6 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
 import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
 
-
 export default function FormularioCliente({ modo, registro, open, onClose, refrescar }) {
     const { paperProps: dialogPaperProps, titleProps: dialogTitleProps } = useDraggableDialog(open);
     const { addSnackbar } = useSnackbar();
@@ -289,10 +288,10 @@ export default function FormularioCliente({ modo, registro, open, onClose, refre
                     <Box
                         component="form"
                         onSubmit={formik.handleSubmit}
-                        sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '950px', margin: 'auto', mt: 2 }}
+                        sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '950px', margin: 'auto', mt: 1 }}
                     >
                         <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
-                            <Grid container spacing={1} sx={{ mb: 2 }}>
+                            <Grid container spacing={1} sx={{ '& > .MuiGrid2-root': { flexBasis: { xs: '100% !important', sm: '50% !important', md: '25% !important' }, maxWidth: { xs: '100% !important', sm: '50% !important', md: '25% !important' } }, '& .MuiTextField-root': { width: '100%' }, mb: 1 }}>
                                 <Grid xs={12} sm={6} md={3}>
                                     <TextField
                                         size="small"
@@ -374,10 +373,9 @@ export default function FormularioCliente({ modo, registro, open, onClose, refre
                                         onKeyDown={(e) => handleKeyDown(e, null)}
                                     />
                                 </Grid>
-                            </Grid>
 
-                            {/* Fila 2: Ocupación, Régimen, Teléfono 1, Teléfono 2 */}
-                            <Grid container spacing={1} sx={{ mb: 2 }}>
+
+
                                 <Grid xs={12} sm={6} md={3}>
                                     <TextField
                                         size="small"
@@ -452,12 +450,39 @@ export default function FormularioCliente({ modo, registro, open, onClose, refre
                                         inputRef={rfcRef}
                                     />
                                 </Grid>
-                            </Grid>
+                                <Grid xs={12} sm={6} md={3}>
+                                    <TextField
+                                        select
+                                        size="small"
+                                        fullWidth
+                                        id="estadoCivilId"
+                                        name="estadoCivilId"
+                                        label="Estado civil"
+                                        value={formik.values.estadoCivilId === null ? '' : formik.values.estadoCivilId}
+                                        onChange={(e) => {
+                                            const newValue = e.target.value === '' ? '' : Number(e.target.value);
+                                            formik.setFieldValue('estadoCivilId', newValue);
+                                        }}
+                                        onBlur={formik.handleBlur}
+                                        error={formik.touched.estadoCivilId && Boolean(formik.errors.estadoCivilId)}
+                                        helperText={formik.touched.estadoCivilId && formik.errors.estadoCivilId}
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                        onKeyDown={(e) => handleKeyDown(e, null)}
+                                    >
+                                        <MenuItem value="">Seleccionar estado civil</MenuItem>
+                                        {(estadosCiviles || []).map((estadoCivil) => (
+                                            <MenuItem key={estadoCivil.id} value={estadoCivil.id}>
+                                                {estadoCivil.nombre}
+                                            </MenuItem>
+                                        ))}
+                                    </TextField>
+                                </Grid>
 
-                            {/* Fila 3: Fecha de nacimiento, Estado civil, Fecha de registro */}
-                            <Grid container spacing={1}>
                                 <Grid xs={12} sm={6} md={3}>
                                     <DateTimePicker
+                                        sx={{ width: '100%' }}
                                         id="fechaNacimiento"
                                         name="fechaNacimiento"
                                         label="Fecha de nacimiento"
@@ -490,6 +515,7 @@ export default function FormularioCliente({ modo, registro, open, onClose, refre
 
                                 <Grid xs={12} sm={6} md={3}>
                                     <DateTimePicker
+                                        sx={{ width: '100%' }}
                                         id="fechaRegistro"
                                         name="fechaRegistro"
                                         label="Fecha de registro"
@@ -523,36 +549,7 @@ export default function FormularioCliente({ modo, registro, open, onClose, refre
                                         }}
                                     />
                                 </Grid>
-                                <Grid xs={12} sm={6} md={3}>
-                                    <TextField
-                                        select
-                                        size="small"
-                                        fullWidth
-                                        id="estadoCivilId"
-                                        name="estadoCivilId"
-                                        label="Estado civil"
-                                        value={formik.values.estadoCivilId === null ? '' : formik.values.estadoCivilId}
-                                        onChange={(e) => {
-                                            const newValue = e.target.value === '' ? '' : Number(e.target.value);
-                                            formik.setFieldValue('estadoCivilId', newValue);
-                                        }}
-                                        onBlur={formik.handleBlur}
-                                        error={formik.touched.estadoCivilId && Boolean(formik.errors.estadoCivilId)}
-                                        helperText={formik.touched.estadoCivilId && formik.errors.estadoCivilId}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                        }}
-                                        onKeyDown={(e) => handleKeyDown(e, null)}
-                                    >
-                                        <MenuItem value="">Seleccionar estado civil</MenuItem>
-                                        {(estadosCiviles || []).map((estadoCivil) => (
-                                            <MenuItem key={estadoCivil.id} value={estadoCivil.id}>
-                                                {estadoCivil.nombre}
-                                            </MenuItem>
-                                        ))}
-                                    </TextField>
-                                </Grid>
-                                <Grid xs={12} sm={6} md={3}></Grid>
+                                
                             </Grid>
                         </Paper>
                         <Paper elevation={1} sx={{ p: 1, mb: 0 }}>
@@ -700,7 +697,7 @@ export default function FormularioCliente({ modo, registro, open, onClose, refre
                                 }}>Guardar</Button>
                             </DialogActions>
                         </Dialog>
-                        <Paper elevation={1} sx={{ p: 1, mb: 1}}>
+                        <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
                             <Stack direction="row" spacing={1}>
                                 <Button color="primary" startIcon={<SaveIcon />} variant="contained" type="submit" disabled={formik.isSubmitting}>
                                     {formik.values.id ? 'Actualizar' : 'Agregar'}

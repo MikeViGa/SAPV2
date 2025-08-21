@@ -247,8 +247,12 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
 
     const { paperProps: dialogPaperProps, titleProps: dialogTitleProps } = useDraggableDialog(open);
     return (
-        <Dialog open={open} onClose={onClose} fullWidth={true} maxWidth="lg" PaperProps={dialogPaperProps}>
-            <DialogTitle {...dialogTitleProps} sx={{ bgcolor: '#1976d2', color: '#fff', py: 1, px: 2, cursor: 'move' }}>
+        <Dialog
+            open={open}
+            onClose={onClose}
+
+            PaperProps={{ ...dialogPaperProps, sx: { ...(dialogPaperProps?.sx || {}), width: 'fit-content' } }}
+        >         <DialogTitle {...dialogTitleProps} sx={{ bgcolor: '#1976d2', color: '#fff', py: 1, px: 2, cursor: 'move' }}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Typography variant="h6" sx={{ color: 'inherit' }}>
                         {modo === 'editar' ? 'Editar vendedor' : 'Crear vendedor'}
@@ -265,10 +269,10 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                     <Box
                         component="form"
                         onSubmit={formik.handleSubmit}
-                        sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '1100px', margin: 'auto', mt: 2 }}
+                        sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: 'fit-content', margin: 'auto', mt: 2 }}
                     >
                         <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
-                            <Grid container spacing={1}>
+                            <Grid container spacing={1} sx={{ '& > .MuiGrid2-root': { flexBasis: { xs: '100% !important', sm: '50% !important', md: '25% !important' }, maxWidth: { xs: '100% !important', sm: '50% !important', md: '25% !important' } }, '& .MuiTextField-root': { width: '100%' } }}>
                                 <Grid xs={12} sm={6} md={3}>
                                     <TextField
                                         size="small"
@@ -290,7 +294,7 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                                         inputRef={nombreRef}
                                     />
                                 </Grid>
-                                <Grid xs={12} sm={4}>
+                                <Grid xs={12} sm={6} md={3}>
                                     <TextField
                                         size="small"
                                         required
@@ -311,7 +315,7 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                                         inputRef={apellidoPaternoRef}
                                     />
                                 </Grid>
-                                <Grid xs={12} sm={4}>
+                                <Grid xs={12} sm={6} md={3}>
                                     <TextField
                                         size="small"
                                         required
@@ -332,7 +336,7 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                                         inputRef={apellidoMaternoRef}
                                     />
                                 </Grid>
-                                <Grid xs={12} sm={4}>
+                                <Grid xs={12} sm={6} md={3}>
                                     <TextField
                                         size="small"
                                         required
@@ -353,7 +357,7 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                                         inputRef={telefono1Ref}
                                     />
                                 </Grid>
-                                <Grid xs={12} sm={4}>
+                                <Grid xs={12} sm={6} md={3}>
                                     <TextField
                                         size="small"
                                         required
@@ -374,7 +378,7 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                                         inputRef={telefono2Ref}
                                     />
                                 </Grid>
-                                <Grid xs={12} sm={4}>
+                                <Grid xs={12} sm={6} md={3}>
                                     <TextField
                                         size="small"
                                         required
@@ -395,7 +399,7 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                                         inputRef={regimenRef}
                                     />
                                 </Grid>
-                                <Grid xs={12} sm={4}>
+                                <Grid xs={12} sm={6} md={3}>
                                     <TextField
                                         size="small"
                                         required
@@ -416,7 +420,7 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                                         inputRef={rfcRef}
                                     />
                                 </Grid>
-                                <Grid xs={12} sm={4}>
+                                <Grid xs={12} sm={6} md={3}>
                                     <TextField
                                         size="small"
                                         required
@@ -437,7 +441,7 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                                         inputRef={curpRef}
                                     />
                                 </Grid>
-                                <Grid xs={12} sm={4}>
+                                <Grid xs={12} sm={6} md={3}>
                                     <TextField
                                         size="small"
                                         required
@@ -458,9 +462,10 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                                         inputRef={numeroTarjetaRef}
                                     />
                                 </Grid>
-                                <Grid xs={12} sm={4}>
+                                <Grid xs={12} sm={6} md={3}>
                                     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
                                         <DateTimePicker
+                                            sx={{ width: '100%' }}
                                             id="fechaAlta"
                                             name="fechaAlta"
                                             label="Fecha de alta"
@@ -480,6 +485,7 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                                             onKeyDown={(e) => handleKeyDown(e, supervisorRef)}
                                             slotProps={{
                                                 textField: {
+                                                    fullWidth: true,
                                                     name: "fechaAlta",
                                                     onBlur: formik.handleBlur,
                                                     error: formik.touched.fechaAlta && Boolean(formik.errors.fechaAlta),
@@ -497,8 +503,8 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                             </Grid>
                         </Paper>
                         <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
-                            <Grid container spacing={1}>
-                                <Grid xs={12} sm={4}>
+                            <Grid container spacing={1} sx={{ '& > .MuiGrid2-root': { flexBasis: { xs: '100% !important', sm: '50% !important', md: '25% !important' }, maxWidth: { xs: '100% !important', sm: '50% !important', md: '25% !important' } } }}>
+                                <Grid xs={12} sm={6} md={3}>
                                     <TextField
                                         size="small"
                                         required
@@ -519,7 +525,7 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                                         inputRef={calleRef}
                                     />
                                 </Grid>
-                                <Grid xs={12} sm={4}>
+                                <Grid xs={12} sm={6} md={3}>
                                     <TextField
                                         size="small"
                                         required
@@ -540,7 +546,7 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                                         inputRef={numeroInteriorRef}
                                     />
                                 </Grid>
-                                <Grid xs={12} sm={4}>
+                                <Grid xs={12} sm={6} md={3}>
                                     <TextField
                                         size="small"
                                         required
@@ -561,7 +567,7 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                                         inputRef={numeroExteriorRef}
                                     />
                                 </Grid>
-                                <Grid xs={12} sm={4}>
+                                <Grid xs={12} sm={6} md={3}>
                                     <TextField
                                         size="small"
                                         required
@@ -582,7 +588,7 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                                         inputRef={coloniaRef}
                                     />
                                 </Grid>
-                                <Grid xs={12} sm={4}>
+                                <Grid xs={12} sm={6} md={3}>
                                     <TextField
                                         size="small"
                                         required
@@ -603,7 +609,7 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                                         inputRef={ciudadRef}
                                     />
                                 </Grid>
-                                <Grid xs={12} sm={4}>
+                                <Grid xs={12} sm={6} md={3}>
                                     <TextField
                                         size="small"
                                         required
@@ -624,7 +630,7 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                                         inputRef={estadoRef}
                                     />
                                 </Grid>
-                                <Grid xs={12} sm={4}>
+                                <Grid xs={12} sm={6} md={3}>
                                     <TextField
                                         size="small"
                                         required
@@ -648,94 +654,93 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                             </Grid>
                         </Paper>
                         <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
-                            <Grid container spacing={2}>
-                                <Grid xs={12} sm={4}>
-                                    <Box sx={{ display: 'flex', border: 0 }} >
-                                        <Box sx={{ display: 'flex', border: 0 }} >
-                                            <Autocomplete
-                                                options={supervisores}
-                                                getOptionLabel={(option) => option.nombre + " " + option.apellidoPaterno + " " + option.apellidoMaterno}
-                                                style={{ width: 400 }}
-                                                value={formik.values.supervisor}
-                                                onChange={(event, newValue) => {
-                                                    setSupervisorSeleccionado(newValue);
+                            <Grid container spacing={1} >
+                                <Grid xs={12} sm={2} md={2}>
+                                    <Autocomplete
+                                        
+                                        options={supervisores}
+                                        getOptionLabel={(option) => option.nombre + " " + option.apellidoPaterno + " " + option.apellidoMaterno}
+                                        fullWidth
+                                        value={formik.values.supervisor}
+                                        onChange={(event, newValue) => {
+                                            setSupervisorSeleccionado(newValue);
+                                        }}
+                                        includeInputInList
+                                        freeSolo
+                                        isOptionEqualToValue={(option, value) =>
+                                            option.id === value.id
+                                        }
+                                        inputRef={supervisorRef}
+                                        onKeyDown={(e) => handleKeyDown(e, null)}
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                label="Seleccionar supervisor"
+                                                
+                                                size="small"
+                                                InputLabelProps={{
+                                                    sx: redAsteriskStyle,
+                                                    shrink: true,
                                                 }}
-                                                includeInputInList
-                                                freeSolo
-                                                isOptionEqualToValue={(option, value) =>
-                                                    option.id === value.id
-                                                }
-                                                inputRef={supervisorRef}
-                                                onKeyDown={(e) => handleKeyDown(e, null)}
-                                                renderInput={(params) => (
-                                                    <TextField
-                                                        {...params}
-                                                        label="Seleccionar supervisor"
-                                                        fullWidth
-                                                        size="small"
-                                                        InputLabelProps={{
-                                                            sx: redAsteriskStyle,
-                                                            shrink: true,
-                                                        }}
-                                                    />
-                                                )}
                                             />
-                                        </Box>
-                                    </Box>
+                                        )}
+                                    />
                                 </Grid>
-                                <Typography >Supervisados:</Typography>
-                                <Grid xs={12} sm={4}>
-                                    <Grid container spacing={2} >
-                                        <Autocomplete
-                                            options={vendedores}
-                                            getOptionLabel={(option) => `${option.nombre} ${option.apellidoPaterno} ${option.apellidoMaterno} (ID: ${option.id})`}
-                                            sx={{ width: 300, marginBottom: '16px', '& .MuiInputBase-root': { height: 40 } }} // Adjust height here
-                                            value={supervisadoSeleccionado}
-                                            onChange={(event, newValue) => setSupervisadoSeleccionado(newValue)}
-                                            renderInput={(params) =>
-                                                <TextField
-                                                    {...params}
-                                                    label="Seleccionar vendedor"
-                                                    variant="outlined"
-                                                    InputLabelProps={{
-                                                        sx: redAsteriskStyle,
-                                                        shrink: true,
-                                                    }}
-                                                />}
-                                        />
-                                        <Button
-                                            variant="contained"
-                                            color="primary"
-                                            startIcon={<Add />}
-                                            onClick={addItem}
-                                            disabled={!supervisadoSeleccionado}
-                                            sx={{ marginBottom: '16px' }}
-                                        >
-                                            Agregar
-                                        </Button>
+                                <Grid xs={12} sm={2} md={2}>
+                                    <Autocomplete
+                                        options={vendedores}
+                                        getOptionLabel={(option) => `${option.nombre} ${option.apellidoPaterno} ${option.apellidoMaterno} (ID: ${option.id})`}
+                                        fullWidth
+                                        sx={{ marginBottom: '16px', '& .MuiInputBase-root': { height: 40, width: '100%' } }}
+                                        value={supervisadoSeleccionado}
+                                        onChange={(event, newValue) => setSupervisadoSeleccionado(newValue)}
+                                        renderInput={(params) =>
+                                            <TextField
+                                                {...params}
+                                                label="Seleccionar vendedor"
+                                                variant="outlined"
+                                                InputLabelProps={{
+                                                    sx: redAsteriskStyle,
+                                                    shrink: true,
+                                                }}
+                                            />}
+                                    />
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        startIcon={<Add />}
+                                        onClick={addItem}
+                                        disabled={!supervisadoSeleccionado}
+                                        sx={{ marginBottom: '16px' }}
+                                    >
+                                        Agregar
+                                    </Button>
+                                </Grid>
+                                <Grid xs={12} sm={12} md={12}>
+                                    <Grid container spacing={1} sx={{ width: '100%' }}>
+                                        <Box sx={{ display: 'flex', width: '100%' }} >
+                                            <List>
+                                                {supervisados.map((item, index) => (
+                                                    <ListItem
+                                                        key={item.id}
+                                                        sx={{
+                                                            display: 'flex',
+                                                            justifyContent: 'space-between',
+                                                            padding: '1px 4px',
+                                                            marginBottom: 'px'
+                                                        }}
+                                                    >
+                                                        <ListItemText
+                                                            primary={`${item.id}.- ${item.nombre} ${item.apellidoPaterno} ${item.apellidoMaterno}`}
+                                                        />
+                                                        <IconButton onClick={() => deleteItem(index)} color="warning" size="small">
+                                                            <Delete />
+                                                        </IconButton>
+                                                    </ListItem>
+                                                ))}
+                                            </List>
+                                        </Box>
                                     </Grid>
-                                    <Box sx={{ height: '100px', maxHeight: '100px', overflowY: 'auto', border: '1px solid #ccc' }}>
-                                        <List>
-                                            {supervisados.map((item, index) => (
-                                                <ListItem
-                                                    key={item.id}
-                                                    sx={{
-                                                        display: 'flex',
-                                                        justifyContent: 'space-between',
-                                                        padding: '1px 4px',
-                                                        marginBottom: 'px'
-                                                    }}
-                                                >
-                                                    <ListItemText
-                                                        primary={`${item.id}.- ${item.nombre} ${item.apellidoPaterno} ${item.apellidoMaterno}`}
-                                                    />
-                                                    <IconButton onClick={() => deleteItem(index)} color="warning" size="small">
-                                                        <Delete />
-                                                    </IconButton>
-                                                </ListItem>
-                                            ))}
-                                        </List>
-                                    </Box>
                                 </Grid>
                             </Grid>
                         </Paper>

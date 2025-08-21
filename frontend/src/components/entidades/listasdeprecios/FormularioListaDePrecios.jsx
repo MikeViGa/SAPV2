@@ -199,33 +199,33 @@ export default function FormularioListaDePrecios({ modo, registro, open, onClose
                         component="form"
                         onSubmit={formik.handleSubmit}
                         sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: 550, pt: 1 }}             >
-                        <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
-                            
-                                <Grid xs={12} sm={6} md={3}>
-                                    <TextField size="small" required fullWidth id="clave" name="clave" label="Clave"
-                                        value={formik.values.clave}
-                                        onChange={formik.handleChange}
-                                        onBlur={formik.handleBlur}
-                                        error={formik.touched.clave && Boolean(formik.errors.clave)}
-                                        helperText={formik.touched.clave && formik.errors.clave}
-                                        InputLabelProps={{ sx: redAsteriskStyle, shrink: true }}
-                                        onKeyDown={(e) => handleKeyDown(e, null)}
-                                    />
-                                </Grid>
-                                <Grid xs={12} sm={6} md={3}>
-                                    <TextField size="small" required fullWidth id="nombre" name="nombre" label="Nombre"
-                                        value={formik.values.nombre}
-                                        onChange={formik.handleChange}
-                                        onBlur={formik.handleBlur}
-                                        error={formik.touched.nombre && Boolean(formik.errors.nombre)}
-                                        helperText={formik.touched.nombre && formik.errors.nombre}
-                                        InputLabelProps={{ sx: redAsteriskStyle, shrink: true }}
-                                        onKeyDown={(e) => handleKeyDown(e, null)}
-                                    />
-                                </Grid>
-                           
+                        <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
+                        <Stack direction="column" spacing={1}>
+                            <Grid xs={12} sm={6} md={3}>
+                                <TextField size="small" required fullWidth id="clave" name="clave" label="Clave"
+                                    value={formik.values.clave}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.clave && Boolean(formik.errors.clave)}
+                                    helperText={formik.touched.clave && formik.errors.clave}
+                                    InputLabelProps={{ sx: redAsteriskStyle, shrink: true }}
+                                    onKeyDown={(e) => handleKeyDown(e, null)}
+                                />
+                            </Grid>
+                            <Grid xs={12} sm={6} md={3}>
+                                <TextField size="small" required fullWidth id="nombre" name="nombre" label="Nombre"
+                                    value={formik.values.nombre}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.nombre && Boolean(formik.errors.nombre)}
+                                    helperText={formik.touched.nombre && formik.errors.nombre}
+                                    InputLabelProps={{ sx: redAsteriskStyle, shrink: true }}
+                                    onKeyDown={(e) => handleKeyDown(e, null)}
+                                />
+                            </Grid>
+                            </Stack>
                         </Paper>
-                        <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
+                        <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
                             <Stack direction="row" spacing={1}>
                                 <Button color="primary" startIcon={<SaveIcon />} variant="contained" type="submit" disabled={formik.isSubmitting}>
                                     {formik.values.id ? 'Actualizar' : 'Agregar'}

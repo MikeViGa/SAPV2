@@ -197,7 +197,7 @@ export default function FormularioAtaud({ modo, registro, open, onClose, refresc
                         onSubmit={formik.handleSubmit}
                         sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: 550, pt: 1 }}
                     >
-                        <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
+                        <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
                             <Grid container spacing={2}>
                                 <Grid xs={12} sm={6} md={3}>
                                     <TextField
@@ -226,7 +226,7 @@ export default function FormularioAtaud({ modo, registro, open, onClose, refresc
                             </Grid>
                         </Paper>
 
-                        <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
+                        <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
                             <Stack direction="row" spacing={1}>
                                 <Button color="primary" startIcon={<SaveIcon />} variant="contained" type="submit" disabled={formik.isSubmitting}>
                                     {formik.values.id ? 'Actualizar' : 'Agregar'}
