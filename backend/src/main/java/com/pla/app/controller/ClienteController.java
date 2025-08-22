@@ -159,6 +159,8 @@ public class ClienteController {
 		}
 	}
 
+	
+
 	@GetMapping("/reporteclientesporfechas/{fechaInicial}/{fechaFinal}")
 	//@CrossOrigin(origins = "http://localhost:3000", exposedHeaders = "Content-Disposition")
 	public void generaReporteClientesPorFechas(@PathVariable String fechaInicial, @PathVariable String fechaFinal, HttpServletResponse response) {

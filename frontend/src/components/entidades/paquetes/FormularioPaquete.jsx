@@ -424,7 +424,7 @@ export default function FormularioPaquete({ modo, registro, open, onClose, refre
               </Box>
             </Paper>
             <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
-              <Stack direction="row" spacing={1}>
+              <Stack direction="row" spacing={1} justifyContent="flex-end">
                 <Button color="primary" startIcon={<SaveIcon />} variant="contained" type="submit" disabled={formik.isSubmitting}>
                   {formik.values.id ? 'Actualizar' : 'Agregar'}
                 </Button>

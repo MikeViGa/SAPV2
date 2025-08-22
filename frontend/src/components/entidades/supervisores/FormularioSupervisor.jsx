@@ -250,7 +250,7 @@ export default function FormularioSupervisor({ modo, registro, open, onClose, re
                     <Box
                         component="form"
                         onSubmit={formik.handleSubmit}
-                        sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '800px', margin: 'auto', mt: 1 }}
+                       sx= {{ display: 'flex', flexDirection: 'column', gap: 1, width: '800px', margin: 'auto', mt: 1 }}
                     >
                         <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
                             <Grid container spacing={1}>
@@ -660,7 +660,7 @@ export default function FormularioSupervisor({ modo, registro, open, onClose, re
                             </Grid>
                         </Paper>
                         <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
-                            <Stack direction="row" spacing={1}>
+                            <Stack direction="row" spacing={1} justifyContent="flex-end">
                                 <Button color="primary" startIcon={<SaveIcon />} variant="contained" type="submit" disabled={formik.isSubmitting}>
                                     {formik.values.id ? 'Actualizar' : 'Agregar'}
                                 </Button>

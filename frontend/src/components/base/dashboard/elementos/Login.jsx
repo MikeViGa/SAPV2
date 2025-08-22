@@ -33,7 +33,6 @@ export default function Login() {
 
     function handlePasswordChange(e) {
         setPassword(e.target.value);
-        setPassword(e.target.value);
         if (e.target.validity.valid) {
             setPasswordError(false);
         } else {
@@ -107,7 +106,11 @@ export default function Login() {
                             }}
                             onChange={handlePasswordChange}
                             InputLabelProps={{ shrink: true }} />
-                        <Typography color="error" sx={{ margin: 2,  }}>{showErrorMessage && <div className="errorMessage"> Usuario o contraseña incorrectos</div>}</Typography>
+                        {showErrorMessage && (
+                            <Typography color="error" sx={{ margin: 2, textAlign: 'center' }}>
+                                Usuario o contraseña incorrectos
+                            </Typography>
+                        )}
                         <Box sx={{ display: 'flex', gap: 0, justifyContent: 'center', }} >
                             <Button sx={{ margin: 2 }} variant="contained" startIcon={<LoginIcon />} name="login" onClick={handleSubmit}>Ingresar</Button>
                         </Box>

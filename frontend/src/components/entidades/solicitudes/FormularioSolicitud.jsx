@@ -405,7 +405,7 @@ export default function FormularioSolicitud({ modo, registro, open, onClose, ref
                                 </Box>
                             </Paper>
                             <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
-                                <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+                                <Stack direction="row" spacing={1} sx={{ mt: 1 }} justifyContent="flex-end">
                                     <Button
                                         color="primary"
                                         startIcon={<SaveIcon />}

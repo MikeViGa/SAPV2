@@ -250,7 +250,7 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
         <Dialog
             open={open}
             onClose={onClose}
-
+            maxWidth="lg"
             PaperProps={{ ...dialogPaperProps, sx: { ...(dialogPaperProps?.sx || {}), width: 'fit-content' } }}
         >         <DialogTitle {...dialogTitleProps} sx={{ bgcolor: '#1976d2', color: '#fff', py: 1, px: 2, cursor: 'move' }}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -503,7 +503,7 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                             </Grid>
                         </Paper>
                         <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
-                            <Grid container spacing={1} sx={{ '& > .MuiGrid2-root': { flexBasis: { xs: '100% !important', sm: '50% !important', md: '25% !important' }, maxWidth: { xs: '100% !important', sm: '50% !important', md: '25% !important' } } }}>
+                            <Grid container spacing={1} >
                                 <Grid xs={12} sm={6} md={3}>
                                     <TextField
                                         size="small"
@@ -654,10 +654,10 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                             </Grid>
                         </Paper>
                         <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
-                            <Grid container spacing={1} >
-                                <Grid xs={12} sm={2} md={2}>
+                            <Grid container spacing={2}>
+                                {/* Primera fila - Autocompletes */}
+                                <Grid xs={12} md={6}>
                                     <Autocomplete
-                                        
                                         options={supervisores}
                                         getOptionLabel={(option) => option.nombre + " " + option.apellidoPaterno + " " + option.apellidoMaterno}
                                         fullWidth
@@ -665,18 +665,17 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                                         onChange={(event, newValue) => {
                                             setSupervisorSeleccionado(newValue);
                                         }}
+                                        sx={{  minWidth: 400 }}
                                         includeInputInList
                                         freeSolo
-                                        isOptionEqualToValue={(option, value) =>
-                                            option.id === value.id
-                                        }
+                                        isOptionEqualToValue={(option, value) => option.id === value.id}
                                         inputRef={supervisorRef}
                                         onKeyDown={(e) => handleKeyDown(e, null)}
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}
                                                 label="Seleccionar supervisor"
-                                                
+                                                fullWidth
                                                 size="small"
                                                 InputLabelProps={{
                                                     sx: redAsteriskStyle,
@@ -686,66 +685,69 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                                         )}
                                     />
                                 </Grid>
-                                <Grid xs={12} sm={2} md={2}>
+                                <Grid xs={12} md={6}>
                                     <Autocomplete
                                         options={vendedores}
                                         getOptionLabel={(option) => `${option.nombre} ${option.apellidoPaterno} ${option.apellidoMaterno} (ID: ${option.id})`}
                                         fullWidth
-                                        sx={{ marginBottom: '16px', '& .MuiInputBase-root': { height: 40, width: '100%' } }}
                                         value={supervisadoSeleccionado}
                                         onChange={(event, newValue) => setSupervisadoSeleccionado(newValue)}
+                                        sx={{  minWidth: 400 }}
                                         renderInput={(params) =>
                                             <TextField
                                                 {...params}
                                                 label="Seleccionar vendedor"
                                                 variant="outlined"
+                                                size="small"
                                                 InputLabelProps={{
                                                     sx: redAsteriskStyle,
                                                     shrink: true,
                                                 }}
                                             />}
                                     />
+                                </Grid>
+
+                                {/* Segunda fila - Botón */}
+                                <Grid xs={12}>
                                     <Button
                                         variant="contained"
                                         color="primary"
                                         startIcon={<Add />}
                                         onClick={addItem}
                                         disabled={!supervisadoSeleccionado}
-                                        sx={{ marginBottom: '16px' }}
+                                        sx={{ mb: 2 }}
                                     >
                                         Agregar
                                     </Button>
                                 </Grid>
-                                <Grid xs={12} sm={12} md={12}>
-                                    <Grid container spacing={1} sx={{ width: '100%' }}>
-                                        <Box sx={{ display: 'flex', width: '100%' }} >
-                                            <List>
-                                                {supervisados.map((item, index) => (
-                                                    <ListItem
-                                                        key={item.id}
-                                                        sx={{
-                                                            display: 'flex',
-                                                            justifyContent: 'space-between',
-                                                            padding: '1px 4px',
-                                                            marginBottom: 'px'
-                                                        }}
-                                                    >
-                                                        <ListItemText
-                                                            primary={`${item.id}.- ${item.nombre} ${item.apellidoPaterno} ${item.apellidoMaterno}`}
-                                                        />
-                                                        <IconButton onClick={() => deleteItem(index)} color="warning" size="small">
-                                                            <Delete />
-                                                        </IconButton>
-                                                    </ListItem>
-                                                ))}
-                                            </List>
-                                        </Box>
-                                    </Grid>
+
+                                {/* Tercera fila - Lista */}
+                                <Grid xs={12}>
+                                    <List>
+                                        {supervisados.map((item, index) => (
+                                            <ListItem
+                                                key={item.id}
+                                                sx={{
+                                                    display: 'flex',
+                                                    justifyContent: 'space-between',
+                                                    padding: '8px',
+                                                    marginBottom: '4px'
+                                                }}
+                                            >
+                                                <ListItemText
+                                                    primary={`${item.id}.- ${item.nombre} ${item.apellidoPaterno} ${item.apellidoMaterno}`}
+                                                />
+                                                <IconButton onClick={() => deleteItem(index)} color="warning" size="small">
+                                                    <Delete />
+                                                </IconButton>
+                                            </ListItem>
+                                        ))}
+                                    </List>
                                 </Grid>
                             </Grid>
                         </Paper>
                         <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
-                            <Stack direction="row" spacing={1}>
+                            <Stack direction="row" spacing={1} justifyContent="flex-end">
                                 <Button color="primary" startIcon={<SaveIcon />} variant="contained" type="submit" disabled={formik.isSubmitting}>
                                     {formik.values.id ? 'Actualizar' : 'Agregar'}
                                 </Button>

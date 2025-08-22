@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { TextField, Button, Box, Typography, Divider, Stack, Dialog, DialogActions, DialogContent, DialogTitle, Autocomplete } from '@mui/material';
+import { TextField, Button, Box, Typography, Divider, Stack, Paper, Dialog, DialogActions, DialogContent, DialogTitle, Autocomplete } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Grid from '@mui/material/Grid2';
@@ -68,6 +68,7 @@ export default function FormularioReportesCliente({ open, onClose }) {
     };
 
     const handleDateSubmit = async () => {
+        console.log("FECHAAAAAAAAAAAAASSSSSSSSSSS");
         try {
             if (!formik.values.fechaInicial || !formik.values.fechaFinal) {
                 addSnackbar("Ambas fechas son requeridas", "error");
@@ -183,89 +184,92 @@ export default function FormularioReportesCliente({ open, onClose }) {
                 {loading ? (
                     <Cargando loading={loading} />
                 ) : (
-                    <Box component="form" noValidate sx={{ width: '950px', margin: 'auto' }}>
-                        <Typography>Por fechas:</Typography>
-                        <Grid container spacing={2} alignItems="center">
-                            <Grid xs={12} sm={4}>
-                                {renderDateTimePicker('fechaInicial', 'Fecha inicial', fechaInicialRef, fechaFinalRef)}
+                    <Box component="form" noValidate sx={{ width: '950px', margin: 'auto', mt: 2 }}>
+                        <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
+                            <Grid container spacing={2} alignItems="center">
+                                <Typography>Por fechas:</Typography>
+                                <Grid xs={12} sm={4}>
+                                    {renderDateTimePicker('fechaInicial', 'Fecha inicial', fechaInicialRef, fechaFinalRef)}
+                                </Grid>
+                                <Grid xs={12} sm={4}>
+                                    {renderDateTimePicker('fechaFinal', 'Fecha final', fechaFinalRef, null)}
+                                </Grid>
+                                <Grid>
+                                    <Button
+                                        color="primary"
+                                        startIcon={<FeedIcon />}
+                                        variant="contained"
+                                        onClick={handleDateSubmit}
+                                        disabled={formik.isSubmitting}
+                                    >
+                                        Generar
+                                    </Button>
+                                </Grid>
                             </Grid>
-                            <Grid xs={12} sm={4}>
-                                {renderDateTimePicker('fechaFinal', 'Fecha final', fechaFinalRef, null)}
+                        </Paper>
+                        <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
+                            <Grid container spacing={2} alignItems="center">
+                                <Typography>Por colonia:</Typography>
+                                <Grid xs={12} sm={6}>
+                                    <Autocomplete
+                                        freeSolo
+                                        options={opciones}
+                                        getOptionLabel={(opcion) => typeof opcion === 'string' ? opcion : `${opcion}`}
+                                        onInputChange={(_, value) => buscarColonias(value)}
+                                        onChange={(_, value) => formik.setFieldValue('colonia', value)}
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                label="Colonia"
+                                                style={{ width: '400px' }}
+                                                required
+                                                size="small"
+                                                InputLabelProps={{
+                                                    sx: { '& .MuiInputLabel-asterisk': { color: 'red' } },
+                                                    shrink: true,
+                                                }}
+                                            />
+                                        )}
+                                    />
+                                </Grid>
+                                <Grid>
+                                    <Button
+                                        color="primary"
+                                        startIcon={<FeedIcon />}
+                                        variant="contained"
+                                        onClick={handleColoniaSubmit}
+                                        disabled={formik.isSubmitting}
+                                    >
+                                        Generar
+                                    </Button>
+                                </Grid>
                             </Grid>
-                            <Grid>
+                        </Paper>
+                        <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
+                            <Stack direction="row" spacing={1} justifyContent="flex-end">
                                 <Button
                                     color="primary"
-                                    startIcon={<FeedIcon />}
+                                    startIcon={<RefreshIcon />}
                                     variant="contained"
-                                    onClick={handleDateSubmit}
+                                    onClick={handleReset}
                                     disabled={formik.isSubmitting}
                                 >
-                                    Generar
+                                    Reiniciar
                                 </Button>
-                            </Grid>
-                        </Grid>
-                        <Divider sx={{ my: 2 }} />
-                        <Typography>Por colonia:</Typography>
-                        <Box  spacing={1}>
-                        <Grid container spacing={2} alignItems="center">
-                            <Grid xs={12} sm={6}>
-                                <Autocomplete
-                                    freeSolo
-                                    options={opciones}
-                                    getOptionLabel={(opcion) => typeof opcion === 'string' ? opcion : `${opcion}`}
-                                    onInputChange={(_, value) => buscarColonias(value)}
-                                    onChange={(_, value) => formik.setFieldValue('colonia', value)}
-                                    renderInput={(params) => (
-                                        <TextField
-                                            {...params}
-                                            label="Colonia"
-                                            style={{ width: '400px' }}
-                                            required
-                                            size="small"
-                                            InputLabelProps={{
-                                                sx: { '& .MuiInputLabel-asterisk': { color: 'red' } },
-                                                shrink: true,
-                                            }}
-                                        />
-                                    )}
-                                />
-                            </Grid>
-                            <Grid>
                                 <Button
-                                    color="primary"
-                                    startIcon={<FeedIcon />}
+                                    color={operacionTerminada ? "primary" : "warning"}
                                     variant="contained"
-                                    onClick={handleColoniaSubmit}
-                                    disabled={formik.isSubmitting}
+                                    startIcon={operacionTerminada ? <ExitToAppIcon /> : <CancelIcon />}
+                                    onClick={onClose}
                                 >
-                                    Generar
+                                    {operacionTerminada ? "Salir" : "Cancelar"}
                                 </Button>
-                            </Grid>
-                        </Grid>
-                        </Box>
+                            </Stack>
+                        </Paper>
                     </Box>
                 )}
             </DialogContent>
             <DialogActions>
-                <Stack direction="row" spacing={1}>
-                    <Button
-                        color="primary"
-                        startIcon={<RefreshIcon />}
-                        variant="contained"
-                        onClick={handleReset}
-                        disabled={formik.isSubmitting}
-                    >
-                        Reiniciar
-                    </Button>
-                    <Button
-                        color={operacionTerminada ? "primary" : "warning"}
-                        variant="contained"
-                        startIcon={operacionTerminada ? <ExitToAppIcon /> : <CancelIcon />}
-                        onClick={onClose}
-                    >
-                        {operacionTerminada ? "Salir" : "Cancelar"}
-                    </Button>
-                </Stack>
             </DialogActions>
         </Dialog>
     );

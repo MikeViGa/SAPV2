@@ -192,7 +192,7 @@ export default function FormularioEmpleado({ modo, registro, open, onClose, refr
     };
 
     return (
-        <Dialog open={open} onClose={onClose} fullWidth={false}  PaperProps={{ ...dialogPaperProps, sx: { ...(dialogPaperProps?.sx || {}), width: 'fit-content' } }}>
+        <Dialog open={open} onClose={onClose} fullWidth={false} maxWidth="lg"  PaperProps={{ ...dialogPaperProps, sx: { ...(dialogPaperProps?.sx || {}), width: 'fit-content' } }}>
             <DialogTitle {...dialogTitleProps} sx={{ bgcolor: '#1976d2', color: '#fff', py: 1, px: 2, cursor: 'move' }}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Typography variant="h6" sx={{ color: 'inherit' }}>
@@ -210,7 +210,7 @@ export default function FormularioEmpleado({ modo, registro, open, onClose, refr
                     <Box
                         component="form"
                         onSubmit={formik.handleSubmit}
-                        sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: 'fit-content', margin: 'auto', mt: 2 }}
+                        sx= {{ display: 'flex', flexDirection: 'column', gap: 1, width: '800px', margin: 'auto', mt: 1 }}
                     >
                         <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
                             <Grid container spacing={1} sx={{ '& > .MuiGrid2-root': { flexBasis: { xs: '100% !important', sm: '50% !important', md: '25% !important' }, maxWidth: { xs: '100% !important', sm: '50% !important', md: '25% !important' } }, '& .MuiTextField-root': { width: '100%' } }}>
@@ -381,7 +381,7 @@ export default function FormularioEmpleado({ modo, registro, open, onClose, refr
                             </Grid>
                         </Paper>
                         <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
-                            <Stack direction="row" spacing={1}>
+                            <Stack direction="row" spacing={1} justifyContent="flex-end">
                                 <Button color="primary" startIcon={<SaveIcon />} variant="contained" type="submit" disabled={formik.isSubmitting}>
                                     {formik.values.id ? 'Actualizar' : 'Agregar'}
                                 </Button>
