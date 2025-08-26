@@ -104,7 +104,7 @@ public class UsuarioService {
 
     @Transactional
     public void generarReporte(OutputStream outputStream) throws Exception {
-        ClassPathResource resource = new ClassPathResource("reportes/reporteusuarios.jasper");
+        ClassPathResource resource = new ClassPathResource("MyReports/reporteusuarios.jasper");
         InputStream jasperStream = resource.getInputStream();
         Connection conn = dataSource.getConnection();
         Map<String, Object> parametros = new HashMap<String, Object>();

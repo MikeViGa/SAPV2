@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public abstract class Auditable implements Serializable {
 
     @CreatedDate
-    @Column(name = "fecha_creacion", nullable = false, updatable = false)
+    @Column(name = "fecha_creacion",  updatable = false)
     private LocalDateTime fechaCreacion;
 
     @LastModifiedDate

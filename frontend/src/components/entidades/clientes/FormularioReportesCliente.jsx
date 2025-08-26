@@ -25,6 +25,7 @@ export default function FormularioReportesCliente({ open, onClose }) {
     const [operacionTerminada, setOperacionTerminada] = useState(false);
     const [loading, setLoading] = useState(false);
     const [opciones, setOpciones] = useState([]);
+    const [coloniaInput, setColoniaInput] = useState('');
     const fechaInicialRef = useRef();
     const fechaFinalRef = useRef();
 
@@ -68,7 +69,6 @@ export default function FormularioReportesCliente({ open, onClose }) {
     };
 
     const handleDateSubmit = async () => {
-        console.log("FECHAAAAAAAAAAAAASSSSSSSSSSS");
         try {
             if (!formik.values.fechaInicial || !formik.values.fechaFinal) {
                 addSnackbar("Ambas fechas son requeridas", "error");
@@ -119,10 +119,12 @@ export default function FormularioReportesCliente({ open, onClose }) {
         if (consulta?.length >= 3) {
             try {
                 const respuesta = await obtenerColoniasClienteApi(consulta);
-                setOpciones(respuesta.data);
+                setOpciones(respuesta.data || []);
             } catch (error) {
                 addSnackbar("Error al obtener colonias", "error");
             }
+        } else {
+            setOpciones([]);
         }
     };
 
@@ -214,9 +216,20 @@ export default function FormularioReportesCliente({ open, onClose }) {
                                     <Autocomplete
                                         freeSolo
                                         options={opciones}
-                                        getOptionLabel={(opcion) => typeof opcion === 'string' ? opcion : `${opcion}`}
-                                        onInputChange={(_, value) => buscarColonias(value)}
-                                        onChange={(_, value) => formik.setFieldValue('colonia', value)}
+                                        value={formik.values.colonia || ''}
+                                        inputValue={coloniaInput}
+                                        onInputChange={(_, newInputValue) => {
+                                            setColoniaInput(newInputValue || '');
+                                            formik.setFieldValue('colonia', newInputValue || '');
+                                            buscarColonias(newInputValue || '');
+                                        }}
+                                        onChange={(_, newValue) => {
+                                            const seleccion = typeof newValue === 'string' ? newValue : (newValue || '');
+                                            formik.setFieldValue('colonia', seleccion);
+                                            setColoniaInput(seleccion);
+                                        }}
+                                        getOptionLabel={(opcion) => (typeof opcion === 'string' ? opcion : `${opcion}`)}
+                                        isOptionEqualToValue={(option, value) => option === value}
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}

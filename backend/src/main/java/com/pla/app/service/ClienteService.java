@@ -109,7 +109,7 @@ public class ClienteService {
 
     @Transactional
     public void generarReporteClientes(OutputStream outputStream) throws Exception {
-        ClassPathResource resource = new ClassPathResource("reportes/reporteclientesfechas.jasper");
+        ClassPathResource resource = new ClassPathResource("MyReports/reporteclientesfechas.jasper");
         InputStream jasperStream = resource.getInputStream();
         Connection conn = dataSource.getConnection();
         Map<String, Object> parametros = new HashMap<String, Object>();
@@ -119,7 +119,7 @@ public class ClienteService {
     @Transactional
     public void generarReporteClientesPorFechas(String fechaInicial, String fechaFinal, OutputStream outputStream)
             throws Exception {
-        ClassPathResource resource = new ClassPathResource("reportes/reporteclientesfechas.jasper");
+        ClassPathResource resource = new ClassPathResource("MyReports/reporteclientesfechas.jasper");
         InputStream jasperStream = resource.getInputStream();
         Connection conn = dataSource.getConnection();
         Map<String, Object> parametros = new HashMap<String, Object>();
@@ -128,10 +128,9 @@ public class ClienteService {
         JasperRunManager.runReportToPdfStream(jasperStream, (OutputStream) outputStream, parametros, conn);
     }
 
-    /* 
-    @Transactional
+        @Transactional
     public void generarReporteClientesPorColonia(String colonia, OutputStream outputStream) throws Exception {
-        ClassPathResource resource = new ClassPathResource("reportes/reporteclientescolonia.jasper");
+        ClassPathResource resource = new ClassPathResource("MyReports/reporteclientescolonia.jasper");
         InputStream jasperStream = resource.getInputStream();
         Connection conn = dataSource.getConnection();
         Map<String, Object> parametros = new HashMap<String, Object>();
@@ -139,10 +138,8 @@ public class ClienteService {
         JasperRunManager.runReportToPdfStream(jasperStream, (OutputStream) outputStream, parametros, conn);
     }
 
-    @Transactional
-    public List<String> obtenerColoniasClientes() {
-        List<String> colonias = clienteRepository.findDistinctColonias();
-        return colonias;
+    @Transactional(readOnly = true)
+    public List<String> obtenerColoniasClientes(String q) {
+        return clienteRepository.findDistinctColoniasContaining(q == null ? "" : q);
     }
-        */
 }

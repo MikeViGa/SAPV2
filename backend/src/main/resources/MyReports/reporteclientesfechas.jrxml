@@ -7,8 +7,8 @@
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MYSQL8"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="237"/>
-	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="759"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="110"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="884"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
@@ -21,10 +21,23 @@
 	<import>net.sf.jasperreports.engine.*</import>
 	<import>java.util.*</import>
 	<import>net.sf.jasperreports.engine.data.*</import>
-	<parameter name="colonia" class="java.lang.String"/>
-	<query language="sql"><![CDATA[select id as id, nombre as nombre, apellido_paterno as apellido_paterno, apellido_materno as apellido_materno,
-     ocupacion as ocupacion, estado as estado, colonia as colonia, telefono1 as telefono1,
-     telefono2 as telefono2, fecha_registro as fecha_registro from clientes c where colonia = $P{colonia};]]></query>
+	<parameter name="fechaInicial" class="java.lang.String"/>
+	<parameter name="fechaFinal" class="java.lang.String"/>
+	<query language="sql"><![CDATA[SELECT 
+    c.id AS id, 
+    c.nombre AS nombre, 
+    c.apellido_paterno AS apellido_paterno, 
+    c.apellido_materno AS apellido_materno,
+    c.ocupacion AS ocupacion, 
+    e.nombre AS estado, 
+    d.colonia AS colonia, 
+    c.telefono1 AS telefono1,
+    c.telefono2 AS telefono2, 
+    c.fecha_registro AS fecha_registro 
+FROM clientes c
+LEFT JOIN domicilios d ON c.id = d.cliente_id
+LEFT JOIN estados e ON d.estado_id = e.id
+ where fecha_registro between $P{fechaInicial} and $P{fechaFinal}]]></query>
 	<field name="id" class="java.lang.Long"/>
 	<field name="nombre" class="java.lang.String"/>
 	<field name="apellido_paterno" class="java.lang.String"/>
@@ -274,7 +287,7 @@
 				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 			</box>
 		</element>
-		<element kind="textField" uuid="e38fbe78-f51e-4f19-ad6c-9b1f5351ce70" key="textField" x="524" y="3" width="36" height="19" forecolor="#000000" backcolor="#FFFFFF" rotation="None" fontName="Arial" fontSize="10.0" pdfFontName="Helvetica" pdfEncoding="CP1252" evaluationTime="Report" pattern="" blankWhenNull="false" underline="false" strikeThrough="false" italic="false" bold="false" pdfEmbedded="false" hTextAlign="Left" vTextAlign="Top">
+		<element kind="textField" uuid="e38fbe78-f51e-4f19-ad6c-9b1f5351ce70" key="textField" x="524" y="3" width="36" height="19" forecolor="#000000" backcolor="#FFFFFF" rotation="None" fontName="Arial" fontSize="10.0" pdfFontName="Helvetica" pdfEncoding="CP1252" evaluationTime="Report" pattern="" blankWhenNull="false" strikeThrough="false" bold="false" underline="false" italic="false" pdfEmbedded="false" hTextAlign="Left" vTextAlign="Top">
 			<paragraph lineSpacing="Single"/>
 			<expression><![CDATA["" + $V{PAGE_NUMBER}]]></expression>
 			<box>

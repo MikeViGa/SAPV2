@@ -37,9 +37,6 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
     )
     Page<ClienteListadoProjection> findListado(Pageable pageable);
 
-    /* 
-    @Query("SELECT DISTINCT c.colonia FROM Cliente c")
-    List<String> findDistinctColonias();
-
-    */
+    @Query("SELECT DISTINCT d.colonia FROM Domicilio d WHERE d.colonia IS NOT NULL AND d.colonia <> '' AND LOWER(d.colonia) LIKE LOWER(CONCAT('%', :q, '%'))")
+    List<String> findDistinctColoniasContaining(@Param("q") String q);
 }

@@ -27,7 +27,7 @@ export const obtenerClienteNombreApi
 
 
 export const obtenerColoniasClienteApi
-    = (query) => apiClient.get(`/obtenercoloniasclientes`);
+    = (query) => apiClient.get(`/obtenercoloniasclientes`, { params: { q: query } });
 
 
 export const obtenerClientesEntreFechasApi = (fechaInicial, fechaFinal) => {
@@ -53,7 +53,7 @@ export const generarReporteClientesPorFechasApi = (fechaInicial, fechaFinal) => 
 }
 
 export const generarReporteClientesPorColoniaApi = (colonia) => {
-    return apiClient.get(`/reporteclientesporcolonia/${colonia}`, {
+    return apiClient.get(`/reporteclientesporcolonia/${encodeURIComponent(colonia)}`, {
         responseType: 'blob'
     });
 }

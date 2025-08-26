@@ -7,11 +7,14 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import com.pla.app.audit.Auditable;
 
 @Entity
 @Table(name = "usuarios")
 @Data
-public class Usuario {
+@EqualsAndHashCode(callSuper = true)
+public class Usuario extends Auditable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
