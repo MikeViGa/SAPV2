@@ -38,9 +38,22 @@ export const obtenerClientesEntreFechasApi = (fechaInicial, fechaFinal) => {
 export const actualizarClienteApi
     = (id, cliente) => apiClient.put(`/clientes/${id}`, cliente)
 
-//DELETE
+//DELETE (Soft Delete)
 export const eliminarClienteApi
     = (id) => apiClient.delete(`/clientes/${id}`)
+
+// RESTORE
+export const restaurarClienteApi
+    = (id) => apiClient.put(`/clientes/${id}/restaurar`)
+
+// GET ALL INCLUDING INACTIVE (for admin)
+export const obtenerClientesTodosApi = (page = 0, size = 50, sort) => {
+    const params = new URLSearchParams();
+    params.append('page', page);
+    params.append('size', size);
+    if (sort) params.append('sort', sort);
+    return apiClient.get(`/clientes/todos?${params.toString()}`)
+}
 
 //REPORT
 export const obtenerReporteClienteApi

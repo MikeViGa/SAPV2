@@ -1,6 +1,8 @@
 package com.pla.app.dto.empleados;
 
 import lombok.Data;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 public class EmpleadoResponseDTO {
@@ -10,9 +12,12 @@ public class EmpleadoResponseDTO {
     private String apellidoMaterno;
     private String correo;
     private String telefono;
-    private String fechaNacimiento; // ISO yyyy-MM-dd
-    private String fechaAlta;       // ISO yyyy-MM-dd
-    private String estado;          // opcional, si aplica
+    private LocalDate fechaNacimiento;
+    private LocalDate fechaAlta;
+    private String estado;
+    private Boolean activo;
+    private LocalDateTime fechaCreacion;
+    private LocalDateTime fechaModificacion;
+    private String creadoPor;
+    private String modificadoPor;
 }
-
-

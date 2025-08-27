@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Autocomplete, TextField, Button, Box, Typography } from '@mui/material';
-import { obtenerPaqueteDescripcionApi, obtenerPaqueteApi, obtenerPaquetesApi } from '../../api/PaqueteApiService';
+import { Autocomplete, TextField, Button, Box, Typography, FormControlLabel, Switch } from '@mui/material';
+import { obtenerPaqueteDescripcionApi, obtenerPaqueteApi, obtenerPaquetesApi, obtenerPaquetesTodosApi } from '../../api/PaqueteApiService';
 import ListarPaquetes from './ListarPaquetes';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import { Item, ScreenWrapper, ExitButton, useScreenCommon, redAsteriskStyle } from '../../base/common/CommonControls';
@@ -88,6 +88,7 @@ export default function PantallaPaquetes() {
     
         const [idRegistro, setIdRegistro] = useState(null);
         const [opciones, setOpciones] = useState([]);
+        const [mostrarInactivos, setMostrarInactivos] = useState(false);
     
         const obtenerOpciones = async (consulta) => {
             try {
@@ -105,7 +106,7 @@ export default function PantallaPaquetes() {
                     const respuesta = await obtenerPaqueteApi(idRegistro);
                     setRegistros([respuesta.data]);
                 } else {
-                    const respuesta = await obtenerPaquetesApi();
+                    const respuesta = mostrarInactivos ? await obtenerPaquetesTodosApi() : await obtenerPaquetesApi();
                     setRegistros(respuesta.data);
                 }
                 addSnackbar("Registros actualizados correctamente", "success");
@@ -122,7 +123,24 @@ export default function PantallaPaquetes() {
     
         return (
             <ScreenWrapper loading={cargando}>
-                
+                <Item>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={mostrarInactivos}
+                                    onChange={(e) => {
+                                        setMostrarInactivos(e.target.checked);
+                                        // Auto-refrescar cuando cambie el toggle
+                                        setTimeout(() => mostrarRegistros(), 100);
+                                    }}
+                                    name="mostrarInactivos"
+                                />
+                            }
+                            label="Mostrar paquetes inactivos"
+                        />
+                    </Box>
+                </Item>
                 <Item>
                     <ListarPaquetes refrescar={mostrarRegistros} regs={registros} />
                 </Item>

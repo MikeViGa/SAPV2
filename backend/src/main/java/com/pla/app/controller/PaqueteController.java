@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
 import org.springframework.web.bind.annotation.RestController;
 import com.pla.app.model.Paquete;
 import com.pla.app.service.PaqueteService;
@@ -66,7 +67,7 @@ public class PaqueteController {
 		return new ResponseEntity<>(dtos, HttpStatus.OK);
 	}
 
-	// DELETE
+	// DELETE (Soft Delete)
 	@DeleteMapping("/paquetes/{id}")
 	public ResponseEntity<?> eliminarPaquete(@PathVariable Long id) {
 		try {
@@ -77,6 +78,29 @@ public class PaqueteController {
 					.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body("No se pudo eliminar el paquete: " + e.getMessage());
 		}
+	}
+
+	// RESTAURAR (reactivar paquete eliminado)
+	@PutMapping("/paquetes/{id}/restaurar")
+	public ResponseEntity<?> restaurarPaquete(@PathVariable Long id) {
+		try {
+			paqueteServicio.restaurarPaquete(id);
+			return ResponseEntity.ok("Paquete restaurado correctamente");
+		} catch (Exception e) {
+			return ResponseEntity
+					.status(HttpStatus.NOT_FOUND)
+					.body("No se pudo restaurar el paquete: " + e.getMessage());
+		}
+	}
+
+	// OBTENER TODOS INCLUSO INACTIVOS (para administración)
+	@GetMapping("/paquetes/todos")
+	public ResponseEntity<List<PaqueteResponseDTO>> obtenerPaquetesInclusoInactivos() {
+		List<Paquete> paquetes = paqueteServicio.obtenerPaquetesTodosInclusoInactivos();
+		List<PaqueteResponseDTO> dtos = paquetes.stream()
+			.map(this::mapToDto)
+			.collect(Collectors.toList());
+		return new ResponseEntity<>(dtos, HttpStatus.OK);
 	}
 
 	// UPDATE
@@ -117,6 +141,13 @@ public class PaqueteController {
 		dto.setImporte(paquete.getImporte());
 		dto.setBovedas(paquete.getBovedas());
 		dto.setGavetas(paquete.getGavetas());
+		
+		// Campos de auditoría y soft delete
+		dto.setActivo(paquete.getActivo());
+		dto.setFechaCreacion(paquete.getFechaCreacion());
+		dto.setFechaModificacion(paquete.getFechaModificacion());
+		dto.setCreadoPor(paquete.getCreadoPor());
+		dto.setModificadoPor(paquete.getModificadoPor());
 		
 		// Mapear PlazoDePago
 		if (paquete.getPlazoDePago() != null) {

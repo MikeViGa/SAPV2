@@ -43,41 +43,36 @@ public class UsuarioService {
 
     @Transactional(readOnly = true)
     public Optional<Usuario> obtenerUsuarioPorId(Long id) {
-        return usuarioRepository.findById(id);
+        return usuarioRepository.findByIdAndActive(id);
     }
 
     
     @Transactional(readOnly = true)
     public List<Usuario> obtenerUsuarios() {
-        return usuarioRepository.findAll();
+        return usuarioRepository.findAllActive();
     }
 
     @Transactional(readOnly = true)
     public Page<UsuarioListadoProjection> obtenerUsuariosPaginado(Pageable pageable) {
-        return usuarioRepository.findListado(pageable);
+        return usuarioRepository.findListadoActive(pageable);
     }
 
     @Transactional(readOnly = true)
     public List<Usuario> obtenerUsuariosPorNombreUsuario(String nombreUsuario) {
-        List<Usuario> usuarios = usuarioRepository.findByNombreUsuarioContaining(nombreUsuario);
+        List<Usuario> usuarios = usuarioRepository.findByNombreUsuarioContainingAndActive(nombreUsuario);
         return usuarios;
     }
 
     @Transactional
     public Usuario actualizarUsuario(Usuario usuario) throws Exception {
-        Usuario usuarioAEditar = null;
-        Usuario usuarioEncontrado = usuarioRepository.findById(usuario.getId()).get();
-        if (usuarioEncontrado != null) {
-            if (usuarioEncontrado.getId() == usuario.getId()) {
-                usuarioAEditar = usuarioEncontrado;
-                usuarioAEditar.setNombre(usuario.getNombre());
-                usuarioAEditar.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
-                usuarioAEditar.setRol(usuario.getRol());
-                Usuario usuarioActualizado = usuarioRepository.save(usuarioAEditar);
-                return usuarioActualizado;
-            } else {
-                throw new Exception("El nombre de usuario ya está en uso.");
-            }
+        Optional<Usuario> usuarioEncontradoOpt = usuarioRepository.findByIdAndActive(usuario.getId());
+        if (usuarioEncontradoOpt.isPresent()) {
+            Usuario usuarioEncontrado = usuarioEncontradoOpt.get();
+            usuarioEncontrado.setNombre(usuario.getNombre());
+            usuarioEncontrado.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
+            usuarioEncontrado.setRol(usuario.getRol());
+            Usuario usuarioActualizado = usuarioRepository.save(usuarioEncontrado);
+            return usuarioActualizado;
         } else {
             throw new Exception("Usuario no encontrado con el ID proporcionado.");
         }
@@ -85,12 +80,42 @@ public class UsuarioService {
 
     @Transactional
     public void eliminarUsuario(Long id) throws Exception {
-        Optional<Usuario> usuarioEncontrado = usuarioRepository.findById(id);
-        if (usuarioEncontrado.isPresent()) {
-            usuarioRepository.deleteById(id);
+        Optional<Usuario> usuarioEncontradoOpt = usuarioRepository.findByIdAndActive(id);
+        if (usuarioEncontradoOpt.isPresent()) {
+            Usuario usuarioEncontrado = usuarioEncontradoOpt.get();
+            usuarioEncontrado.setActivo(false); // Soft delete
+            usuarioRepository.save(usuarioEncontrado);
         } else {
             throw new Exception("Usuario no encontrado con el ID proporcionado.");
         }
+    }
+
+    // Método adicional para recuperar un usuario eliminado
+    @Transactional
+    public void restaurarUsuario(Long id) throws Exception {
+        Optional<Usuario> usuarioEncontradoOpt = usuarioRepository.findById(id);
+        if (usuarioEncontradoOpt.isPresent()) {
+            Usuario usuarioEncontrado = usuarioEncontradoOpt.get();
+            if (!usuarioEncontrado.getActivo()) {
+                usuarioEncontrado.setActivo(true);
+                usuarioRepository.save(usuarioEncontrado);
+            } else {
+                throw new Exception("El usuario ya está activo.");
+            }
+        } else {
+            throw new Exception("Usuario no encontrado con el ID proporcionado.");
+        }
+    }
+
+    // Método para obtener todos los usuarios (incluidos inactivos) - para administración
+    @Transactional(readOnly = true)
+    public List<Usuario> obtenerUsuariosTodosInclusoInactivos() {
+        return usuarioRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<UsuarioListadoProjection> obtenerUsuariosPaginadoInclusoInactivos(Pageable pageable) {
+        return usuarioRepository.findListado(pageable);
     }
 
     @Transactional

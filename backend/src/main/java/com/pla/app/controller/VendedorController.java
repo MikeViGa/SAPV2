@@ -21,7 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.pla.app.model.Vendedor;
 import com.pla.app.dto.vendedores.VendedorResponseDTO;
-import com.pla.app.dto.vendedores.SupervisorResumenDTO;
+
+import com.pla.app.mapper.VendedorMapper;
 import com.pla.app.service.VendedorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Date;
@@ -36,6 +37,9 @@ public class VendedorController {
 
 	@Autowired
 	private VendedorService vendedorServicio;
+
+	@Autowired
+	private VendedorMapper vendedorMapper;
 
 	// CREATE
 	@PostMapping("/vendedores/")
@@ -54,7 +58,7 @@ public class VendedorController {
 		try {
 			Optional<Vendedor> vendedor = vendedorServicio.obtenerVendedorPorId(id);
 			if (vendedor.isPresent()) {
-                return new ResponseEntity<>(mapToDto(vendedor.get()), HttpStatus.OK);
+                return new ResponseEntity<>(vendedorMapper.toResponseDTO(vendedor.get()), HttpStatus.OK);
 			} else {
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
@@ -67,7 +71,9 @@ public class VendedorController {
     @GetMapping("/vendedores")
     public ResponseEntity<List<VendedorResponseDTO>> obtenerVendedores() {
         List<Vendedor> vendedores = vendedorServicio.obtenerVendedores();
-        List<VendedorResponseDTO> dtos = vendedores.stream().map(this::mapToDto).collect(Collectors.toList());
+        List<VendedorResponseDTO> dtos = vendedores.stream()
+            .map(vendedorMapper::toResponseDTO)
+            .collect(Collectors.toList());
         return new ResponseEntity<>(dtos, HttpStatus.OK);
 	}
 
@@ -83,7 +89,9 @@ public class VendedorController {
 	@GetMapping("/obtenersupervisadosporvendedor")
     public ResponseEntity<List<VendedorResponseDTO>> obtenerSupervisadosPorVendedor(@RequestParam Long idVendedor) {
         List<Vendedor> vendedores = vendedorServicio.obtenerSupervisadosPorVendedor(idVendedor);
-        List<VendedorResponseDTO> dtos = vendedores.stream().map(this::mapToDto).collect(Collectors.toList());
+        List<VendedorResponseDTO> dtos = vendedores.stream()
+            .map(vendedorMapper::toResponseDTO)
+            .collect(Collectors.toList());
         return new ResponseEntity<>(dtos, HttpStatus.OK);
 	}
 
@@ -132,6 +140,39 @@ public class VendedorController {
 		}
 	}
 
+	// RESTAURAR (reactivar vendedor eliminado)
+	@PutMapping("/vendedores/{id}/restaurar")
+	public ResponseEntity<?> restaurarVendedor(@PathVariable Long id) {
+		try {
+			vendedorServicio.restaurarVendedor(id);
+			return ResponseEntity.ok("Vendedor restaurado correctamente");
+		} catch (Exception e) {
+			return ResponseEntity
+					.status(HttpStatus.NOT_FOUND)
+					.body("No se pudo restaurar el vendedor: " + e.getMessage());
+		}
+	}
+
+	// OBTENER TODOS INCLUSO INACTIVOS (para administración)
+	@GetMapping("/vendedores/todos")
+	public ResponseEntity<List<VendedorResponseDTO>> obtenerVendedoresInclusoInactivos() {
+		List<Vendedor> vendedores = vendedorServicio.obtenerVendedoresTodosInclusoInactivos();
+		List<VendedorResponseDTO> dtos = vendedores.stream()
+			.map(vendedorMapper::toResponseDTO)
+			.collect(Collectors.toList());
+		return new ResponseEntity<>(dtos, HttpStatus.OK);
+	}
+
+	// OBTENER TODOS PAGINADOS INCLUSO INACTIVOS (para administración)
+	@GetMapping("/vendedores/todos/page")
+	public ResponseEntity<Page<com.pla.app.dto.vendedores.VendedorListRowDTO>> obtenerVendedoresPaginadosInclusoInactivos(
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "25") int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		Page<com.pla.app.dto.vendedores.VendedorListRowDTO> result = vendedorServicio.obtenerVendedoresPaginadosInclusoInactivos(pageable);
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
 	// REPORT
 	@GetMapping("/reportesvendedores")
 	public void generaReporteVendedores(HttpServletResponse response, @RequestParam String tipoReporte) {
@@ -148,35 +189,5 @@ public class VendedorController {
 			e.printStackTrace();
 		}
 	}
-    private VendedorResponseDTO mapToDto(Vendedor v) {
-        VendedorResponseDTO dto = new VendedorResponseDTO();
-        dto.setId(v.getId());
-        dto.setNombre(v.getNombre());
-        dto.setApellidoPaterno(v.getApellidoPaterno());
-        dto.setApellidoMaterno(v.getApellidoMaterno());
-        dto.setCalle(v.getCalle());
-        dto.setNumeroExterior(v.getNumeroExterior());
-        dto.setNumeroInterior(v.getNumeroInterior());
-        dto.setColonia(v.getColonia());
-        dto.setCiudad(v.getCiudad());
-        dto.setEstado(v.getEstado());
-        dto.setCodigoPostal(v.getCodigoPostal());
-        dto.setTelefono1(v.getTelefono1());
-        dto.setTelefono2(v.getTelefono2());
-        dto.setRegimen(v.getRegimen());
-        dto.setRfc(v.getRfc());
-        dto.setCurp(v.getCurp());
-        dto.setNumeroTarjeta(v.getNumeroTarjeta());
-        dto.setFechaAlta(v.getFechaAlta() != null ? v.getFechaAlta().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) : null);
-        if (v.getSupervisor() != null) {
-            SupervisorResumenDTO sup = new SupervisorResumenDTO();
-            sup.setId(v.getSupervisor().getId());
-            sup.setNombre(v.getSupervisor().getNombre());
-            sup.setApellidoPaterno(v.getSupervisor().getApellidoPaterno());
-            sup.setApellidoMaterno(v.getSupervisor().getApellidoMaterno());
-            sup.setNombreCompleto(v.getSupervisor().getNombre() + " " + v.getSupervisor().getApellidoPaterno() + " " + v.getSupervisor().getApellidoMaterno());
-            dto.setSupervisor(sup);
-        }
-        return dto;
-    }
+
 }

@@ -1,6 +1,7 @@
 package com.pla.app.dto.clientes;
 
 import java.util.List;
+import java.time.LocalDateTime;
 
 import com.pla.app.dto.DomicilioResponseDTO;
 
@@ -23,5 +24,12 @@ public class ClienteDetailResponseDTO {
     private String telefono1;
     private String telefono2;
     private String regimen;
+    private Long estadoCivilId;
+    private String estadoCivilNombre;
+    private Boolean activo;
+    private LocalDateTime fechaCreacion;
+    private LocalDateTime fechaModificacion;
+    private String creadoPor;
+    private String modificadoPor;
     private List<DomicilioResponseDTO> domicilios;
 }

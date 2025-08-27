@@ -1,6 +1,7 @@
 package com.pla.app.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -9,14 +10,15 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pla.app.audit.Auditable;
 
-import java.io.Serializable;
 import java.sql.Date;
 
 @Entity
 @Table(name = "clientes")
 @Data
-public class Cliente implements Serializable {
+@EqualsAndHashCode(callSuper = true)
+public class Cliente extends Auditable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -68,6 +70,9 @@ public class Cliente implements Serializable {
   //@NotNull(message = "El régimen es obligatorio")
   @Column(length = 50)
   private String regimen;
+
+  @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+  private Boolean activo = true;
 
   @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
   @JsonIgnore

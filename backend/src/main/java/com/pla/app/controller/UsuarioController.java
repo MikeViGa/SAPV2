@@ -23,6 +23,7 @@ import com.pla.app.model.Usuario;
 import com.pla.app.dto.usuarios.UsuarioListadoProjection;
 import com.pla.app.dto.usuarios.UsuarioResponseDTO;
 import com.pla.app.service.UsuarioService;
+import com.pla.app.mapper.UsuarioMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,6 +38,9 @@ public class UsuarioController {
 	@Autowired
 	private UsuarioService usuarioServicio;
 
+	@Autowired
+	private UsuarioMapper usuarioMapper;
+
 	// CREATE
 	@PostMapping("/usuarios/")
 	public ResponseEntity<?> crearUsuario(@Valid @RequestBody Usuario usuario, HttpServletRequest request) {
@@ -50,11 +54,12 @@ public class UsuarioController {
 
 	// READ 1
 	@GetMapping("/usuarios/{id}")
-	public ResponseEntity<Usuario> obtenerUsuario(@PathVariable Long id) {
+	public ResponseEntity<UsuarioResponseDTO> obtenerUsuario(@PathVariable Long id) {
 		try {
 			Optional<Usuario> usuario = usuarioServicio.obtenerUsuarioPorId(id);
 			if (usuario.isPresent()) {
-				return new ResponseEntity<>(usuario.get(), HttpStatus.OK);
+				UsuarioResponseDTO usuarioDTO = usuarioMapper.toResponseDTO(usuario.get());
+				return new ResponseEntity<>(usuarioDTO, HttpStatus.OK);
 			} else {
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
@@ -67,7 +72,7 @@ public class UsuarioController {
     @GetMapping("/usuarios")
     public ResponseEntity<Page<UsuarioResponseDTO>> obtenerUsuarios(@PageableDefault(size = 50) Pageable pageable) {
         Page<UsuarioListadoProjection> pagina = usuarioServicio.obtenerUsuariosPaginado(pageable);
-        Page<UsuarioResponseDTO> respuesta = pagina.map(p -> new UsuarioResponseDTO(p.getId(), p.getNombre(), p.getRolNombre()));
+        Page<UsuarioResponseDTO> respuesta = pagina.map(p -> new UsuarioResponseDTO(p.getId(), p.getNombre(), p.getRolNombre(), null, null, null, null, null));
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
 
@@ -114,6 +119,27 @@ public class UsuarioController {
 					.status(HttpStatus.NOT_FOUND)
 					.body("No se pudo actualizar el usuario: " + e.getMessage());
 		}
+	}
+
+	// RESTAURAR (reactivar usuario eliminado)
+	@PutMapping("/usuarios/{id}/restaurar")
+	public ResponseEntity<?> restaurarUsuario(@PathVariable Long id) {
+		try {
+			usuarioServicio.restaurarUsuario(id);
+			return ResponseEntity.ok("Usuario restaurado correctamente");
+		} catch (Exception e) {
+			return ResponseEntity
+					.status(HttpStatus.NOT_FOUND)
+					.body("No se pudo restaurar el usuario: " + e.getMessage());
+		}
+	}
+
+	// OBTENER TODOS INCLUSO INACTIVOS (para administración)
+	@GetMapping("/usuarios/todos")
+	public ResponseEntity<Page<UsuarioResponseDTO>> obtenerUsuariosInclusoInactivos(@PageableDefault(size = 50) Pageable pageable) {
+		Page<UsuarioListadoProjection> pagina = usuarioServicio.obtenerUsuariosPaginadoInclusoInactivos(pageable);
+		Page<UsuarioResponseDTO> respuesta = pagina.map(p -> new UsuarioResponseDTO(p.getId(), p.getNombre(), p.getRolNombre(), null, null, null, null, null));
+		return new ResponseEntity<>(respuesta, HttpStatus.OK);
 	}
 
 	// REPORT

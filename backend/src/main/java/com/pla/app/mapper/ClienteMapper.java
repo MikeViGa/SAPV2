@@ -12,6 +12,7 @@ import com.pla.app.dto.clientes.ClienteConDomiciliosResponseDTO;
 import com.pla.app.dto.clientes.ClienteCreateRequestDTO;
 import com.pla.app.dto.clientes.ClienteResponseDTO;
 import com.pla.app.dto.clientes.ClienteUpdateRequestDTO;
+import com.pla.app.dto.clientes.ClienteDetailResponseDTO;
 import com.pla.app.model.Cliente;
 import com.pla.app.model.Domicilio;
 
@@ -119,5 +120,34 @@ public class ClienteMapper {
     
     private String formatDateTime(LocalDateTime dateTime) {
         return dateTime != null ? dateTime.format(DATETIME_FORMAT) : null;
+    }
+
+    // Entity to Response (con auditoría completa)
+    public ClienteDetailResponseDTO toDetailResponseDTO(Cliente cliente) {
+        ClienteDetailResponseDTO dto = new ClienteDetailResponseDTO();
+        dto.setId(cliente.getId());
+        dto.setNombre(cliente.getNombre());
+        dto.setApellidoPaterno(cliente.getApellidoPaterno());
+        dto.setApellidoMaterno(cliente.getApellidoMaterno());
+        dto.setFechaNacimiento(formatDate(cliente.getFechaNacimiento()));
+        dto.setRfc(cliente.getRfc());
+        dto.setFechaRegistro(formatDateTime(cliente.getFechaRegistro()));
+        dto.setOcupacion(cliente.getOcupacion());
+        dto.setTelefono1(cliente.getTelefono1());
+        dto.setTelefono2(cliente.getTelefono2());
+        dto.setRegimen(cliente.getRegimen());
+        if (cliente.getEstadoCivil() != null) {
+            dto.setEstadoCivilId(cliente.getEstadoCivil().getId());
+            dto.setEstadoCivilNombre(cliente.getEstadoCivil().getNombre());
+        }
+        dto.setActivo(cliente.getActivo());
+        dto.setFechaCreacion(cliente.getFechaCreacion());
+        dto.setFechaModificacion(cliente.getFechaModificacion());
+        dto.setCreadoPor(cliente.getCreadoPor());
+        dto.setModificadoPor(cliente.getModificadoPor());
+        dto.setDomicilios(cliente.getDomicilios() != null ? 
+            cliente.getDomicilios().stream().map(this::toDomicilioResponseDTO).collect(Collectors.toList()) : 
+            new ArrayList<>());
+        return dto;
     }
 }

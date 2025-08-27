@@ -1,6 +1,5 @@
 package com.pla.app.model;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,14 +7,17 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.ToString;
+import lombok.EqualsAndHashCode;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import com.pla.app.audit.Auditable;
 
 @Entity
 @Table(name = "supervisores")
 @Data
+@EqualsAndHashCode(callSuper = true)
 @ToString(exclude = { "vendedores" })
-public class Supervisor implements Serializable {
+public class Supervisor extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false)
@@ -83,6 +85,9 @@ public class Supervisor implements Serializable {
     @NotBlank(message = "La comisión es obligatoria")
     @Column(nullable = false)
     private Double comision;
+
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private Boolean activo = true;
 
     @OneToMany(mappedBy = "supervisor", cascade = CascadeType.ALL)
     @JsonIgnore

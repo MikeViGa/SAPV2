@@ -30,18 +30,19 @@ public class RolService {
     }
 
     public Optional<Rol> obtenerRolPorId(Long id) {
-        return rolRepository.findById(id);
+        return rolRepository.findByIdAndActive(id);
     }
 
     @Transactional(readOnly = true)
     public List<Rol> obtenerRolesTodos() {
-        return rolRepository.findAll();
+        return rolRepository.findAllActive();
     }
 
     @Transactional
     public Rol actualizarRol(Rol rol) throws Exception {
-        Rol rolEncontrado = rolRepository.findById(rol.getId()).get();
-        if (rolEncontrado != null) {
+        Optional<Rol> rolEncontradoOpt = rolRepository.findByIdAndActive(rol.getId());
+        if (rolEncontradoOpt.isPresent()) {
+            Rol rolEncontrado = rolEncontradoOpt.get();
             rolEncontrado.setNombre(rol.getNombre());
             Rol rolActualizado = rolRepository.save(rolEncontrado);
             return rolActualizado;
@@ -52,12 +53,37 @@ public class RolService {
 
     @Transactional
     public void eliminarRol(Long id) throws Exception {
-        Optional<Rol> rolEncontrado = rolRepository.findById(id);
-        if (rolEncontrado.isPresent()) {
-            rolRepository.deleteById(id);
+        Optional<Rol> rolEncontradoOpt = rolRepository.findByIdAndActive(id);
+        if (rolEncontradoOpt.isPresent()) {
+            Rol rolEncontrado = rolEncontradoOpt.get();
+            rolEncontrado.setActivo(false); // Soft delete
+            rolRepository.save(rolEncontrado);
         } else {
             throw new Exception("Rol no encontrado con el ID proporcionado.");
         }
+    }
+
+    // Método adicional para recuperar un rol eliminado
+    @Transactional
+    public void restaurarRol(Long id) throws Exception {
+        Optional<Rol> rolEncontradoOpt = rolRepository.findById(id);
+        if (rolEncontradoOpt.isPresent()) {
+            Rol rolEncontrado = rolEncontradoOpt.get();
+            if (!rolEncontrado.getActivo()) {
+                rolEncontrado.setActivo(true);
+                rolRepository.save(rolEncontrado);
+            } else {
+                throw new Exception("El rol ya está activo.");
+            }
+        } else {
+            throw new Exception("Rol no encontrado con el ID proporcionado.");
+        }
+    }
+
+    // Método para obtener todos los roles (incluidos inactivos) - para administración
+    @Transactional(readOnly = true)
+    public List<Rol> obtenerRolesTodosInclusoInactivos() {
+        return rolRepository.findAll();
     }
 
     @Transactional

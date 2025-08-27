@@ -49,10 +49,10 @@ export default function ListarClientes({ refrescar, regs }) {
         onDelete: () => listadoHook.abrirDialogoEliminar(params.id, Array.isArray(regs?.rows) ? regs.rows : [])
       }),
     },
-    { field: "id", headerName: "Id", width: 60, headerClassName: "super-app-theme--header", pinned: 'left' },
+    { field: "id", headerName: "Id", width: 100, headerClassName: "super-app-theme--header", pinned: 'left' },
     { field: "nombre", headerName: "Nombre", width: 200, headerClassName: "super-app-theme--header" },
-    { field: "apellidoPaterno", headerName: "Apellido paterno", width: 150, headerClassName: "super-app-theme--header" },
-    { field: "apellidoMaterno", headerName: "Apellido materno", width: 150, headerClassName: "super-app-theme--header" },
+    { field: "apellidoPaterno", headerName: "Apellido paterno", width: 200, headerClassName: "super-app-theme--header" },
+    { field: "apellidoMaterno", headerName: "Apellido materno", width: 200, headerClassName: "super-app-theme--header" },
     { field: "fechaRegistro", headerName: "Fecha registro", width: 180, headerClassName: "super-app-theme--header" },
     { field: "fechaNacimiento", headerName: "Fecha nacimiento", width: 180, headerClassName: "super-app-theme--header" },
     { field: "telefono1", headerName: "Teléfono 1", width: 150, headerClassName: "super-app-theme--header" },
@@ -60,11 +60,11 @@ export default function ListarClientes({ refrescar, regs }) {
     { field: "rfc", headerName: "RFC", width: 150, headerClassName: "super-app-theme--header" },
     { field: "regimen", headerName: "Regimen", width: 150, headerClassName: "super-app-theme--header" },
     { field: "ocupacion", headerName: "Ocupación", width: 150, headerClassName: "super-app-theme--header" },
-    { field: "estadoCivilNombre", headerName: "Estado civil", width: 150, headerClassName: "super-app-theme--header" },
+    { field: "estadoCivilNombre", headerName: "Estado civil", width: 170, headerClassName: "super-app-theme--header" },
     { 
       field: "cantidadDomicilios", 
       headerName: "Domicilios", 
-      width: 120, 
+      width: 150, 
       headerClassName: "super-app-theme--header",
       renderCell: (params) => (
         <Chip 

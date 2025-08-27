@@ -42,38 +42,38 @@ public class VendedorService {
 
     @Transactional(readOnly = true)
     public Optional<Vendedor> obtenerVendedorPorId(Long id) {
-        return vendedorRepository.findById(id);
+        return vendedorRepository.findByIdAndActive(id);
     }
 
     @Transactional(readOnly = true)
     public List<Vendedor> obtenerVendedores() {
-        return vendedorRepository.findAllWithSupervisor();
+        return vendedorRepository.findAllWithSupervisorAndActive();
     }
 
     @Transactional(readOnly = true)
     public Page<VendedorListRowDTO> obtenerVendedoresPaginados(Pageable pageable) {
-        return vendedorRepository.findAllListRows(pageable);
+        return vendedorRepository.findAllListRowsActive(pageable);
     }
 
     @Transactional(readOnly = true)
     public List<Vendedor> obtenerVendedoresPorNombre(String nombreVendedor) {
-        List<Vendedor> vendedores = vendedorRepository.findByNombreContaining(nombreVendedor);
+        List<Vendedor> vendedores = vendedorRepository.findByNombreContainingAndActive(nombreVendedor);
         return vendedores;
     }
 
     @Transactional(readOnly = true)
     public List<Vendedor> obtenerSupervisadosPorVendedor(Long id) {
-        List<Vendedor> vendedores = vendedorRepository.findSupervisadosByVendedorId(id);
+        List<Vendedor> vendedores = vendedorRepository.findSupervisadosByVendedorIdAndActive(id);
         return vendedores;
     }
 
     @Transactional
     public Vendedor actualizarVendedor(Vendedor vendedor) throws Exception {
-        Vendedor vendedorAEditar = vendedorRepository.findById(vendedor.getId())
+        Vendedor vendedorAEditar = vendedorRepository.findByIdAndActive(vendedor.getId())
                 .orElseThrow(() -> new Exception("Vendedor no encontrado con el ID proporcionado."));
 
-        Vendedor vendedorConMismoNombre = vendedorRepository.findByNombre(vendedor.getNombre());
-        if (vendedorConMismoNombre != null && !vendedorConMismoNombre.getId().equals(vendedor.getId())) {
+        Optional<Vendedor> vendedorConMismoNombre = vendedorRepository.findByNombreAndActive(vendedor.getNombre());
+        if (vendedorConMismoNombre.isPresent() && !vendedorConMismoNombre.get().getId().equals(vendedor.getId())) {
             throw new Exception("El nombre de vendedor ya está en uso.");
         }
 
@@ -94,6 +94,7 @@ public class VendedorService {
         vendedorAEditar.setCurp(vendedor.getCurp());
         vendedorAEditar.setNumeroTarjeta(vendedor.getNumeroTarjeta());
         vendedorAEditar.setFechaAlta(vendedor.getFechaAlta());
+        vendedorAEditar.setActivo(vendedor.getActivo());
 
         if (vendedor.getIdSupervisor() != null) {
             Supervisor supervisorAActualizar = supervisorService
@@ -129,9 +130,11 @@ public class VendedorService {
 
     @Transactional
     public void eliminarVendedor(Long id) throws Exception {
-        Optional<Vendedor> vendedorEncontrado = vendedorRepository.findById(id);
-        if (vendedorEncontrado.isPresent()) {
-            vendedorRepository.deleteById(id);
+        Optional<Vendedor> vendedorEncontradoOpt = vendedorRepository.findByIdAndActive(id);
+        if (vendedorEncontradoOpt.isPresent()) {
+            Vendedor vendedorEncontrado = vendedorEncontradoOpt.get();
+            vendedorEncontrado.setActivo(false); // Soft delete
+            vendedorRepository.save(vendedorEncontrado);
         } else {
             throw new Exception("Vendedor no encontrado con el ID proporcionado.");
         }
@@ -162,5 +165,33 @@ public class VendedorService {
         Connection conn = dataSource.getConnection();
         Map<String, Object> parametros = new HashMap<String, Object>();
         JasperRunManager.runReportToPdfStream(jasperStream, (OutputStream) outputStream, parametros, conn);
+    }
+
+    // Método adicional para recuperar un vendedor eliminado
+    @Transactional
+    public void restaurarVendedor(Long id) throws Exception {
+        Optional<Vendedor> vendedorEncontradoOpt = vendedorRepository.findById(id);
+        if (vendedorEncontradoOpt.isPresent()) {
+            Vendedor vendedorEncontrado = vendedorEncontradoOpt.get();
+            if (!vendedorEncontrado.getActivo()) {
+                vendedorEncontrado.setActivo(true);
+                vendedorRepository.save(vendedorEncontrado);
+            } else {
+                throw new Exception("El vendedor ya está activo.");
+            }
+        } else {
+            throw new Exception("Vendedor no encontrado con el ID proporcionado.");
+        }
+    }
+
+    // Métodos para obtener todos los vendedores (incluidos inactivos) - para administración
+    @Transactional(readOnly = true)
+    public List<Vendedor> obtenerVendedoresTodosInclusoInactivos() {
+        return vendedorRepository.findAllWithSupervisor();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<VendedorListRowDTO> obtenerVendedoresPaginadosInclusoInactivos(Pageable pageable) {
+        return vendedorRepository.findAllListRows(pageable);
     }
 }

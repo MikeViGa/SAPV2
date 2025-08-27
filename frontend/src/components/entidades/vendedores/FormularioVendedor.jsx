@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { TextField, Button, Box, Typography } from '@mui/material';
+import { TextField, Button, Box, Typography, FormControlLabel, Chip, Switch } from '@mui/material';
 import { actualizarVendedorApi, crearVendedorApi, } from '../../api/VendedorApiService';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -95,6 +95,7 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                 formik.setValues({
                     ...registro,
                     fechaAlta: dayjs(registro.fechaAlta, "DD/MM/YYYY HH:mm:ss"),
+                    activo: registro.activo !== undefined ? registro.activo : true,
                 });
                 cargarSupervisados(registro.id);
             } else {
@@ -144,6 +145,7 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
         idSupervisor: '',
         clavesSupervisados: '',
         supervisor: '',
+        activo: true,
     };
 
     const validationSchema = Yup.object({
@@ -181,11 +183,16 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                     clavesSupervisados: supervisados.map(item => ({
                         id: item.id,
                     })),
+                    activo: values.activo,
                 };
 
                 const response = (modo === "editar" ? actualizarVendedorApi(formData.id, formData) : crearVendedorApi(formData))
                     .then(response => {
-                        addSnackbar("Registro " + (modo === "editar" ? "actualizado" : "creado") + " correctamente", "success");
+                        let mensaje = "Registro " + (modo === "editar" ? "actualizado" : "creado") + " correctamente";
+                        if (modo === "editar" && !values.activo) {
+                            mensaje = "Vendedor desactivado correctamente";
+                        }
+                        addSnackbar(mensaje, "success");
                         setOperacionTerminada(true);
                     }).catch(error => {
                         if (error.response) {
@@ -651,6 +658,38 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                                         inputRef={codigoPostalRef}
                                     />
                                 </Grid>
+                                {modo === "editar" && (
+                            
+                                <Grid container spacing={2}>
+                                    <Grid xs={12}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, height: '40px' }}>
+                                            <FormControlLabel
+                                                control={
+                                                    <Switch
+                                                        checked={Boolean(formik.values.activo)}
+                                                        onChange={(e) => formik.setFieldValue('activo', e.target.checked)}
+                                                        name="activo"
+                                                        color="primary"
+                                                    />
+                                                }
+                                                label="Estado del vendedor:"
+                                                sx={{ mr: 1 }}
+                                            />
+                                            <Chip 
+                                                label={Boolean(formik.values.activo) ? "Activo" : "Inactivo"}
+                                                color={Boolean(formik.values.activo) ? "success" : "warning"}
+                                                size="small"
+                                            />
+                                        </Box>
+                                        {!Boolean(formik.values.activo) && (
+                                            <Typography variant="caption" color="warning.main" sx={{ mt: 0.5, display: 'block' }}>
+                                                ⚠️ El vendedor será marcado como inactivo
+                                            </Typography>
+                                        )}
+                                    </Grid>
+                                </Grid>
+                            
+                        )}
                             </Grid>
                         </Paper>
                         <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
@@ -746,6 +785,7 @@ export default function FormularioVendedor({ modo, registro, open, onClose, refr
                                 </Grid>
                             </Grid>
                         </Paper>
+                        
                         <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
                             <Stack direction="row" spacing={1} justifyContent="flex-end">
                                 <Button color="primary" startIcon={<SaveIcon />} variant="contained" type="submit" disabled={formik.isSubmitting}>

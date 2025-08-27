@@ -75,8 +75,8 @@ public class EmpleadoController {
         dto.setApellidoMaterno(e.getApellidoMaterno());
         dto.setCorreo(e.getCorreo());
         dto.setTelefono(e.getTelefono());
-        dto.setFechaNacimiento(e.getFechaNacimiento() != null ? e.getFechaNacimiento().toString() : null);
-        dto.setFechaAlta(e.getFechaAlta() != null ? e.getFechaAlta().toString() : null);
+        dto.setFechaNacimiento(e.getFechaNacimiento());
+        dto.setFechaAlta(e.getFechaAlta());
         return dto;
     }
 

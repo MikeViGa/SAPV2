@@ -2,6 +2,7 @@ package com.pla.app.model;
 
 import lombok.Data;
 import lombok.ToString;
+import lombok.EqualsAndHashCode;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
@@ -10,13 +11,14 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pla.app.dto.ClaveSupervisadoDTO;
-import java.io.Serializable;
+import com.pla.app.audit.Auditable;
 
 @Entity
 @Table(name = "vendedores")
 @Data
+@EqualsAndHashCode(callSuper = true)
 @ToString(exclude = { "supervisados" })
-public class Vendedor implements Serializable {
+public class Vendedor extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false)
@@ -75,6 +77,9 @@ public class Vendedor implements Serializable {
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     @Column(nullable = false)
     private LocalDateTime fechaAlta;
+
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private Boolean activo = true;
 
     @OneToMany(mappedBy = "vendedor", cascade = CascadeType.ALL)
     @JsonIgnore

@@ -24,8 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pla.app.model.Cliente;
 import com.pla.app.dto.clientes.ClienteResponseDTO;
 import com.pla.app.dto.clientes.ClienteListadoProjection;
+import com.pla.app.dto.clientes.ClienteDetailResponseDTO;
 import com.pla.app.mapper.ClienteMapper;
-import com.pla.app.dto.clientes.ClienteConDomiciliosResponseDTO;
 import com.pla.app.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Date;
@@ -57,11 +57,11 @@ public class ClienteController {
 
 	// READ 1
     @GetMapping("/clientes/{id}")
-    public ResponseEntity<ClienteConDomiciliosResponseDTO> obtenerCliente(@PathVariable Long id) {
+    public ResponseEntity<ClienteDetailResponseDTO> obtenerCliente(@PathVariable Long id) {
         try {
             Optional<Cliente> cliente = clienteServicio.obtenerClientePorId(id);
             if (cliente.isPresent()) {
-                return new ResponseEntity<>(clienteMapper.toConDomiciliosResponseDTO(cliente.get()), HttpStatus.OK);
+                return new ResponseEntity<>(clienteMapper.toDetailResponseDTO(cliente.get()), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
@@ -141,6 +141,43 @@ public class ClienteController {
                 .status(HttpStatus.NOT_FOUND)
                 .body("No se pudo actualizar el cliente: "+ e.getMessage());
 		}
+	}
+
+	// RESTAURAR (reactivar cliente eliminado)
+	@PutMapping("/clientes/{id}/restaurar")
+	public ResponseEntity<?> restaurarCliente(@PathVariable Long id) {
+		try {
+			clienteServicio.restaurarCliente(id);
+			return ResponseEntity.ok("Cliente restaurado correctamente");
+		} catch (Exception e) {
+			return ResponseEntity
+					.status(HttpStatus.NOT_FOUND)
+					.body("No se pudo restaurar el cliente: " + e.getMessage());
+		}
+	}
+
+	// OBTENER TODOS INCLUSO INACTIVOS (para administración)
+	@GetMapping("/clientes/todos")
+	public ResponseEntity<Page<ClienteResponseDTO>> obtenerClientesInclusoInactivos(@PageableDefault(size = 50) Pageable pageable) {
+		Page<ClienteListadoProjection> pagina = clienteServicio.obtenerClientesPaginadoInclusoInactivos(pageable);
+		Page<ClienteResponseDTO> respuesta = pagina.map(p -> {
+			ClienteResponseDTO dto = new ClienteResponseDTO();
+			dto.setId(p.getId());
+			dto.setNombre(p.getNombre());
+			dto.setApellidoPaterno(p.getApellidoPaterno());
+			dto.setApellidoMaterno(p.getApellidoMaterno());
+			dto.setFechaNacimiento(p.getFechaNacimiento() != null ? new java.text.SimpleDateFormat("dd/MM/yyyy").format(p.getFechaNacimiento()) : null);
+			dto.setRfc(p.getRfc());
+			dto.setFechaRegistro(p.getFechaRegistro() != null ? p.getFechaRegistro().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) : null);
+			dto.setOcupacion(p.getOcupacion());
+			dto.setTelefono1(p.getTelefono1());
+			dto.setTelefono2(p.getTelefono2());
+			dto.setRegimen(p.getRegimen());
+			dto.setEstadoCivilNombre(p.getEstadoCivilNombre());
+			dto.setCantidadDomicilios(p.getCantidadDomicilios() != null ? p.getCantidadDomicilios().intValue() : 0);
+			return dto;
+		});
+		return new ResponseEntity<>(respuesta, HttpStatus.OK);
 	}
 
 	// REPORT

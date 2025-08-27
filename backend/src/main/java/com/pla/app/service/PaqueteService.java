@@ -26,6 +26,7 @@ public class PaqueteService {
 
     @Transactional
     public Paquete crearPaquete(Paquete paquete) throws Exception {
+        // Los campos de auditoría se establecen automáticamente con @PrePersist
         return paqueteRepository.save(paquete);
     }
 
@@ -40,11 +41,26 @@ public class PaqueteService {
 
     @Transactional
     public Paquete actualizarPaquete(Paquete paquete) throws Exception {
-        Paquete paqueteEncontrado = paqueteRepository.findById(paquete.getId()).get();
-        if (paqueteEncontrado != null) {
-            // paqueteEncontrado.setDescripcion(paquete.obtenerDescripcion());
-            Paquete paqueteActualizado = paqueteRepository.save(paqueteEncontrado);
-            return paqueteActualizado;
+        Optional<Paquete> paqueteEncontradoOpt = paqueteRepository.findById(paquete.getId());
+        if (paqueteEncontradoOpt.isPresent()) {
+            Paquete paqueteEncontrado = paqueteEncontradoOpt.get();
+            
+            // Actualizar campos
+            paqueteEncontrado.setClave(paquete.getClave());
+            paqueteEncontrado.setServicios(paquete.getServicios());
+            paqueteEncontrado.setNumeroPagos(paquete.getNumeroPagos());
+            paqueteEncontrado.setValorTotal(paquete.getValorTotal());
+            paqueteEncontrado.setEnganche(paquete.getEnganche());
+            paqueteEncontrado.setImporte(paquete.getImporte());
+            paqueteEncontrado.setBovedas(paquete.getBovedas());
+            paqueteEncontrado.setGavetas(paquete.getGavetas());
+            paqueteEncontrado.setPlazoDePago(paquete.getPlazoDePago());
+            paqueteEncontrado.setListaDePrecios(paquete.getListaDePrecios());
+            paqueteEncontrado.setPeriodicidad(paquete.getPeriodicidad());
+            paqueteEncontrado.setAtaud(paquete.getAtaud());
+            
+            // Los campos de auditoría se actualizan automáticamente con @PreUpdate
+            return paqueteRepository.save(paqueteEncontrado);
         } else {
             throw new Exception("Paquete no encontrado con el ID proporcionado.");
         }
@@ -52,12 +68,42 @@ public class PaqueteService {
 
     @Transactional
     public void eliminarPaquete(Long id) throws Exception {
+        eliminarPaquete(id, "SYSTEM");
+    }
+
+    @Transactional
+    public void eliminarPaquete(Long id, String modificadoPor) throws Exception {
         Optional<Paquete> paqueteEncontrado = paqueteRepository.findById(id);
         if (paqueteEncontrado.isPresent()) {
-            paqueteRepository.deleteById(id);
+            // Usar soft delete en lugar de eliminación física
+            paqueteRepository.softDeletePaquete(id, modificadoPor);
         } else {
             throw new Exception("Paquete no encontrado con el ID proporcionado.");
         }
+    }
+
+    @Transactional
+    public void restaurarPaquete(Long id) throws Exception {
+        restaurarPaquete(id, "SYSTEM");
+    }
+
+    @Transactional
+    public void restaurarPaquete(Long id, String modificadoPor) throws Exception {
+        Optional<Paquete> paqueteEncontrado = paqueteRepository.findByIdIncludingInactive(id);
+        if (paqueteEncontrado.isPresent()) {
+            paqueteRepository.restaurarPaquete(id, modificadoPor);
+        } else {
+            throw new Exception("Paquete no encontrado con el ID proporcionado.");
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public List<Paquete> obtenerPaquetesTodosInclusoInactivos() {
+        return paqueteRepository.findAllIncludingInactive();
+    }
+
+    public Optional<Paquete> obtenerPaquetePorIdInclusoInactivos(Long id) {
+        return paqueteRepository.findByIdIncludingInactive(id);
     }
 
     @Transactional

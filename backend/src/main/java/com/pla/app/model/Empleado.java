@@ -1,6 +1,5 @@
 package com.pla.app.model;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -9,11 +8,14 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import com.pla.app.audit.Auditable;
 
 @Entity
 @Table(name = "empleados")
 @Data
-public class Empleado implements Serializable {
+@EqualsAndHashCode(callSuper = true)
+public class Empleado extends Auditable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,6 +53,12 @@ public class Empleado implements Serializable {
 	@Column(nullable = false)
 	private LocalDate fechaAlta;
 
+	@Column(length = 50)
+	private String estado = "Activo";
+
+	@Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+	private Boolean activo = true;
+
 	@OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "FK_empleado_usuario"))  
     private Usuario usuario;
@@ -58,6 +66,5 @@ public class Empleado implements Serializable {
 	@ManyToOne
     @JoinColumn(name = "sucursal_id", foreignKey = @ForeignKey(name = "FK_empleado_sucursal")) 
     private Sucursal sucursal;
-
 
 }

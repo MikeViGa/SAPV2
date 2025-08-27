@@ -1,23 +1,15 @@
-package com.pla.app.dto.usuarios;
+package com.pla.app.dto.roles;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class UsuarioResponseDTO {
+public class RolResponseDTO {
     private Long id;
     private String nombre;
-    private String rolNombre;
     private Boolean activo;
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaModificacion;
     private String creadoPor;
     private String modificadoPor;
 }
-
-
-

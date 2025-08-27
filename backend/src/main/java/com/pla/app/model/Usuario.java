@@ -30,6 +30,9 @@ public class Usuario extends Auditable {
 	@Column(nullable = false)
 	private String contrasena;
 
+	@Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+	private Boolean activo = true;
+
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
 	@JsonIgnore
     private List<Cancelacion> cancelaciones = new ArrayList<>();

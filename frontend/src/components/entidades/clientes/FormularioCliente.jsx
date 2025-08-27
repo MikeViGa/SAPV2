@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { TextField, Button, Box, Typography, List, ListItem, ListItemText, IconButton, Divider, MenuItem, Paper } from '@mui/material';
+import { TextField, Button, Box, Typography, List, ListItem, ListItemText, IconButton, Divider, MenuItem, Paper, Switch, FormControlLabel, Chip } from '@mui/material';
 import { actualizarClienteApi, crearClienteApi, obtenerClienteApi } from '../../api/ClienteApiService';
 import { obtenerEstadosCivilesApi } from '../../api/EstadoCivilApiService';
 import { obtenerEstadosApi } from '../../api/EstadoApiService';
@@ -68,6 +68,7 @@ export default function FormularioCliente({ modo, registro, open, onClose, refre
         ocupacion: '',
         regimen: '',
         estadoCivilId: '',
+        activo: true,
     };
 
     const validationSchema = Yup.object({
@@ -107,11 +108,16 @@ export default function FormularioCliente({ modo, registro, open, onClose, refre
                     regimen: values.regimen,
                     estadoCivilId: values.estadoCivilId,
                     estadoCivil: values.estadoCivilId ? { id: values.estadoCivilId } : null,
+                    activo: values.activo,
                 };
 
                 const response = (modo === "editar" ? actualizarClienteApi(formData.id, formData) : crearClienteApi(formData))
                     .then(response => {
-                        addSnackbar("Registro " + (modo === "editar" ? "actualizado" : "creado") + " correctamente", "success");
+                        let mensaje = "Registro " + (modo === "editar" ? "actualizado" : "creado") + " correctamente";
+                        if (modo === "editar" && !values.activo) {
+                            mensaje = "Cliente desactivado correctamente";
+                        }
+                        addSnackbar(mensaje, "success");
                         setOperacionTerminada(true);
                     }).catch(error => {
                         if (error.response) {
@@ -187,6 +193,7 @@ export default function FormularioCliente({ modo, registro, open, onClose, refre
                     const resp = await obtenerClienteApi(registro.id);
                     if (!isActive) return;
                     const det = typeof resp.data === 'string' ? JSON.parse(resp.data) : resp.data;
+                    
                     formik.setValues({
                         id: det.id || registro.id || '',
                         nombre: det.nombre ?? registro.nombre ?? '',
@@ -210,7 +217,8 @@ export default function FormularioCliente({ modo, registro, open, onClose, refre
                         fechaNacimiento: parseToDayjs(det.fechaNacimiento),
                         ocupacion: det.ocupacion ?? registro.ocupacion ?? '',
                         regimen: det.regimen ?? registro.regimen ?? '',
-                        estadoCivilId: det.estadoCivilId ?? registro.estadoCivilId ?? '',
+                        estadoCivilId: det.estadoCivilId ? String(det.estadoCivilId) : (registro.estadoCivilId ? String(registro.estadoCivilId) : ''),
+                        activo: det.activo !== undefined ? det.activo : true,
                     });
                 } catch (e) {
                     if (!isActive) return;
@@ -480,6 +488,8 @@ export default function FormularioCliente({ modo, registro, open, onClose, refre
                                     </TextField>
                                 </Grid>
 
+                               
+
                                 <Grid xs={12} sm={6} md={3}>
                                     <DateTimePicker
                                         sx={{ width: '100%' }}
@@ -549,6 +559,34 @@ export default function FormularioCliente({ modo, registro, open, onClose, refre
                                         }}
                                     />
                                 </Grid>
+                                {modo === "editar" && (
+                                    <Grid xs={12} sm={6} md={3}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, height: '40px' }}>
+                                            <FormControlLabel
+                                                control={
+                                                    <Switch
+                                                        checked={Boolean(formik.values.activo)}
+                                                        onChange={(e) => formik.setFieldValue('activo', e.target.checked)}
+                                                        name="activo"
+                                                        color="primary"
+                                                    />
+                                                }
+                                                label="Estado:"
+                                                sx={{ mr: 1 }}
+                                            />
+                                            <Chip 
+                                                label={Boolean(formik.values.activo) ? "Activo" : "Inactivo"}
+                                                color={Boolean(formik.values.activo) ? "success" : "warning"}
+                                                size="small"
+                                            />
+                                        </Box>
+                                        {!Boolean(formik.values.activo) && (
+                                            <Typography variant="caption" color="warning.main" sx={{ mt: 0.5, display: 'block' }}>
+                                                ⚠️ El cliente será marcado como inactivo
+                                            </Typography>
+                                        )}
+                                    </Grid>
+                                )}
                                 
                             </Grid>
                         </Paper>

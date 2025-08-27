@@ -23,14 +23,20 @@ export const obtenerSupervisadosPorVendedorApi
 export const actualizarVendedorApi
     = (id, vendedor) => apiClient.put(`/vendedores/${id}`, vendedor)
 
-//DELETE
+//DELETE (Soft Delete)
 export const eliminarVendedorApi
     = (id) => apiClient.delete(`/vendedores/${id}`)
+
+// RESTORE
+export const restaurarVendedorApi
+    = (id) => apiClient.put(`/vendedores/${id}/restaurar`)
+
+// GET ALL INCLUDING INACTIVE (for admin)
+export const obtenerVendedoresTodosApi
+    = () => apiClient.get(`/vendedores/todos`)
 
 //REPORT
 export const obtenerReporteVendedorApi
     = (tipoReporte) => 
         apiClient.get(`reportesvendedores?tipoReporte=${tipoReporte}`, { responseType: 'blob' })
-
-
 

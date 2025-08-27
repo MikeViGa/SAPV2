@@ -32,47 +32,41 @@ public class SucursalService {
 
     @Transactional(readOnly = true)
     public Optional<Sucursal> obtenerSucursalPorId(Long id) {
-        return sucursalRepository.findById(id);
+        return sucursalRepository.findByIdAndActive(id);
     }
 
     @Transactional(readOnly = true)
     public List<Sucursal> obtenerSucursales() {
-        return sucursalRepository.findAll();
+        return sucursalRepository.findAllActive();
     }
 
     @Transactional(readOnly = true)
     public List<Sucursal> obtenerSucursalesPorNombre(String nombreSucursal) {
-        List<Sucursal> sucursales = sucursalRepository.findByNombreContaining(nombreSucursal);
+        List<Sucursal> sucursales = sucursalRepository.findByNombreContainingAndActive(nombreSucursal);
         return sucursales;
     }
 
     @Transactional
     public Sucursal actualizarSucursal(Sucursal sucursal) throws Exception {
-        Sucursal sucursalAEditar = null;
-        Sucursal sucursalEncontrado = sucursalRepository.findById(sucursal.getId()).get();
-        if (sucursalEncontrado != null) {
-            sucursalEncontrado = sucursalRepository.findByNombre(sucursal.getNombre());
-            if (sucursalEncontrado.getId() == sucursal.getId()) {
-                sucursalAEditar = sucursalEncontrado;
-                sucursalAEditar.setNombre(sucursal.getNombre());
-                Sucursal sucursalActualizado = sucursalRepository.save(sucursalAEditar);
-                return sucursalActualizado;
-
-            } else {
-                throw new Exception("El nombre de sucursal ya está en uso.");
-            }
-        } else {
-            throw new Exception("Sucursal no encontrado con el ID proporcionado.");
+        Optional<Sucursal> opt = sucursalRepository.findByIdAndActive(sucursal.getId());
+        if (opt.isEmpty()) {
+            throw new Exception("Sucursal no encontrada con el ID proporcionado.");
         }
+        Sucursal existente = opt.get();
+        existente.setNombre(sucursal.getNombre());
+        existente.setActivo(sucursal.getActivo());
+        return sucursalRepository.save(existente);
     }
 
     @Transactional
     public void eliminarSucursal(Long id) throws Exception {
-        Optional<Sucursal> sucursalEncontrado = sucursalRepository.findById(id);
-        if (sucursalEncontrado.isPresent()) {
-            sucursalRepository.deleteById(id);
+        Optional<Sucursal> sucursalEncontradoOpt = sucursalRepository.findByIdAndActive(id);
+        if (sucursalEncontradoOpt.isPresent()) {
+            Sucursal sucursalEncontrada = sucursalEncontradoOpt.get();
+            sucursalEncontrada.setActivo(false); // Soft delete
+            sucursalRepository.save(sucursalEncontrada);
         } else {
-            throw new Exception("Sucursal no encontrado con el ID proporcionado.");
+            throw new Exception("Sucursal no encontrada con el ID proporcionado.");
         }
     }
 
@@ -92,5 +86,28 @@ public class SucursalService {
         Connection conn = dataSource.getConnection();
         Map<String, Object> parametros = new HashMap<String, Object>();
         JasperRunManager.runReportToPdfStream(jasperStream, (OutputStream) outputStream, parametros, conn);
+    }
+
+    // Método adicional para recuperar una sucursal eliminada
+    @Transactional
+    public void restaurarSucursal(Long id) throws Exception {
+        Optional<Sucursal> sucursalEncontradoOpt = sucursalRepository.findById(id);
+        if (sucursalEncontradoOpt.isPresent()) {
+            Sucursal sucursalEncontrada = sucursalEncontradoOpt.get();
+            if (!sucursalEncontrada.getActivo()) {
+                sucursalEncontrada.setActivo(true);
+                sucursalRepository.save(sucursalEncontrada);
+            } else {
+                throw new Exception("La sucursal ya está activa.");
+            }
+        } else {
+            throw new Exception("Sucursal no encontrada con el ID proporcionado.");
+        }
+    }
+
+    // Métodos para obtener todas las sucursales (incluidas inactivas) - para administración
+    @Transactional(readOnly = true)
+    public List<Sucursal> obtenerSucursalesTodasInclusoInactivas() {
+        return sucursalRepository.findAll();
     }
 }

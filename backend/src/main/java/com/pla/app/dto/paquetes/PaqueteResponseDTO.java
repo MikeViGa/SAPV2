@@ -2,6 +2,8 @@ package com.pla.app.dto.paquetes;
 
 import lombok.Data;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Data
 public class PaqueteResponseDTO implements Serializable {
@@ -14,6 +16,18 @@ public class PaqueteResponseDTO implements Serializable {
     private Double importe;
     private Long bovedas;
     private Long gavetas;
+    
+    // Campos de auditoría y soft delete
+    private Boolean activo;
+    
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+    private LocalDateTime fechaCreacion;
+    
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+    private LocalDateTime fechaModificacion;
+    
+    private String creadoPor;
+    private String modificadoPor;
     
     // Datos simplificados de las relaciones
     private PlazoDePagoSimpleDTO plazoDePago;

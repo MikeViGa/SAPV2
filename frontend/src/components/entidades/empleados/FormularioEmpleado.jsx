@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { TextField, Button, Box, Typography, Paper, } from '@mui/material';
+import { TextField, Button, Box, Typography, Paper, FormControlLabel, Chip, Switch } from '@mui/material';
 import { actualizarEmpleadoApi, crearEmpleadoApi, } from "../../api/EmpleadoApiService";
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -16,7 +16,6 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import { styled } from '@mui/material/styles';
-import Switch from '@mui/material/Switch';
 import Stack from '@mui/material/Stack';
 import { useSnackbar } from '../../base/dashboard/elementos/SnackbarContext';
 import Grid from '@mui/material/Grid2';
@@ -88,6 +87,7 @@ export default function FormularioEmpleado({ modo, registro, open, onClose, refr
         fechaNacimiento: '',
         fechaAlta: '',
         estado: '',
+        activo: true,
     };
 
     const validationSchema = Yup.object({
@@ -122,10 +122,15 @@ export default function FormularioEmpleado({ modo, registro, open, onClose, refr
                     fechaNacimiento: values.fechaNacimiento,
                     fechaAlta: values.fechaAlta,
                     estado: values.estado,
+                    activo: values.activo,
                 };
                 const response = (modo === "editar" ? actualizarEmpleadoApi(formData.id, formData) : crearEmpleadoApi(formData))
                     .then(response => {
-                        addSnackbar("Registro " + (modo === "editar" ? "actualizado" : "creado") + " correctamente", "success");
+                        let mensaje = "Registro " + (modo === "editar" ? "actualizado" : "creado") + " correctamente";
+                        if (modo === "editar" && !values.activo) {
+                            mensaje = "Empleado desactivado correctamente";
+                        }
+                        addSnackbar(mensaje, "success");
                         setOperacionTerminada(true);
                     }).catch(error => {
                         if (error.response) {
@@ -151,6 +156,7 @@ export default function FormularioEmpleado({ modo, registro, open, onClose, refr
                 formik.setValues({
                     ...registro,
                     fechaCreacion: dayjs(registro.fechaCreacion),
+                    activo: registro.activo !== undefined ? registro.activo : true,
                 });
             } else {
                 formik.resetForm({
@@ -364,20 +370,35 @@ export default function FormularioEmpleado({ modo, registro, open, onClose, refr
                                     />
                                 </Grid>
 
-                                <Grid xs={12} sm={6} md={3}>
-                                    <Stack direction="row" spacing={1}>
-                                        <Typography>Cancelado</Typography>
-                                        <AntSwitch
-                                            checked={formik.values.estado === 'Activo'}
-                                            onChange={(event) => {
-                                                formik.setFieldValue('estado', event.target.checked ? 'Activo' : 'Cancelado');
-                                            }}
-                                            inputRef={fechaAltaRef}
-                                            onKeyDown={(e) => handleKeyDown(e, null)}
-                                        />
-                                        <Typography>Activo</Typography>
-                                    </Stack>
-                                </Grid>
+                                
+                                {modo === "editar" && (
+                                    <Grid xs={12} sm={6} md={3}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, height: '40px' }}>
+                                            <FormControlLabel
+                                                control={
+                                                    <Switch
+                                                        checked={Boolean(formik.values.activo)}
+                                                        onChange={(e) => formik.setFieldValue('activo', e.target.checked)}
+                                                        name="activo"
+                                                        color="primary"
+                                                    />
+                                                }
+                                                label="Estado:"
+                                                sx={{ mr: 1 }}
+                                            />
+                                            <Chip 
+                                                label={Boolean(formik.values.activo) ? "Activo" : "Inactivo"}
+                                                color={Boolean(formik.values.activo) ? "success" : "warning"}
+                                                size="small"
+                                            />
+                                        </Box>
+                                        {!Boolean(formik.values.activo) && (
+                                            <Typography variant="caption" color="warning.main" sx={{ mt: 0.5, display: 'block' }}>
+                                                ⚠️ El empleado será marcado como inactivo
+                                            </Typography>
+                                        )}
+                                    </Grid>
+                                )}
                             </Grid>
                         </Paper>
                         <Paper elevation={1} sx={{ p: 1, mb: 1 }}>

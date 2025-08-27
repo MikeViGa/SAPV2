@@ -31,61 +31,65 @@ public class SupervisorService {
 
     @Transactional(readOnly = true)
     public Optional<Supervisor> obtenerSupervisorPorId(Long id) {
-        return supervisorRepository.findById(id);
+        return supervisorRepository.findByIdAndActive(id);
     }
 
     @Transactional(readOnly = true)
     public List<Supervisor> obtenerSupervisores() {
-        return supervisorRepository.findAll();
+        return supervisorRepository.findAllActive();
     }
 
     @Transactional(readOnly = true)
     public List<Supervisor> obtenerSupervisoresPorNombre(String nombreSupervisor) {
-        List<Supervisor> supervisores = supervisorRepository.findByNombreContaining(nombreSupervisor);
+        List<Supervisor> supervisores = supervisorRepository.findByNombreContainingAndActive(nombreSupervisor);
         return supervisores;
     }
 
     @Transactional
     public Supervisor actualizarSupervisor(Supervisor supervisor) throws Exception {
-        Supervisor supervisorAEditar = null;
-        Supervisor supervisorEncontrado = supervisorRepository.findById(supervisor.getId()).get();
-        if (supervisorEncontrado != null) {
-            supervisorEncontrado = supervisorRepository.findByNombre(supervisor.getNombre());
-            if (supervisorEncontrado.getId() == supervisor.getId()) {
-                supervisorAEditar = supervisorEncontrado;
-                supervisorAEditar.setNombre(supervisor.getNombre());
-                supervisorAEditar.setApellidoPaterno(supervisor.getApellidoPaterno());
-                supervisorAEditar.setApellidoMaterno(supervisor.getApellidoMaterno());
-                supervisorAEditar.setCalle(supervisor.getCalle());
-                supervisorAEditar.setNumeroExterior(supervisor.getNumeroExterior());
-                supervisorAEditar.setNumeroInterior(supervisor.getNumeroInterior());
-                supervisorAEditar.setColonia(supervisor.getColonia());
-                supervisorAEditar.setCiudad(supervisor.getCiudad());
-                supervisorAEditar.setEstado(supervisor.getEstado());
-                supervisorAEditar.setCodigoPostal(supervisor.getCodigoPostal());
-                supervisorAEditar.setTelefono1(supervisor.getTelefono1());
-                supervisorAEditar.setTelefono2(supervisor.getTelefono2());
-                supervisorAEditar.setRegimen(supervisor.getRegimen());
-                supervisorAEditar.setRfc(supervisor.getRfc());
-                supervisorAEditar.setCurp(supervisor.getCurp());
-                supervisorAEditar.setNumeroTarjeta(supervisor.getNumeroTarjeta());
-                supervisorAEditar.setFechaAlta(supervisor.getFechaAlta());
-                supervisorAEditar.setComision(supervisor.getComision());
-                Supervisor supervisorActualizado = supervisorRepository.save(supervisorAEditar);
-                return supervisorActualizado;
-            } else {
-                throw new Exception("El nombre de supervisor ya está en uso.");
-            }
-        } else {
+        Optional<Supervisor> supervisorEncontradoOpt = supervisorRepository.findByIdAndActive(supervisor.getId());
+        if (supervisorEncontradoOpt.isEmpty()) {
             throw new Exception("Supervisor no encontrado con el ID proporcionado.");
         }
+        
+        Supervisor supervisorAEditar = supervisorEncontradoOpt.get();
+        
+        // Verificar si el nombre ya está en uso por otro supervisor
+        Optional<Supervisor> supervisorConMismoNombre = supervisorRepository.findByNombreAndActive(supervisor.getNombre());
+        if (supervisorConMismoNombre.isPresent() && !supervisorConMismoNombre.get().getId().equals(supervisor.getId())) {
+            throw new Exception("El nombre de supervisor ya está en uso.");
+        }
+        
+        supervisorAEditar.setNombre(supervisor.getNombre());
+        supervisorAEditar.setApellidoPaterno(supervisor.getApellidoPaterno());
+        supervisorAEditar.setApellidoMaterno(supervisor.getApellidoMaterno());
+        supervisorAEditar.setCalle(supervisor.getCalle());
+        supervisorAEditar.setNumeroExterior(supervisor.getNumeroExterior());
+        supervisorAEditar.setNumeroInterior(supervisor.getNumeroInterior());
+        supervisorAEditar.setColonia(supervisor.getColonia());
+        supervisorAEditar.setCiudad(supervisor.getCiudad());
+        supervisorAEditar.setEstado(supervisor.getEstado());
+        supervisorAEditar.setCodigoPostal(supervisor.getCodigoPostal());
+        supervisorAEditar.setTelefono1(supervisor.getTelefono1());
+        supervisorAEditar.setTelefono2(supervisor.getTelefono2());
+        supervisorAEditar.setRegimen(supervisor.getRegimen());
+        supervisorAEditar.setRfc(supervisor.getRfc());
+        supervisorAEditar.setCurp(supervisor.getCurp());
+        supervisorAEditar.setNumeroTarjeta(supervisor.getNumeroTarjeta());
+        supervisorAEditar.setFechaAlta(supervisor.getFechaAlta());
+        supervisorAEditar.setComision(supervisor.getComision());
+        supervisorAEditar.setActivo(supervisor.getActivo());
+        
+        return supervisorRepository.save(supervisorAEditar);
     }
 
     @Transactional
     public void eliminarSupervisor(Long id) throws Exception {
-        Optional<Supervisor> supervisorEncontrado = supervisorRepository.findById(id);
-        if (supervisorEncontrado.isPresent()) {
-            supervisorRepository.deleteById(id);
+        Optional<Supervisor> supervisorEncontradoOpt = supervisorRepository.findByIdAndActive(id);
+        if (supervisorEncontradoOpt.isPresent()) {
+            Supervisor supervisorEncontrado = supervisorEncontradoOpt.get();
+            supervisorEncontrado.setActivo(false); // Soft delete
+            supervisorRepository.save(supervisorEncontrado);
         } else {
             throw new Exception("Supervisor no encontrado con el ID proporcionado.");
         }
@@ -107,5 +111,28 @@ public class SupervisorService {
         Connection conn = dataSource.getConnection();
         Map<String, Object> parametros = new HashMap<String, Object>();
         JasperRunManager.runReportToPdfStream(jasperStream, (OutputStream) outputStream, parametros, conn);
+    }
+
+    // Método adicional para recuperar un supervisor eliminado
+    @Transactional
+    public void restaurarSupervisor(Long id) throws Exception {
+        Optional<Supervisor> supervisorEncontradoOpt = supervisorRepository.findById(id);
+        if (supervisorEncontradoOpt.isPresent()) {
+            Supervisor supervisorEncontrado = supervisorEncontradoOpt.get();
+            if (!supervisorEncontrado.getActivo()) {
+                supervisorEncontrado.setActivo(true);
+                supervisorRepository.save(supervisorEncontrado);
+            } else {
+                throw new Exception("El supervisor ya está activo.");
+            }
+        } else {
+            throw new Exception("Supervisor no encontrado con el ID proporcionado.");
+        }
+    }
+
+    // Métodos para obtener todos los supervisores (incluidos inactivos) - para administración
+    @Transactional(readOnly = true)
+    public List<Supervisor> obtenerSupervisoresTodosInclusoInactivos() {
+        return supervisorRepository.findAll();
     }
 }

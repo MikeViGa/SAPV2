@@ -38,28 +38,28 @@ public class ClienteService {
 
     @Transactional(readOnly = true)
     public Optional<Cliente> obtenerClientePorId(Long id) {
-        return clienteRepository.findById(id);
+        return clienteRepository.findByIdAndActive(id);
     }
 
     @Transactional(readOnly = true)
     public List<Cliente> obtenerClientes() {
-        return clienteRepository.findAll();
+        return clienteRepository.findAllActive();
     }
 
     @Transactional(readOnly = true)
     public Page<ClienteListadoProjection> obtenerClientesPaginado(Pageable pageable) {
-        return clienteRepository.findListado(pageable);
+        return clienteRepository.findListadoActive(pageable);
     }
 
     @Transactional(readOnly = true)
     public List<Cliente> obtenerClientesPorNombre(String nombreCliente) {
-        List<Cliente> clientes = clienteRepository.findByNombreContaining(nombreCliente);
+        List<Cliente> clientes = clienteRepository.findByNombreContainingAndActive(nombreCliente);
         return clientes;
     }
 
     @Transactional
     public Cliente actualizarCliente(Cliente cliente) throws Exception {
-        Optional<Cliente> opt = clienteRepository.findById(cliente.getId());
+        Optional<Cliente> opt = clienteRepository.findByIdAndActive(cliente.getId());
         if (opt.isEmpty()) {
             throw new Exception("Cliente no encontrado con el ID proporcionado.");
         }
@@ -75,6 +75,7 @@ public class ClienteService {
         existente.setTelefono2(cliente.getTelefono2());
         existente.setRegimen(cliente.getRegimen());
         existente.setEstadoCivil(cliente.getEstadoCivil());
+        existente.setActivo(cliente.getActivo());
 
         // Sincronizar domicilios (orphanRemoval = true)
         existente.getDomicilios().clear();
@@ -90,9 +91,11 @@ public class ClienteService {
 
     @Transactional
     public void eliminarCliente(Long id) throws Exception {
-        Optional<Cliente> clienteEncontrado = clienteRepository.findById(id);
-        if (clienteEncontrado.isPresent()) {
-            clienteRepository.deleteById(id);
+        Optional<Cliente> clienteEncontradoOpt = clienteRepository.findByIdAndActive(id);
+        if (clienteEncontradoOpt.isPresent()) {
+            Cliente clienteEncontrado = clienteEncontradoOpt.get();
+            clienteEncontrado.setActivo(false); // Soft delete
+            clienteRepository.save(clienteEncontrado);
         } else {
             throw new Exception("Cliente no encontrado con el ID proporcionado.");
         }
@@ -141,5 +144,33 @@ public class ClienteService {
     @Transactional(readOnly = true)
     public List<String> obtenerColoniasClientes(String q) {
         return clienteRepository.findDistinctColoniasContaining(q == null ? "" : q);
+    }
+
+    // Método adicional para recuperar un cliente eliminado
+    @Transactional
+    public void restaurarCliente(Long id) throws Exception {
+        Optional<Cliente> clienteEncontradoOpt = clienteRepository.findById(id);
+        if (clienteEncontradoOpt.isPresent()) {
+            Cliente clienteEncontrado = clienteEncontradoOpt.get();
+            if (!clienteEncontrado.getActivo()) {
+                clienteEncontrado.setActivo(true);
+                clienteRepository.save(clienteEncontrado);
+            } else {
+                throw new Exception("El cliente ya está activo.");
+            }
+        } else {
+            throw new Exception("Cliente no encontrado con el ID proporcionado.");
+        }
+    }
+
+    // Métodos para obtener todos los clientes (incluidos inactivos) - para administración
+    @Transactional(readOnly = true)
+    public List<Cliente> obtenerClientesTodosInclusoInactivos() {
+        return clienteRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ClienteListadoProjection> obtenerClientesPaginadoInclusoInactivos(Pageable pageable) {
+        return clienteRepository.findListado(pageable);
     }
 }

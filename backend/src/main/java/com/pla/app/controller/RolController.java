@@ -3,6 +3,7 @@ package com.pla.app.controller;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.pla.app.model.Rol;
 import com.pla.app.service.RolService;
+import com.pla.app.dto.roles.RolResponseDTO;
+import com.pla.app.mapper.RolMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Date;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,6 +29,9 @@ public class RolController {
 
 	@Autowired
 	private RolService rolServicio;
+
+	@Autowired
+	private RolMapper rolMapper;
 
 	// CREATE
 	@PostMapping("/roles/")
@@ -40,11 +46,12 @@ public class RolController {
 
 	// READ 1
 	@GetMapping("/roles/{id}")
-	public ResponseEntity<Rol> obtenerRol(@PathVariable Long id) {
+	public ResponseEntity<RolResponseDTO> obtenerRol(@PathVariable Long id) {
 		try {
 			Optional<Rol> rol = rolServicio.obtenerRolPorId(id);
 			if (rol.isPresent()) {
-				return new ResponseEntity<>(rol.get(), HttpStatus.OK);
+				RolResponseDTO rolDTO = rolMapper.toResponseDTO(rol.get());
+				return new ResponseEntity<>(rolDTO, HttpStatus.OK);
 			} else {
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
@@ -55,9 +62,12 @@ public class RolController {
 
 	// READ ALL
 	@GetMapping("/roles")
-	public ResponseEntity<List<Rol>> obtenerRoles() {
+	public ResponseEntity<List<RolResponseDTO>> obtenerRoles() {
 		List<Rol> roles = rolServicio.obtenerRolesTodos();
-		return new ResponseEntity<>(roles, HttpStatus.OK);
+		List<RolResponseDTO> rolesDTO = roles.stream()
+				.map(rolMapper::toResponseDTO)
+				.collect(Collectors.toList());
+		return new ResponseEntity<>(rolesDTO, HttpStatus.OK);
 	}
 
 	// DELETE
@@ -84,6 +94,29 @@ public class RolController {
 					.status(HttpStatus.NOT_FOUND)
 					.body("No se pudo actualizar el rol: " + e.getMessage());
 		}
+	}
+
+	// RESTAURAR (reactivar rol eliminado)
+	@PutMapping("/roles/{id}/restaurar")
+	public ResponseEntity<?> restaurarRol(@PathVariable Long id) {
+		try {
+			rolServicio.restaurarRol(id);
+			return ResponseEntity.ok("Rol restaurado correctamente");
+		} catch (Exception e) {
+			return ResponseEntity
+					.status(HttpStatus.NOT_FOUND)
+					.body("No se pudo restaurar el rol: " + e.getMessage());
+		}
+	}
+
+	// OBTENER TODOS INCLUSO INACTIVOS (para administración)
+	@GetMapping("/roles/todos")
+	public ResponseEntity<List<RolResponseDTO>> obtenerRolesInclusoInactivos() {
+		List<Rol> roles = rolServicio.obtenerRolesTodosInclusoInactivos();
+		List<RolResponseDTO> rolesDTO = roles.stream()
+				.map(rolMapper::toResponseDTO)
+				.collect(Collectors.toList());
+		return new ResponseEntity<>(rolesDTO, HttpStatus.OK);
 	}
 
 	// REPORT

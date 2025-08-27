@@ -1,6 +1,7 @@
 package com.pla.app.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,10 +10,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "paquetes")
 @Data
+@SQLDelete(sql = "UPDATE paquetes SET activo = false, fecha_modificacion = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLRestriction("activo = true")
 public class Paquete implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -70,6 +75,36 @@ public class Paquete implements Serializable {
     @ManyToOne
     @JoinColumn(name = "ataud_id", foreignKey = @ForeignKey(name = "FK_paquete_ataud")) 
     private Ataud ataud;
+
+    // Campos de auditoría y soft delete
+    @Column(name = "activo", nullable = false)
+    private Boolean activo = true;
+
+    @Column(name = "fecha_creacion", nullable = false, updatable = false)
+    private LocalDateTime fechaCreacion;
+
+    @Column(name = "fecha_modificacion")
+    private LocalDateTime fechaModificacion;
+
+    @Column(name = "creado_por", length = 100)
+    private String creadoPor;
+
+    @Column(name = "modificado_por", length = 100)
+    private String modificadoPor;
+
+    @PrePersist
+    protected void onCreate() {
+        fechaCreacion = LocalDateTime.now();
+        fechaModificacion = LocalDateTime.now();
+        if (activo == null) {
+            activo = true;
+        }
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        fechaModificacion = LocalDateTime.now();
+    }
 
     public String obtenerDescripcion() {
         return bovedas + " Boveda(s) de " + gavetas + " Gaveta(s) con " + servicios

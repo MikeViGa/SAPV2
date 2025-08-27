@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { TextField, Button, Box, Typography } from '@mui/material';
+import { TextField, Button, Box, Typography, FormControlLabel, Chip, Switch } from '@mui/material';
 import { actualizarSucursalApi, crearSucursalApi, } from '../../api/SucursalApiService';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -16,7 +16,6 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import { styled } from '@mui/material/styles';
-import Switch from '@mui/material/Switch';
 import { useSnackbar } from '../../base/dashboard/elementos/SnackbarContext';
 import Grid from '@mui/material/Grid2';
 import Paper from '@mui/material/Paper';
@@ -100,6 +99,7 @@ export default function FormularioSucursal({ modo, registro, open, onClose, refr
     const initialValues = {
         id: '',
         nombre: '',
+        activo: true,
     };
 
     const validationSchema = Yup.object({
@@ -115,11 +115,16 @@ export default function FormularioSucursal({ modo, registro, open, onClose, refr
                 let formData = {
                     id: values.id,
                     nombre: values.nombre,
+                    activo: values.activo,
                 };
 
                 const response = (modo === "editar" ? actualizarSucursalApi(formData.id, formData) : crearSucursalApi(formData))
                     .then(response => {
-                        addSnackbar("Registro " + (modo === "editar" ? "actualizado" : "creado") + " correctamente", "success");
+                        let mensaje = "Registro " + (modo === "editar" ? "actualizado" : "creado") + " correctamente";
+                        if (modo === "editar" && !values.activo) {
+                            mensaje = "Sucursal desactivada correctamente";
+                        }
+                        addSnackbar(mensaje, "success");
                         setOperacionTerminada(true);
                     }).catch(error => {
                         if (error.response) {
@@ -144,6 +149,7 @@ export default function FormularioSucursal({ modo, registro, open, onClose, refr
             if (modo === "editar" && registro) {
                 formik.setValues({
                     ...registro,
+                    activo: registro.activo !== undefined ? registro.activo : true,
                 });
             } else {
                 formik.resetForm({
@@ -220,6 +226,34 @@ export default function FormularioSucursal({ modo, registro, open, onClose, refr
                                         inputRef={nombreRef}
                                     />
                                 </Grid>
+                                {modo === "editar" && (
+                                    <Grid xs={12} sm={6} md={3}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, height: '40px' }}>
+                                            <FormControlLabel
+                                                control={
+                                                    <Switch
+                                                        checked={Boolean(formik.values.activo)}
+                                                        onChange={(e) => formik.setFieldValue('activo', e.target.checked)}
+                                                        name="activo"
+                                                        color="primary"
+                                                    />
+                                                }
+                                                label="Estado:"
+                                                sx={{ mr: 1 }}
+                                            />
+                                            <Chip 
+                                                label={Boolean(formik.values.activo) ? "Activo" : "Inactivo"}
+                                                color={Boolean(formik.values.activo) ? "success" : "warning"}
+                                                size="small"
+                                            />
+                                        </Box>
+                                        {!Boolean(formik.values.activo) && (
+                                            <Typography variant="caption" color="warning.main" sx={{ mt: 0.5, display: 'block' }}>
+                                                ⚠️ La sucursal será marcada como inactiva
+                                            </Typography>
+                                        )}
+                                    </Grid>
+                                )}
                             </Grid>
                         </Paper>
                         <Paper elevation={1} sx={{ p: 1, mb: 1 }}>

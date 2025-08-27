@@ -12,13 +12,21 @@ export const obtenerRolApi
 export const obtenerRolesApi
     = () => apiClient.get(`/roles`)
 
+// Obtener todos los roles incluyendo inactivos (para administración)
+export const obtenerRolesTodosApi
+    = () => apiClient.get(`/roles/todos`)
+
 //UPDATE
 export const actualizarRolApi
     = (id, rol) => apiClient.put(`/roles/${id}`, rol)
 
-//DELETE
+//DELETE (Soft delete)
 export const eliminarRolApi
     = (id) => apiClient.delete(`/roles/${id}`)
+
+//RESTAURAR
+export const restaurarRolApi
+    = (id) => apiClient.put(`/roles/${id}/restaurar`)
 
 
 

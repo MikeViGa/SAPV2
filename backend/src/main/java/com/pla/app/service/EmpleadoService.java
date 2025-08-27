@@ -31,45 +31,47 @@ public class EmpleadoService {
 
     @Transactional(readOnly = true)
     public Optional<Empleado> obtenerEmpleadoPorId(Long id) {
-        return empleadoRepository.findById(id);
+        return empleadoRepository.findByIdAndActive(id);
     }
 
     @Transactional(readOnly = true)
     public List<Empleado> obtenerEmpleadosTodos() {
-        return empleadoRepository.findAll();
+        return empleadoRepository.findAllActive();
     }
 
     @Transactional(readOnly = true)
     public List<Empleado> obtenerEmpleadosPorNombre(String nombre) {
-        List<Empleado> empleados = empleadoRepository.findByNombreContaining(nombre);
+        List<Empleado> empleados = empleadoRepository.findByNombreContainingAndActive(nombre);
         return empleados;
     }
 
     @Transactional
     public Empleado actualizarEmpleado(Empleado empleado) throws Exception {
-        Empleado empleadoEncontrado = empleadoRepository.findById(empleado.getId()).get();
-        if (empleadoEncontrado != null) {
-            empleadoEncontrado.setNombre(empleado.getNombre());
-            empleadoEncontrado.setApellidoPaterno(empleado.getApellidoPaterno());
-            empleadoEncontrado.setApellidoMaterno(empleado.getApellidoMaterno());
-            empleadoEncontrado.setCorreo(empleado.getCorreo());
-            empleadoEncontrado.setTelefono(empleado.getTelefono());
-            empleadoEncontrado.setFechaNacimiento(empleado.getFechaNacimiento());
-            empleadoEncontrado.setFechaAlta(empleado.getFechaAlta());
-           
-            Empleado empleadoActualizado = empleadoRepository.save(empleadoEncontrado);
-            return empleadoActualizado;
-        } else {
+        Optional<Empleado> opt = empleadoRepository.findByIdAndActive(empleado.getId());
+        if (opt.isEmpty()) {
             throw new Exception("Empleado no encontrado con el ID proporcionado.");
         }
-
+        Empleado existente = opt.get();
+        existente.setNombre(empleado.getNombre());
+        existente.setApellidoPaterno(empleado.getApellidoPaterno());
+        existente.setApellidoMaterno(empleado.getApellidoMaterno());
+        existente.setCorreo(empleado.getCorreo());
+        existente.setTelefono(empleado.getTelefono());
+        existente.setFechaNacimiento(empleado.getFechaNacimiento());
+        existente.setFechaAlta(empleado.getFechaAlta());
+        existente.setEstado(empleado.getEstado());
+        existente.setActivo(empleado.getActivo());
+        
+        return empleadoRepository.save(existente);
     }
 
     @Transactional
     public void eliminarEmpleado(Long id) throws Exception {
-        Optional<Empleado> empleadoEncontrado = empleadoRepository.findById(id);
-        if (empleadoEncontrado.isPresent()) {
-            empleadoRepository.deleteById(id);
+        Optional<Empleado> empleadoEncontradoOpt = empleadoRepository.findByIdAndActive(id);
+        if (empleadoEncontradoOpt.isPresent()) {
+            Empleado empleadoEncontrado = empleadoEncontradoOpt.get();
+            empleadoEncontrado.setActivo(false); // Soft delete
+            empleadoRepository.save(empleadoEncontrado);
         } else {
             throw new Exception("Empleado no encontrado con el ID proporcionado.");
         }
@@ -82,5 +84,28 @@ public class EmpleadoService {
         Connection conn = dataSource.getConnection();
         Map<String, Object> parametros = new HashMap<String, Object>();
         JasperRunManager.runReportToPdfStream(jasperStream, (OutputStream) outputStream, parametros, conn);
+    }
+
+    // Método adicional para recuperar un empleado eliminado
+    @Transactional
+    public void restaurarEmpleado(Long id) throws Exception {
+        Optional<Empleado> empleadoEncontradoOpt = empleadoRepository.findById(id);
+        if (empleadoEncontradoOpt.isPresent()) {
+            Empleado empleadoEncontrado = empleadoEncontradoOpt.get();
+            if (!empleadoEncontrado.getActivo()) {
+                empleadoEncontrado.setActivo(true);
+                empleadoRepository.save(empleadoEncontrado);
+            } else {
+                throw new Exception("El empleado ya está activo.");
+            }
+        } else {
+            throw new Exception("Empleado no encontrado con el ID proporcionado.");
+        }
+    }
+
+    // Métodos para obtener todos los empleados (incluidos inactivos) - para administración
+    @Transactional(readOnly = true)
+    public List<Empleado> obtenerEmpleadosTodosInclusoInactivos() {
+        return empleadoRepository.findAll();
     }
 }

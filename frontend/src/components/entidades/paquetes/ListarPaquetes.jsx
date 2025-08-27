@@ -1,6 +1,6 @@
 import { Box, Button } from "@mui/material";
 import { useMemo } from "react";
-import { eliminarPaqueteApi, obtenerReportePaqueteApi } from "../../api/PaqueteApiService";
+import { eliminarPaqueteApi, obtenerReportePaqueteApi, restaurarPaqueteApi } from "../../api/PaqueteApiService";
 import StatusCell from "../../base/dashboard/elementos/StatusCell";
 import FormularioPaquete from "./FormularioPaquete";
 import { FullScreenModal, DeleteDialog, ActionButtons, commonGridProps, commonButtonStyles, localeText, ListLayout, useListado, DataGridBase } from '../../base/common/CommonControls';
@@ -31,6 +31,19 @@ export default function ListarPaquetes({ refrescar, regs }) {
     }
   };
 
+  const restaurarPaquete = async (id) => {
+    listadoHook.setCargando(true);
+    try {
+      await restaurarPaqueteApi(id);
+      addSnackbar("Paquete restaurado correctamente", "success");
+      refrescar();
+    } catch (error) {
+      addSnackbar("No se pudo restaurar el paquete, razón: " + error.message, "error");
+    } finally {
+      listadoHook.setCargando(false);
+    }
+  };
+
   const columnas = useMemo(() => [
     {
       field: 'acciones',
@@ -40,7 +53,9 @@ export default function ListarPaquetes({ refrescar, regs }) {
       headerClassName: "super-app-theme--header",
       getActions: (params) => ActionButtons({
         onEdit: () => listadoHook.abrirFomularioEditar(params.row),
-        onDelete: () => listadoHook.abrirDialogoEliminar(params.id, rowsData)
+        onDelete: params.row.activo ? () => listadoHook.abrirDialogoEliminar(params.id, rowsData) : null,
+        onRestore: !params.row.activo ? () => restaurarPaquete(params.id) : null,
+        showRestore: !params.row.activo
       }),
     },
     { field: "id", headerName: "Id", width: 60, headerClassName: "super-app-theme--header", pinned: 'left' },
@@ -58,7 +73,24 @@ export default function ListarPaquetes({ refrescar, regs }) {
       renderCell: (params) => (params?.row?.periodicidadNombre ?? params?.row?.periodicidad?.nombre ?? '') },
     { field: "bovedas", headerName: "Bovedas", width: 100, headerClassName: "super-app-theme--header" },
     { field: "gavetas", headerName: "Gavetas", width: 100, headerClassName: "super-app-theme--header" },
-  ], [listadoHook]);
+    { 
+      field: "activo", 
+      headerName: "Estado", 
+      width: 100, 
+      headerClassName: "super-app-theme--header",
+      renderCell: (params) => (
+        <StatusCell 
+          status={params.value} 
+          activeText="Activo" 
+          inactiveText="Inactivo" 
+        />
+      )
+    },
+    { field: "fechaCreacion", headerName: "Fecha Creación", width: 150, headerClassName: "super-app-theme--header" },
+    { field: "fechaModificacion", headerName: "Fecha Modificación", width: 150, headerClassName: "super-app-theme--header" },
+    { field: "creadoPor", headerName: "Creado Por", width: 120, headerClassName: "super-app-theme--header" },
+    { field: "modificadoPor", headerName: "Modificado Por", width: 120, headerClassName: "super-app-theme--header" },
+  ], [listadoHook, restaurarPaquete]);
 
   const dataGridExtraProps = useMemo(() => ({
     initialState: {

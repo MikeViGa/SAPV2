@@ -1,11 +1,11 @@
-package com.pla.app.dto.vendedores;
+package com.pla.app.dto.supervisores;
 
 import lombok.Data;
 import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Data
-public class VendedorResponseDTO {
+public class SupervisorResponseDTO {
     private Long id;
     private String nombre;
     private String apellidoPaterno;
@@ -27,13 +27,12 @@ public class VendedorResponseDTO {
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime fechaAlta;
     
+    private Double comision;
     private Boolean activo;
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaModificacion;
     private String creadoPor;
     private String modificadoPor;
-    
-    // Información del supervisor
-    private Long supervisorId;
-    private String supervisorNombre;
 }
+
+

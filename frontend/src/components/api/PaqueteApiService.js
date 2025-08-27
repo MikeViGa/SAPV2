@@ -19,9 +19,17 @@ export const obtenerPaqueteDescripcionApi
 export const actualizarPaqueteApi
     = (id, paquete) => apiClient.put(`/paquetes/${id}`, paquete)
 
-//DELETE
+//DELETE (Soft Delete)
 export const eliminarPaqueteApi
     = (id) => apiClient.delete(`/paquetes/${id}`)
+
+//RESTAURAR
+export const restaurarPaqueteApi
+    = (id) => apiClient.put(`/paquetes/${id}/restaurar`)
+
+//OBTENER TODOS INCLUSO INACTIVOS (para administración)
+export const obtenerPaquetesTodosApi
+    = () => apiClient.get(`/paquetes/todos`)
 
     //REPORT
 export const obtenerReportePaqueteApi

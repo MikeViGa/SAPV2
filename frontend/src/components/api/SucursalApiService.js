@@ -19,10 +19,18 @@ export const obtenerSucursalNombreApi
 export const actualizarSucursalApi
     = (id, sucursal) => apiClient.put(`/sucursales/${id}`, sucursal)
 
-//DELETE
+//DELETE (Soft Delete)
 export const eliminarSucursalApi
     = (id) => apiClient.delete(`/sucursales/${id}`)
 
-    //REPORT
+// RESTORE
+export const restaurarSucursalApi
+    = (id) => apiClient.put(`/sucursales/${id}/restaurar`)
+
+// GET ALL INCLUDING INACTIVE (for admin)
+export const obtenerSucursalesTodasApi
+    = () => apiClient.get(`/sucursales/todas`)
+
+//REPORT
 export const obtenerReporteSucursalApi
 = () => apiClient.get(`/reportesucursales`, { responseType: 'blob' })

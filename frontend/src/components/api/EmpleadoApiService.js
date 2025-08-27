@@ -21,15 +21,19 @@ export const obtenerEmpleadosEntreFechasApi
 export const actualizarEmpleadoApi
     = (id, empleado) => apiClient.put(`/empleados/${id}`, empleado)
 
-//DELETE
+//DELETE (Soft Delete)
 export const eliminarEmpleadoApi
     = (id) => apiClient.delete(`/empleados/${id}`)
+
+// RESTORE
+export const restaurarEmpleadoApi
+    = (id) => apiClient.put(`/empleados/${id}/restaurar`)
+
+// GET ALL INCLUDING INACTIVE (for admin)
+export const obtenerEmpleadosTodosApi
+    = () => apiClient.get(`/empleados/todos`)
 
 //REPORT
 export const obtenerReporteEmpleadoApi
 = () => apiClient.get(`/reporteempleados`, { responseType: 'blob' })
-
-
-
-
 

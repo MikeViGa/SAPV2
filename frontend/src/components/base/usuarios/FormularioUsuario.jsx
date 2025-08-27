@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { TextField, Button, Box, Typography, Paper, Stack } from '@mui/material';
+import { TextField, Button, Box, Typography, Paper, Stack, Switch, FormControlLabel, Chip } from '@mui/material';
 import { actualizarUsuarioApi, crearUsuarioApi, } from "../../api/UsuarioApiService"
 import { obtenerRolesApi } from "../../api/RolApiService"
 import SaveIcon from '@mui/icons-material/Save';
@@ -41,6 +41,7 @@ export default function FormularioUsuario({ modo, registro, open, onClose, refre
 			nombre: '',
 			contrasena: '',
 			rolId: '',
+			activo: true,
 		},
 		validationSchema: Yup.object({
 			nombre: Yup.string()
@@ -60,6 +61,7 @@ export default function FormularioUsuario({ modo, registro, open, onClose, refre
 					id: values.id,
 					nombre: values.nombre,
 					contrasena: values.contrasena,
+					activo: values.activo,
 					rol: {
 						id: values.rolId
 					}
@@ -70,7 +72,14 @@ export default function FormularioUsuario({ modo, registro, open, onClose, refre
 					: crearUsuarioApi(formData);
 
 				await apiCall;
-				addSnackbar(`Usuario ${modo === "editar" ? "actualizado" : "creado"} correctamente`, "success");
+				
+				// Mensaje personalizado según el estado del usuario
+				let mensaje = `Usuario ${modo === "editar" ? "actualizado" : "creado"} correctamente`;
+				if (modo === "editar" && !values.activo) {
+					mensaje += " (Usuario desactivado)";
+				}
+				
+				addSnackbar(mensaje, "success");
 				refrescar?.();
 				onClose();
 			} catch (error) {
@@ -103,19 +112,43 @@ export default function FormularioUsuario({ modo, registro, open, onClose, refre
 	const cargarDatosFormulario = async () => {
 		setLoadingData(true);
 		try {
-			// Cargar todos los roles
+			// Cargar todos los roles primero
 			const response = await obtenerRolesApi();
 			const rolesData = response.data || [];
 			setRoles(rolesData);
 
-			// Si es edición y hay registro, configurar el formulario
+			// Si es edición y hay registro, configurar el formulario DESPUÉS de cargar roles
 			if (modo === "editar" && registro) {
-				formik.setValues({
+				// Esperar un poco para asegurar que los roles se han establecido en el estado
+				await new Promise(resolve => setTimeout(resolve, 100));
+				
+				// Determinar el rolId correctamente
+				let rolId = '';
+				if (registro.rol) {
+					rolId = String(registro.rol.id || '');
+				} else if (registro.rolNombre && rolesData.length > 0) {
+					// Si solo tenemos el nombre del rol, buscar el ID
+					const rolEncontrado = rolesData.find(r => r.nombre === registro.rolNombre);
+					rolId = rolEncontrado ? String(rolEncontrado.id) : '';
+				}
+				
+				// Determinar el estado activo correctamente
+				let estadoActivo = true; // valor por defecto
+				if (registro.activo !== undefined && registro.activo !== null) {
+					estadoActivo = Boolean(registro.activo);
+				}
+				
+				const nuevosValores = {
 					id: registro.id || '',
 					nombre: registro.nombre || '',
-					contrasena: registro.contrasena || '',
-					rolId: registro.rol?.id || '',
-				});
+					contrasena: '', // No precargar contraseña por seguridad
+					rolId: rolId,
+					activo: estadoActivo,
+				};
+				
+				// Estado activo determinado correctamente
+				
+				formik.setValues(nuevosValores);
 			} else {
 				formik.resetForm();
 			}
@@ -133,6 +166,17 @@ export default function FormularioUsuario({ modo, registro, open, onClose, refre
 			cargarDatosFormulario();
 		}
 	}, [open, modo, registro]);
+
+	// UseEffect adicional para forzar la actualización del campo activo cuando cambie el registro
+	useEffect(() => {
+		if (open && modo === "editar" && registro && registro.activo !== undefined) {
+			const estadoActivo = Boolean(registro.activo);
+			if (formik.values.activo !== estadoActivo) {
+				// Actualizando estado activo del switch
+				formik.setFieldValue('activo', estadoActivo);
+			}
+		}
+	}, [registro?.activo, open, modo]);
 
 	const handleReset = () => {
 		formik.resetForm();
@@ -157,7 +201,7 @@ export default function FormularioUsuario({ modo, registro, open, onClose, refre
 					<Box
 						component="form"
 						onSubmit={formik.handleSubmit}
-						sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: 400, pt: 1 }}
+						sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: 450, pt: 1 }}
 					>
 						<Paper elevation={1} sx={{ p: 1, mb: 1 }}>
 							<Stack direction="column" spacing={1}>
@@ -205,13 +249,13 @@ export default function FormularioUsuario({ modo, registro, open, onClose, refre
 									<InputLabel>Rol</InputLabel>
 									<Select
 										name="rolId"
-										value={formik.values.rolId}
+										value={formik.values.rolId || ''}
 										onChange={formik.handleChange}
 										onBlur={formik.handleBlur}
 										label="Rol"
 									>
 										{roles.map((rol) => (
-											<MenuItem key={rol.id} value={rol.id}>
+											<MenuItem key={rol.id} value={String(rol.id)}>
 												{rol.nombre}
 											</MenuItem>
 										))}
@@ -220,6 +264,40 @@ export default function FormularioUsuario({ modo, registro, open, onClose, refre
 										<FormHelperText>{formik.errors.rolId}</FormHelperText>
 									)}
 								</FormControl>
+
+								{/* Campo para activar/desactivar usuario (soft delete) */}
+								<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 1 }}>
+									<FormControlLabel
+										control={
+											<Switch
+												checked={Boolean(formik.values.activo)}
+												onChange={(e) => {
+													formik.setFieldValue('activo', e.target.checked);
+												}}
+												name="activo"
+												color="primary"
+											/>
+										}
+										label={
+											<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+												<Typography variant="body2">
+													Estado del usuario
+												</Typography>
+																												<Chip
+																	label={Boolean(formik.values.activo) ? 'Activo' : 'Inactivo'}
+																	color={Boolean(formik.values.activo) ? 'success' : 'error'}
+																	size="small"
+																	variant="outlined"
+																/>
+											</Box>
+										}
+									/>
+								</Box>
+								{!Boolean(formik.values.activo) && (
+									<Typography variant="caption" color="warning.main" sx={{ mt: 1, fontStyle: 'italic' }}>
+										⚠️ Usuario inactivo: No podrá iniciar sesión en el sistema
+									</Typography>
+								)}
 							</Stack>
 						</Paper>
 						<Paper elevation={1} sx={{ p: 1, mb: 1 }}>
