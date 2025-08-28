@@ -49,6 +49,7 @@ public class ListaDePreciosController {
                 dto.setId(listaDePrecios.get().getId());
                 dto.setClave(listaDePrecios.get().getClave());
                 dto.setNombre(listaDePrecios.get().getNombre());
+                dto.setActivo(listaDePrecios.get().getActivo());
                 return new ResponseEntity<>(dto, HttpStatus.OK);
 			} else {
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -67,12 +68,28 @@ public class ListaDePreciosController {
             dto.setId(lp.getId());
             dto.setClave(lp.getClave());
             dto.setNombre(lp.getNombre());
+            dto.setActivo(lp.getActivo());
             return dto;
         }).toList();
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
 	}
 
-	// DELETE
+	// READ ALL INCLUDING INACTIVE
+	@GetMapping("/listasdeprecios/todos")
+	public ResponseEntity<List<ListaDePreciosResponseDTO>> obtenerListasDePreciosInclusoInactivos() {
+		List<ListaDePrecios> listas = listaDePreciosServicio.obtenerListasDePreciosTodosInclusoInactivos();
+		List<ListaDePreciosResponseDTO> respuesta = listas.stream().map(lp -> {
+			ListaDePreciosResponseDTO dto = new ListaDePreciosResponseDTO();
+			dto.setId(lp.getId());
+			dto.setClave(lp.getClave());
+			dto.setNombre(lp.getNombre());
+			dto.setActivo(lp.getActivo());
+			return dto;
+		}).toList();
+		return new ResponseEntity<>(respuesta, HttpStatus.OK);
+	}
+
+	// DELETE (soft)
 	@DeleteMapping("/listasdeprecios/{id}")
 	public ResponseEntity<?> eliminarListaDePrecios(@PathVariable Long id) {
 		try {
@@ -82,6 +99,19 @@ public class ListaDePreciosController {
 			return ResponseEntity
 					.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body("No se pudo eliminar la lista: " + e.getMessage());
+		}
+	}
+
+	// RESTORE
+	@PutMapping("/listasdeprecios/{id}/restaurar")
+	public ResponseEntity<?> restaurarListaDePrecios(@PathVariable Long id) {
+		try {
+			listaDePreciosServicio.restaurarListaDePrecios(id);
+			return ResponseEntity.ok("Lista restaurada correctamente");
+		} catch (Exception e) {
+			return ResponseEntity
+					.status(HttpStatus.NOT_FOUND)
+					.body("No se pudo restaurar la lista: " + e.getMessage());
 		}
 	}
 

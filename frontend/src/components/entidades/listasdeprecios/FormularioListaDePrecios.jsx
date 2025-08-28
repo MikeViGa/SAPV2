@@ -101,11 +101,13 @@ export default function FormularioListaDePrecios({ modo, registro, open, onClose
         id: '',
         clave: '',
         nombre: '',
+        activo: true,
     };
 
     const validationSchema = Yup.object({
-        clave: Yup.string().required('Requerido'),
+        clave: Yup.string().max(100, 'Máximo 100 caracteres').required('Requerido'),
         nombre: Yup.string().required('Requerido'),
+        activo: Yup.boolean().required('Requerido'),
     });
 
     const formik = useFormik({
@@ -116,8 +118,9 @@ export default function FormularioListaDePrecios({ modo, registro, open, onClose
                 setLoading(true);
                 let formData = {
                     id: values.id,
-                    clave: values.clave,
+                    clave: (values.clave || '').trim(),
                     nombre: values.nombre,
+                    activo: values.activo,
                 };
 
                 const response = (modo === "editar" ? actualizarListaDePreciosApi(formData.id, formData) : crearListaDePreciosApi(formData))
@@ -147,6 +150,7 @@ export default function FormularioListaDePrecios({ modo, registro, open, onClose
             if (modo === "editar" && registro) {
                 formik.setValues({
                     ...registro,
+                    activo: registro.activo !== undefined ? registro.activo : true,
                 });
             } else {
                 formik.resetForm({
@@ -204,11 +208,12 @@ export default function FormularioListaDePrecios({ modo, registro, open, onClose
                             <Grid xs={12} sm={6} md={3}>
                                 <TextField size="small" required fullWidth id="clave" name="clave" label="Clave"
                                     value={formik.values.clave}
-                                    onChange={formik.handleChange}
+                                    onChange={(e) => formik.setFieldValue('clave', e.target.value.slice(0, 100))}
                                     onBlur={formik.handleBlur}
                                     error={formik.touched.clave && Boolean(formik.errors.clave)}
                                     helperText={formik.touched.clave && formik.errors.clave}
                                     InputLabelProps={{ sx: redAsteriskStyle, shrink: true }}
+                                    inputProps={{ maxLength: 100 }}
                                     onKeyDown={(e) => handleKeyDown(e, null)}
                                 />
                             </Grid>
@@ -223,7 +228,21 @@ export default function FormularioListaDePrecios({ modo, registro, open, onClose
                                     onKeyDown={(e) => handleKeyDown(e, null)}
                                 />
                             </Grid>
-                            </Stack>
+                            <Grid xs={12} sm={6} md={3}>
+                                <Box display="flex" alignItems="center" gap={1}>
+                                    <Typography variant="body2">Estado de la lista:</Typography>
+                                    <AntSwitch
+                                        checked={formik.values.activo}
+                                        onChange={(e) => formik.setFieldValue('activo', e.target.checked)}
+                                        name="activo"
+                                        inputProps={{ 'aria-label': 'Estado de la lista' }}
+                                    />
+                                    <Typography variant="body2">
+                                        {formik.values.activo ? 'Activo' : 'Inactivo'}
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                        </Stack>
                         </Paper>
                         <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
                             <Stack direction="row" spacing={1}>

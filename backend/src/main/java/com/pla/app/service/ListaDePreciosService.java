@@ -38,11 +38,18 @@ public class ListaDePreciosService {
         return listaDePreciosRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
+    public List<ListaDePrecios> obtenerListasDePreciosTodosInclusoInactivos() {
+        return listaDePreciosRepository.findAllIncludingInactive();
+    }
+
     @Transactional
     public ListaDePrecios actualizarListaDePrecios(ListaDePrecios listaDePrecios) throws Exception {
-        ListaDePrecios listaDePreciosEncontrado = listaDePreciosRepository.findById(listaDePrecios.getId()).get();
+        ListaDePrecios listaDePreciosEncontrado = listaDePreciosRepository.findById(listaDePrecios.getId()).orElse(null);
         if (listaDePreciosEncontrado != null) {
             listaDePreciosEncontrado.setNombre(listaDePrecios.getNombre());
+            listaDePreciosEncontrado.setClave(listaDePrecios.getClave());
+            listaDePreciosEncontrado.setActivo(listaDePrecios.getActivo());
             ListaDePrecios listaDePreciosActualizado = listaDePreciosRepository.save(listaDePreciosEncontrado);
             return listaDePreciosActualizado;
         } else {
@@ -54,7 +61,17 @@ public class ListaDePreciosService {
     public void eliminarListaDePrecios(Long id) throws Exception {
         Optional<ListaDePrecios> listaDePreciosEncontrado = listaDePreciosRepository.findById(id);
         if (listaDePreciosEncontrado.isPresent()) {
-            listaDePreciosRepository.deleteById(id);
+            listaDePreciosRepository.softDelete(id);
+        } else {
+            throw new Exception("Lista de precios no encontrado con el ID proporcionado.");
+        }
+    }
+
+    @Transactional
+    public void restaurarListaDePrecios(Long id) throws Exception {
+        Optional<ListaDePrecios> lista = listaDePreciosRepository.findByIdIncludingInactive(id);
+        if (lista.isPresent()) {
+            listaDePreciosRepository.restaurar(id);
         } else {
             throw new Exception("Lista de precios no encontrado con el ID proporcionado.");
         }

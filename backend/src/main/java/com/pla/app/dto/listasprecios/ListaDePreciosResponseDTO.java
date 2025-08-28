@@ -7,6 +7,7 @@ public class ListaDePreciosResponseDTO {
     private Long id;
     private String clave;
     private String nombre;
+    private Boolean activo;
 }
 
 
